@@ -1,0 +1,18 @@
+﻿name: Build My Application
+
+on: push
+
+jobs:
+  build:
+    name: Build our App
+    runs-on: ubuntu-latest
+    steps:
+#      - name: Hello world
+#        uses: actions/hello-world-javascript-action@v1
+#        with:
+#          who-to-greet: 'Mona the Octocat'
+#        id: hello
+      - name: Print Current Directory
+        run: pwd
+      - name: List Filed in Directory
+        run: ls
