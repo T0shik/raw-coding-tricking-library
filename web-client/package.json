@@ -1,0 +1,20 @@
+{
+  "name": "web-client",
+  "version": "1.0.0",
+  "description": "My swell Nuxt.js project",
+  "author": "Anton Wieslander",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "nuxt": "^2.0.0",
+    "@nuxtjs/axios": "^5.3.6"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.0.0"
+  }
+}
