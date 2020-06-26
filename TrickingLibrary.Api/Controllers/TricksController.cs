@@ -7,11 +7,11 @@ namespace TrickingLibrary.Api.Controllers
 {
     [ApiController]
     [Route("api/tricks")]
-    public class Tricks : ControllerBase
+    public class TricksController : ControllerBase
     {
         private readonly TrickyStore _store;
 
-        public Tricks(TrickyStore store)
+        public TricksController(TrickyStore store)
         {
             _store = store;
         }
