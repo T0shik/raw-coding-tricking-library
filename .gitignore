@@ -1,3 +1,5 @@
 .idea
 bin/
 obj/
+
+*.mp4
