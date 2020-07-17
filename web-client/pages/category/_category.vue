@@ -1,12 +1,6 @@
 ﻿<template>
   <div class="d-flex mt-3 justify-center align-start">
-    <div class="mx-2">
-      <v-text-field label="Search" placeholder="e.g. cork/flip/kick" v-model="filter"
-                    prepend-inner-icon="mdi-magnify" outlined></v-text-field>
-      <div v-for="t in filteredTricks">
-        {{t.name}} - {{t.description}}
-      </div>
-    </div>
+    <trick-list :tricks="tricks" class="mx-2" />
 
     <v-sheet class="pa-3 mx-2 sticky" v-if="category">
       <div class="text-h6">{{ category.name }}</div>
@@ -18,24 +12,15 @@
 
 <script>
   import {mapGetters} from 'vuex'
+  import TrickList from "../../components/trick-list";
 
   export default {
+    components: {TrickList},
     data: () => ({
       category: null,
       tricks: [],
-      filter: "",
     }),
-    computed: {
-      ...mapGetters('tricks', ['categoryById']),
-      filteredTricks() {
-        if (!this.filter) return this.tricks
-
-        const normilze = this.filter.trim().toLowerCase();
-        return this.tricks.filter(t => t.name.toLowerCase().includes(normilze)
-          || t.description.toLowerCase().includes(normilze))
-
-      }
-    },
+    computed: mapGetters('tricks', ['categoryById']),
     async fetch() {
       const categoryId = this.$route.params.category;
       this.category = this.categoryById(categoryId)
