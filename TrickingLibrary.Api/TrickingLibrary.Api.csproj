@@ -5,11 +5,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot" />
+      <ProjectReference Include="..\TrickingLibrary.Data\TrickingLibrary.Data.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TrickingLibrary.Data\TrickingLibrary.Data.csproj" />
+      <Content Update="wwwroot\vid4.mp4">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+      <Content Update="wwwroot\vid3.mp4">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
