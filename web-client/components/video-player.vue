@@ -37,7 +37,7 @@
   .video-container {
     display: flex;
     position: relative;
-    width: 480px;
+    width: 100%;
 
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
