@@ -1,70 +1,79 @@
 ﻿<template>
-  <v-stepper v-model="step">
-    <v-stepper-header>
-      <v-stepper-step :complete="step > 1" step="1">Upload Video</v-stepper-step>
+  <v-card>
+    <v-card-title>
+      Create Submission
+      <v-spacer></v-spacer>
+      <v-btn icon @click="close">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-card-title>
+    <v-stepper class="rounded-0" v-model="step">
+      <v-stepper-header class="elevation-0">
+        <v-stepper-step :complete="step > 1" step="1">Upload Video</v-stepper-step>
 
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-stepper-step :complete="step > 2" step="2">Select Trick</v-stepper-step>
+        <v-stepper-step :complete="step > 2" step="2">Select Trick</v-stepper-step>
 
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-stepper-step :complete="step > 3" step="3">Submission</v-stepper-step>
+        <v-stepper-step :complete="step > 3" step="3">Submission</v-stepper-step>
 
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-stepper-step step="4">Review</v-stepper-step>
-    </v-stepper-header>
+        <v-stepper-step step="4">Review</v-stepper-step>
+      </v-stepper-header>
+      <v-stepper-items>
+        <v-stepper-content class="pt-0" step="1">
+          <div>
+            <v-file-input accept="video/*" @change="handleFile"></v-file-input>
+          </div>
+        </v-stepper-content>
 
-    <v-stepper-items>
+        <v-stepper-content step="2">
+          <div>
+            <v-select :items="trickItems" v-model="form.trickId" label="Select Trick"></v-select>
+            <div class="d-flex justify-center">
+              <v-btn @click="step++">Next</v-btn>
+            </div>
+          </div>
+        </v-stepper-content>
 
-      <v-stepper-content step="1">
-        <div>
-          <v-file-input accept="video/*" @change="handleFile"></v-file-input>
-        </div>
-      </v-stepper-content>
+        <v-stepper-content step="3">
+          <div>
+            <v-text-field label="Description" v-model="form.description"></v-text-field>
+            <div class="d-flex justify-center">
+              <v-btn @click="step++">Next</v-btn>
+            </div>
+          </div>
+        </v-stepper-content>
 
-      <v-stepper-content step="2">
-        <div>
-          <v-select :items="trickItems" v-model="form.trickId" label="Select Trick"></v-select>
-          <v-btn @click="step++">Next</v-btn>
-        </div>
-      </v-stepper-content>
-
-      <v-stepper-content step="3">
-        <div>
-          <v-text-field label="Description" v-model="form.description"></v-text-field>
-          <v-btn @click="step++">Next</v-btn>
-        </div>
-      </v-stepper-content>
-
-      <v-stepper-content step="4">
-        <div>
-          <v-btn @click="save">Save</v-btn>
-        </div>
-      </v-stepper-content>
-    </v-stepper-items>
-  </v-stepper>
+        <v-stepper-content step="4">
+          <div class="d-flex justify-center">
+            <v-btn @click="save">Save</v-btn>
+          </div>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
+  </v-card>
 </template>
 
 <script>
-  import {mapState, mapGetters, mapActions, mapMutations} from 'vuex';
-
-  const initState = () => ({
-    step: 1,
-    form: {
-      trickId: "",
-      video: "",
-      description: ""
-    }
-  })
+  import {mapGetters, mapActions, mapMutations} from 'vuex';
+  import {close} from "./_shared";
 
   export default {
     name: "submission-steps",
-    data: initState,
-    computed: {
-      ...mapGetters('tricks', ['trickItems']),
-    },
+    mixins: [close],
+    data: () => ({
+      step: 1,
+      form: {
+        trickId: "",
+        video: "",
+        description: ""
+      }
+    }),
+    computed: mapGetters('tricks', ['trickItems']),
     methods: {
       ...mapMutations('video-upload', ['hide']),
       ...mapActions('video-upload', ['startVideoUpload', 'createSubmission']),

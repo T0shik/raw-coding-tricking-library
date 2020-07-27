@@ -20,17 +20,11 @@
     <div v-if="component">
       <component :is="component"></component>
     </div>
-
-    <div class="d-flex justify-center my-4">
-      <v-btn @click="cancelUpload">
-        Close
-      </v-btn>
-    </div>
   </v-dialog>
 </template>
 
 <script>
-  import {mapState, mapMutations, mapActions} from 'vuex';
+  import {mapState, mapMutations} from 'vuex';
   import TrickSteps from "./trick-steps";
   import SubmissionSteps from "./submission-steps";
   import DifficultyForm from "./difficulty-form";
@@ -50,10 +44,7 @@
         ]
       }
     },
-    methods: {
-      ...mapMutations('video-upload', ['activate']),
-      ...mapActions('video-upload', ['cancelUpload'])
-    },
+    methods: mapMutations('video-upload', ['activate']),
   }
 </script>
 
