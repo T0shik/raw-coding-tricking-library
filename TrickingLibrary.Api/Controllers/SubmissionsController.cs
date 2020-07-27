@@ -5,6 +5,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TrickingLibrary.Api.BackgroundServices;
+using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
@@ -22,28 +23,34 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Submission> All() => _ctx.Submissions
-                                                    .Where(x => x.VideoProcessed)
-                                                    .ToList();
+        public IEnumerable<Submission> All() =>
+            _ctx.Submissions
+                .Where(x => x.VideoProcessed)
+                .ToList();
 
         [HttpGet("{id}")]
         public Submission Get(int id) => _ctx.Submissions.FirstOrDefault(x => x.Id.Equals(id));
 
         [HttpPost]
-        public async Task<Submission> Create(
+        public async Task<IActionResult> Create(
             [FromBody] Submission submission,
-            [FromServices] Channel<EditVideoMessage> channel)
+            [FromServices] Channel<EditVideoMessage> channel,
+            [FromServices] VideoManager videoManager)
         {
-           //todo: validate video path
-           submission.VideoProcessed = false;
-           _ctx.Add(submission);
-           await _ctx.SaveChangesAsync();
-           await channel.Writer.WriteAsync(new EditVideoMessage
-           {
-               SubmissionId = submission.Id,
-               Input = submission.Video,
-           });
-           return submission;
+            if (!videoManager.TemporaryVideoExists(submission.Video))
+            {
+                return BadRequest();
+            }
+
+            submission.VideoProcessed = false;
+            _ctx.Add(submission);
+            await _ctx.SaveChangesAsync();
+            await channel.Writer.WriteAsync(new EditVideoMessage
+            {
+                SubmissionId = submission.Id,
+                Input = submission.Video,
+            });
+            return Ok(submission);
         }
 
         [HttpPut]

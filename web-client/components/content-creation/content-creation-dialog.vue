@@ -22,7 +22,7 @@
     </div>
 
     <div class="d-flex justify-center my-4">
-      <v-btn @click="reset">
+      <v-btn @click="cancelUpload">
         Close
       </v-btn>
     </div>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import {mapState, mapMutations} from 'vuex';
+  import {mapState, mapMutations, mapActions} from 'vuex';
   import TrickSteps from "./trick-steps";
   import SubmissionSteps from "./submission-steps";
   import DifficultyForm from "./difficulty-form";
@@ -50,7 +50,10 @@
         ]
       }
     },
-    methods: mapMutations('video-upload', ['reset', 'activate']),
+    methods: {
+      ...mapMutations('video-upload', ['activate']),
+      ...mapActions('video-upload', ['cancelUpload'])
+    },
   }
 </script>
 
