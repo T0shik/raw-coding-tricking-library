@@ -9,18 +9,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="wwwroot\vid4.mp4">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Update="wwwroot\vid3.mp4">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <Folder Include="ffmpeg" />
+      <Folder Include="wwwroot" />
     </ItemGroup>
 
 </Project>

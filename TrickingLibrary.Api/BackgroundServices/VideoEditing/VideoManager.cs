@@ -12,6 +12,7 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
         private readonly IWebHostEnvironment _env;
         public const string TempPrefix = "temp_";
         public const string ConvertedPrefix = "c";
+        public const string ThumbnailPrefix = "t";
 
         public VideoManager(IWebHostEnvironment env)
         {
@@ -43,6 +44,7 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
         }
 
         public string GenerateConvertedFileName() => $"{ConvertedPrefix}{DateTime.Now.Ticks}.mp4";
+        public string GenerateThumbnailFileName() => $"{ThumbnailPrefix}{DateTime.Now.Ticks}.png";
 
         public async Task<string> SaveTemporaryVideo(IFormFile video)
         {

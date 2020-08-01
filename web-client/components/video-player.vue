@@ -3,7 +3,12 @@
     <div class="play-button" :class="{'hide': playing}" @click="playing = !playing">
       <v-icon size="78">mdi-play</v-icon>
     </div>
-    <video ref="video" muted loop :src="`http://localhost:5000/api/videos/${video}`"></video>
+    <video ref="video"
+           muted loop
+           :src="`http://localhost:5000/api/videos/${video.videoLink}`"
+           :poster="`http://localhost:5000/api/videos/${video.thumbLink}`"
+           preload="none"
+    ></video>
   </div>
 </template>
 
