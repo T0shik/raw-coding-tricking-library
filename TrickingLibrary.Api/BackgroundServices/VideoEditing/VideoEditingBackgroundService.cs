@@ -16,20 +16,17 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
 {
     public class VideoEditingBackgroundService : BackgroundService
     {
-        private readonly IWebHostEnvironment _env;
         private readonly ILogger<VideoEditingBackgroundService> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly VideoManager _videoManager;
         private readonly ChannelReader<EditVideoMessage> _channelReader;
 
         public VideoEditingBackgroundService(
-            IWebHostEnvironment env,
             Channel<EditVideoMessage> channel,
             ILogger<VideoEditingBackgroundService> logger,
             IServiceProvider serviceProvider,
             VideoManager videoManager)
         {
-            _env = env;
             _logger = logger;
             _serviceProvider = serviceProvider;
             _videoManager = videoManager;
@@ -41,18 +38,17 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
             while (await _channelReader.WaitToReadAsync(stoppingToken))
             {
                 var message = await _channelReader.ReadAsync(stoppingToken);
+                var inputPath = _videoManager.TemporarySavePath(message.Input);
+                var outputConvertedName = _videoManager.GenerateConvertedFileName();
+                var outputThumbnailName = _videoManager.GenerateThumbnailFileName();
+                var outputConvertedPath = _videoManager.TemporarySavePath(outputConvertedName);
+                var outputThumbnailPath = _videoManager.TemporarySavePath(outputThumbnailName);
                 try
                 {
-                    var inputPath = _videoManager.TemporarySavePath(message.Input);
-                    var outputConvertedName = _videoManager.GenerateConvertedFileName();
-                    var outputThumbnailName = _videoManager.GenerateThumbnailFileName();
-                    var outputConvertedPath = _videoManager.TemporarySavePath(outputConvertedName);
-                    var outputThumbnailPath = _videoManager.TemporarySavePath(outputThumbnailName);
                     var startInfo = new ProcessStartInfo
                     {
-                        FileName = Path.Combine(_env.ContentRootPath, "ffmpeg", "ffmpeg.exe"),
+                        FileName = _videoManager.FFMPEGPath,
                         Arguments = $"-y -i {inputPath} -an -vf scale=540x380 {outputConvertedPath} -ss 00:00:00 -vframes 1 -vf scale=540x380 {outputThumbnailPath}",
-                        WorkingDirectory = _videoManager.WorkingDirectory,
                         CreateNoWindow = true,
                         UseShellExecute = false,
                     };
@@ -63,9 +59,14 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
                         process.WaitForExit();
                     }
 
-                    if (!_videoManager.TemporaryVideoExists(outputConvertedName))
+                    if (!_videoManager.TemporaryFileExists(outputConvertedName))
                     {
                         throw new Exception("FFMPEG failed to generate converted video");
+                    }
+
+                    if (!_videoManager.TemporaryFileExists(outputThumbnailName))
+                    {
+                        throw new Exception("FFMPEG failed to generate thumbnail");
                     }
 
                     using (var scope = _serviceProvider.CreateScope())
@@ -87,10 +88,12 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
                 catch (Exception e)
                 {
                     _logger.LogError(e, "Video Processing Failed for {0}", message.Input);
+                    _videoManager.DeleteTemporaryFile(outputConvertedName);
+                    _videoManager.DeleteTemporaryFile(outputThumbnailName);
                 }
                 finally
                 {
-                    _videoManager.DeleteTemporaryVideo(message.Input);
+                    _videoManager.DeleteTemporaryFile(message.Input);
                 }
             }
         }

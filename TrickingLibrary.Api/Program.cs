@@ -51,20 +51,28 @@ namespace TrickingLibrary.Api
                             new TrickRelationship {PrerequisiteId = "backwards-roll"}
                         }
                     });
-                    // ctx.Add(new Submission
-                    // {
-                    //     TrickId = "back-flip",
-                    //     Description = "Test description, I've tried to go for max height",
-                    //     Video = "vid3.mp4",
-                    //     VideoProcessed = true,
-                    // });
-                    // ctx.Add(new Submission
-                    // {
-                    //     TrickId = "back-flip",
-                    //     Description = "Test description, I've tried to go for min height",
-                    //     Video = "vid4.mp4",
-                    //     VideoProcessed = true,
-                    // });
+                    ctx.Add(new Submission
+                    {
+                        TrickId = "back-flip",
+                        Description = "Test description, I've tried to go for max height",
+                        Video = new Video
+                        {
+                            VideoLink = "one.mp4",
+                            ThumbLink = "one.jpg"
+                        },
+                        VideoProcessed = true,
+                    });
+                    ctx.Add(new Submission
+                    {
+                        TrickId = "back-flip",
+                        Description = "Test description, I've tried to go for min height",
+                        Video = new Video
+                        {
+                            VideoLink = "two.mp4",
+                            ThumbLink = "two.jpg"
+                        },
+                        VideoProcessed = true,
+                    });
                     ctx.SaveChanges();
                 }
             }

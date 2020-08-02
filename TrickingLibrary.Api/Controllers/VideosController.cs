@@ -49,12 +49,12 @@ namespace TrickingLibrary.Api.Controllers
                 return BadRequest();
             }
 
-            if (!_videoManager.TemporaryVideoExists(fileName))
+            if (!_videoManager.TemporaryFileExists(fileName))
             {
                 return NoContent();
             }
 
-            _videoManager.DeleteTemporaryVideo(fileName);
+            _videoManager.DeleteTemporaryFile(fileName);
 
             return Ok();
         }

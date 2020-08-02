@@ -3,5 +3,4 @@ bin/
 obj/
 
 ffmpeg/
-*.mp4
-*.png
+wwwroot/

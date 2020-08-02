@@ -2,9 +2,11 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   mode: 'universal',
-  /*
-  ** Headers of the page
-  */
+
+  publicRuntimeConfig: {
+    api: process.env.API_URL
+  },
+
   head: {
     titleTemplate: '%s - Tricking Library',
     title: 'Welcome',

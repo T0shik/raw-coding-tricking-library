@@ -15,8 +15,8 @@
 
         <v-stepper-step step="2">Review</v-stepper-step>
       </v-stepper-header>
-      <v-stepper-items>
-        <v-stepper-content class="pt-0" step="1">
+      <v-stepper-items class="fpt-0">
+        <v-stepper-content step="1">
           <div>
             <v-text-field label="Name" v-model="form.name"></v-text-field>
             <v-text-field label="Description" v-model="form.description"></v-text-field>
