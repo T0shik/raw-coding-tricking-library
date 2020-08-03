@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div>
-      {{ $config.api }}
-    </div>
     <div v-for="s in sections">
       <div class="d-flex flex-column align-center">
         <p class="text-h5">{{s.title}}</p>

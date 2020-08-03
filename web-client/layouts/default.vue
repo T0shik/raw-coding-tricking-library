@@ -5,6 +5,7 @@
 
       <v-spacer></v-spacer>
 
+      <v-btn depressed to="/moderation">Moderation</v-btn>
       <content-creation-dialog></content-creation-dialog>
     </v-app-bar>
     <v-main>

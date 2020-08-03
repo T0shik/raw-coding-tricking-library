@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api
 {
@@ -36,6 +37,14 @@ namespace TrickingLibrary.Api
                         Id = "backwards-roll",
                         Name = "Backwards Roll",
                         Description = "This is a test backwards roll",
+                        Difficulty = "easy",
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}}
+                    });
+                    ctx.Add(new Trick
+                    {
+                        Id = "forwards-roll",
+                        Name = "Forwards Roll",
+                        Description = "This is a test forwards roll",
                         Difficulty = "easy",
                         TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}}
                     });
@@ -72,6 +81,11 @@ namespace TrickingLibrary.Api
                             ThumbLink = "two.jpg"
                         },
                         VideoProcessed = true,
+                    });
+                    ctx.Add(new ModerationItem
+                    {
+                        Target = "forwards-roll",
+                        Type = ModerationTypes.Trick,
                     });
                     ctx.SaveChanges();
                 }

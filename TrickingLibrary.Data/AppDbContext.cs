@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Data
 {
@@ -14,6 +15,7 @@ namespace TrickingLibrary.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<TrickCategory> TrickCategories { get; set; }
         public DbSet<Video> Videos { get; set; }
+        public DbSet<ModerationItem> ModerationItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
