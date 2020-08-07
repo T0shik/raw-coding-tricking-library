@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 using TrickingLibrary.Models.Moderation;
@@ -28,17 +29,21 @@ namespace TrickingLibrary.Api.Controllers
         public ModerationItem Get(int id) => _ctx.ModerationItems.FirstOrDefault(x => x.Id.Equals(id));
 
         [HttpGet("{id}/comments")]
-        public IEnumerable<Comment> GetComments(int id) =>
-            _ctx.ModerationItems
-                .Include(x => x.Comments)
-                .Where(x => x.Id.Equals(id))
-                .Select(x => x.Comments)
-                .FirstOrDefault();
+        public IEnumerable<object> GetComments(int id) =>
+            _ctx.Comments
+                .Where(x => x.ModerationItemId.Equals(id))
+                .Select(CommentViewModel.Projection)
+                .ToList();
 
         [HttpPost("{id}/comments")]
         public async Task<IActionResult> Comment(int id, [FromBody] Comment comment)
         {
             var modItem = _ctx.ModerationItems.FirstOrDefault(x => x.Id == id);
+
+            if (modItem == null)
+            {
+                return NoContent();
+            }
 
             var regex = new Regex(@"\B(?<tag>@[a-zA-Z0-9-_]+)");
 
@@ -54,7 +59,7 @@ namespace TrickingLibrary.Api.Controllers
             modItem.Comments.Add(comment);
             await _ctx.SaveChangesAsync();
 
-            return Ok(comment);
+            return Ok(CommentViewModel.Create(comment));
         }
     }
 }
