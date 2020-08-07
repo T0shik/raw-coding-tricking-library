@@ -16,6 +16,7 @@ namespace TrickingLibrary.Data
         public DbSet<TrickCategory> TrickCategories { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<ModerationItem> ModerationItems { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
