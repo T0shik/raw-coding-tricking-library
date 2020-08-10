@@ -6,7 +6,7 @@
       <v-btn small text v-if="$listeners['load-replies']" @click="$emit('load-replies')">load replies</v-btn>
     </div>
 
-    <comment-input v-if="replying" @send="(c) => $emit('send', c)" @cancel="replying = false" />
+    <comment-input label="Reply" v-if="replying" @send="(c) => $emit('send', c)" @cancel="replying = false" />
 
   </div>
 </template>
