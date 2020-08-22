@@ -10,7 +10,14 @@
 
     <ItemGroup>
       <Folder Include="ffmpeg" />
+      <Folder Include="Pages\Shared" />
       <Folder Include="wwwroot" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="IdentityServer4" Version="4.0.4" />
+      <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.0.4" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
     </ItemGroup>
 
 </Project>

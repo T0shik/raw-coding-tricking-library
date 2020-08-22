@@ -4,3 +4,4 @@ obj/
 
 ffmpeg/
 wwwroot/
+tempkey.jwk

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -88,6 +89,11 @@ namespace TrickingLibrary.Api
                         Type = ModerationTypes.Trick,
                     });
                     ctx.SaveChanges();
+
+
+                    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                    var user = new IdentityUser("test");
+                    userMgr.CreateAsync(user, "password").GetAwaiter().GetResult();
                 }
             }
 
