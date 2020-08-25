@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using IdentityServer4;
@@ -62,7 +63,7 @@ namespace TrickingLibrary.Api
 
             app.UseIdentityServer();
 
-            // auth here
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -95,10 +96,7 @@ namespace TrickingLibrary.Api
                 .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.LoginPath = "/Account/Login";
-            });
+            services.ConfigureApplicationCookie(config => { config.LoginPath = "/Account/Login"; });
 
             var identityServerBuilder = services.AddIdentityServer();
 
@@ -112,6 +110,11 @@ namespace TrickingLibrary.Api
                     new IdentityResources.Profile(),
                 });
 
+                identityServerBuilder.AddInMemoryApiScopes(new ApiScope[]
+                {
+                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName, new[] {ClaimTypes.Role}),
+                });
+
                 identityServerBuilder.AddInMemoryClients(new Client[]
                 {
                     new Client
@@ -123,10 +126,11 @@ namespace TrickingLibrary.Api
                         PostLogoutRedirectUris = new[] {"http://localhost:3000"},
                         AllowedCorsOrigins = new[] {"http://localhost:3000"},
 
-                        AllowedScopes = new []
+                        AllowedScopes = new[]
                         {
                             IdentityServerConstants.StandardScopes.OpenId,
                             IdentityServerConstants.StandardScopes.Profile,
+                            IdentityServerConstants.LocalApi.ScopeName,
                         },
 
                         RequirePkce = true,
@@ -138,6 +142,31 @@ namespace TrickingLibrary.Api
 
                 identityServerBuilder.AddDeveloperSigningCredential();
             }
+
+            services.AddLocalApiAuthentication();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(TrickingLibraryConstants.Policies.Mod, policy =>
+                {
+                    var is4Policy = options.GetPolicy(IdentityServerConstants.LocalApi.PolicyName);
+                    policy.Combine(is4Policy);
+                    policy.RequireClaim(ClaimTypes.Role, TrickingLibraryConstants.Roles.Mod);
+                });
+            });
+        }
+    }
+
+    public struct TrickingLibraryConstants
+    {
+        public struct Policies
+        {
+            public const string Mod = nameof(Mod);
+        }
+
+        public struct Roles
+        {
+            public const string Mod = nameof(Mod);
         }
     }
 }
