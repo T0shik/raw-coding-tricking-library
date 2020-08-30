@@ -96,7 +96,11 @@ namespace TrickingLibrary.Api
                 .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(config => { config.LoginPath = "/Account/Login"; });
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Account/Login";
+                config.LogoutPath = "/api/auth/logout";
+            });
 
             var identityServerBuilder = services.AddIdentityServer();
 
@@ -108,11 +112,14 @@ namespace TrickingLibrary.Api
                 {
                     new IdentityResources.OpenId(),
                     new IdentityResources.Profile(),
+                    new IdentityResource(TrickingLibraryConstants.IdentityResources.RoleScope,
+                        new[] {TrickingLibraryConstants.Claims.Role}),
                 });
 
                 identityServerBuilder.AddInMemoryApiScopes(new ApiScope[]
                 {
-                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName, new[] {ClaimTypes.Role}),
+                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName,
+                        new[] {TrickingLibraryConstants.Claims.Role}),
                 });
 
                 identityServerBuilder.AddInMemoryClients(new Client[]
@@ -122,15 +129,16 @@ namespace TrickingLibrary.Api
                         ClientId = "web-client",
                         AllowedGrantTypes = GrantTypes.Code,
 
-                        RedirectUris = new[] {"http://localhost:3000"},
-                        PostLogoutRedirectUris = new[] {"http://localhost:3000"},
-                        AllowedCorsOrigins = new[] {"http://localhost:3000"},
+                        RedirectUris = new[] {"https://localhost:3000/oidc/sign-in-callback.html"},
+                        PostLogoutRedirectUris = new[] {"https://localhost:3000"},
+                        AllowedCorsOrigins = new[] {"https://localhost:3000"},
 
                         AllowedScopes = new[]
                         {
                             IdentityServerConstants.StandardScopes.OpenId,
                             IdentityServerConstants.StandardScopes.Profile,
                             IdentityServerConstants.LocalApi.ScopeName,
+                            TrickingLibraryConstants.IdentityResources.RoleScope
                         },
 
                         RequirePkce = true,
@@ -151,7 +159,8 @@ namespace TrickingLibrary.Api
                 {
                     var is4Policy = options.GetPolicy(IdentityServerConstants.LocalApi.PolicyName);
                     policy.Combine(is4Policy);
-                    policy.RequireClaim(ClaimTypes.Role, TrickingLibraryConstants.Roles.Mod);
+                    policy.RequireClaim(TrickingLibraryConstants.Claims.Role,
+                        TrickingLibraryConstants.Roles.Mod);
                 });
             });
         }
@@ -162,6 +171,16 @@ namespace TrickingLibrary.Api
         public struct Policies
         {
             public const string Mod = nameof(Mod);
+        }
+
+        public struct IdentityResources
+        {
+            public const string RoleScope = "role";
+        }
+
+        public struct Claims
+        {
+            public const string Role = "role";
         }
 
         public struct Roles

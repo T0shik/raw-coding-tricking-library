@@ -98,7 +98,9 @@ namespace TrickingLibrary.Api
 
                     var mod = new IdentityUser("mod");
                     userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
-                    userMgr.AddClaimAsync(mod, new Claim(ClaimTypes.Role, TrickingLibraryConstants.Roles.Mod))
+                    userMgr.AddClaimAsync(mod,
+                            new Claim(TrickingLibraryConstants.Claims.Role,
+                                TrickingLibraryConstants.Roles.Mod))
                         .GetAwaiter()
                         .GetResult();
                 }
