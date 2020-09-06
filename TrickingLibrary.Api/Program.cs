@@ -93,10 +93,10 @@ namespace TrickingLibrary.Api
 
 
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                    var user = new IdentityUser("test");
+                    var user = new IdentityUser("test@test.com");
                     userMgr.CreateAsync(user, "password").GetAwaiter().GetResult();
 
-                    var mod = new IdentityUser("mod");
+                    var mod = new IdentityUser("mod@test.com");
                     userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
                     userMgr.AddClaimAsync(mod,
                             new Claim(TrickingLibraryConstants.Claims.Role,

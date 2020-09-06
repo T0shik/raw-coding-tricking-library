@@ -10,7 +10,6 @@
 
     <ItemGroup>
       <Folder Include="ffmpeg" />
-      <Folder Include="Pages\Shared" />
       <Folder Include="wwwroot" />
     </ItemGroup>
 
