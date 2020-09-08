@@ -7,7 +7,6 @@
 }
 
 <form method="post">
-    <h3 class="title">Register</h3>
     <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl">
     <div class="field">
         <label>Email</label>
@@ -25,7 +24,10 @@
         <span asp-validation-for="Form.ConfirmPassword"></span>
     </div>
     <div class="field flex-row">
-        <button type="submit">Sign Up</button>
-        <a asp-page="/Account/Login" asp-route-returnUrl="@Model.Form.ReturnUrl" >Back to Login</a>
+        <button type="submit">Register</button>
+    </div>
+    <hr>
+    <div class="field flex-row">
+        <a asp-page="/Account/Login" asp-route-returnUrl="@Model.Form.ReturnUrl">Back to Login</a>
     </div>
 </form>

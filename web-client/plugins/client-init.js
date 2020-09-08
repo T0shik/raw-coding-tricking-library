@@ -8,9 +8,10 @@ export default async ({app, store}, inject) => {
     response_type: "code",
     scope: 'openid profile IdentityServerApi role',
     post_logout_redirect_uri: "https://localhost:3000",
-    // silent_redirect_uri: "https://localhost:3000/",
-    userStore: new WebStorageStateStore({store: window.localStorage})
+    silent_redirect_uri: "https://localhost:3000/oidc/sign-in-silent-callback.html",
+    userStore: new WebStorageStateStore({store: window.localStorage}),
   })
+
   inject('auth', userManager)
 
   app.fetch = () => {

@@ -25,14 +25,24 @@ export const mutations = {
 
 export const actions = {
   initialize({commit}) {
-    return this.$auth.getUser()
+    return this.$auth.querySessionStatus()
+      .then(sessionStatus => {
+        if (sessionStatus) {
+          return this.$auth.getUser()
+        }
+      })
       .then(user => {
         if (user) {
           commit('saveUser', {user})
           this.$axios.setToken(`Bearer ${user.access_token}`)
         }
       })
-      //todo something about the error
+      .catch(err => {
+        console.log(err.message)
+        if (err.message === "login_required") {
+          return this.$auth.removeUser();
+        }
+      })
       .finally(() => commit('finish'))
   }
 }
