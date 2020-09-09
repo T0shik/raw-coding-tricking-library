@@ -9,6 +9,11 @@
 <form method="post">
     <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl">
     <div class="field">
+        <label>Username</label>
+        <input asp-for="Form.Username">
+        <span asp-validation-for="Form.Username"></span>
+    </div>
+    <div class="field">
         <label>Email</label>
         <input asp-for="Form.Email">
         <span asp-validation-for="Form.Email"></span>

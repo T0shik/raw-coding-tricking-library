@@ -1,20 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Channels;
-using System.Threading.Tasks;
+using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TrickingLibrary.Api.BackgroundServices;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Data;
 
@@ -80,6 +74,8 @@ namespace TrickingLibrary.Api
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
+                    options.User.RequireUniqueEmail = true;
+
                     if (_env.IsDevelopment())
                     {
                         options.Password.RequireDigit = false;
@@ -119,7 +115,11 @@ namespace TrickingLibrary.Api
                 identityServerBuilder.AddInMemoryApiScopes(new ApiScope[]
                 {
                     new ApiScope(IdentityServerConstants.LocalApi.ScopeName,
-                        new[] {TrickingLibraryConstants.Claims.Role}),
+                        new[]
+                        {
+                            JwtClaimTypes.PreferredUserName,
+                            TrickingLibraryConstants.Claims.Role
+                        }),
                 });
 
                 identityServerBuilder.AddInMemoryClients(new Client[]
@@ -174,6 +174,7 @@ namespace TrickingLibrary.Api
     {
         public struct Policies
         {
+            public const string User = IdentityServerConstants.LocalApi.PolicyName;
             public const string Mod = nameof(Mod);
         }
 
