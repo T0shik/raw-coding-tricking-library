@@ -37,8 +37,8 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
             {
                 var message = await _channelReader.ReadAsync(stoppingToken);
                 var inputPath = _videoManager.TemporarySavePath(message.Input);
-                var outputConvertedName = _videoManager.GenerateConvertedFileName();
-                var outputThumbnailName = _videoManager.GenerateThumbnailFileName();
+                var outputConvertedName = VideoManager.GenerateConvertedFileName();
+                var outputThumbnailName = VideoManager.GenerateThumbnailFileName();
                 var outputConvertedPath = _videoManager.TemporarySavePath(outputConvertedName);
                 var outputThumbnailPath = _videoManager.TemporarySavePath(outputThumbnailName);
                 try

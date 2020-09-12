@@ -15,7 +15,11 @@
         <v-menu offset-y v-if="authenticated">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-account-circle</v-icon>
+              <v-avatar size="36">
+                <img v-if="profile.image" :src="`https://localhost:5001/api/videos/${profile.image}`"
+                     alt="profile image"/>
+                <v-icon v-else>mdi-account-circle</v-icon>
+              </v-avatar>
             </v-btn>
           </template>
           <v-list>
@@ -54,7 +58,7 @@ import {mapGetters, mapState} from "vuex";
 export default {
   components: {ContentCreationDialog},
   computed: {
-    ...mapState('auth', ['loading']),
+    ...mapState('auth', ['loading', 'profile']),
     ...mapGetters('auth', ['authenticated', 'moderator']),
   }
 }
