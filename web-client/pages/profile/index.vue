@@ -18,7 +18,7 @@
               <v-btn icon v-if="hover" :disabled="uploadingImage" @click="$refs.profileImageInput.click()">
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
-              <img v-else-if="profile.image" :src="`https://localhost:5001/api/videos/${profile.image}`" alt="profile image" />
+              <img v-else-if="profile.image" :src="profile.image" alt="profile image" />
               <v-icon v-else>mdi-account</v-icon>
             </v-avatar>
           </v-hover>

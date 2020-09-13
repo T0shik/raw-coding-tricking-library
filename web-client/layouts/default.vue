@@ -16,7 +16,7 @@
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-avatar size="36">
-                <img v-if="profile.image" :src="`https://localhost:5001/api/videos/${profile.image}`"
+                <img v-if="profile.image" :src="profile.image"
                      alt="profile image"/>
                 <v-icon v-else>mdi-account-circle</v-icon>
               </v-avatar>

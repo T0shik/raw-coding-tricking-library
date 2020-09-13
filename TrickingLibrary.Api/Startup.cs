@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
@@ -16,11 +17,15 @@ namespace TrickingLibrary.Api
 {
     public class Startup
     {
+        private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private const string AllCors = "All";
 
-        public Startup(IWebHostEnvironment env)
+        public Startup(
+            IConfiguration config,
+            IWebHostEnvironment env)
         {
+            _config = config;
             _env = env;
         }
 
@@ -36,7 +41,7 @@ namespace TrickingLibrary.Api
 
             services.AddHostedService<VideoEditingBackgroundService>()
                 .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
-                .AddSingleton<VideoManager>()
+                .AddFileManager(_config)
                 .AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
                     .AllowAnyOrigin()
                     .AllowAnyMethod()));
@@ -167,30 +172,6 @@ namespace TrickingLibrary.Api
                         TrickingLibraryConstants.Roles.Mod);
                 });
             });
-        }
-    }
-
-    public struct TrickingLibraryConstants
-    {
-        public struct Policies
-        {
-            public const string User = IdentityServerConstants.LocalApi.PolicyName;
-            public const string Mod = nameof(Mod);
-        }
-
-        public struct IdentityResources
-        {
-            public const string RoleScope = "role";
-        }
-
-        public struct Claims
-        {
-            public const string Role = "role";
-        }
-
-        public struct Roles
-        {
-            public const string Mod = nameof(Mod);
         }
     }
 }

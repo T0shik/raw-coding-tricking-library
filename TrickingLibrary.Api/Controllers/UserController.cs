@@ -9,6 +9,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
+using TrickingLibrary.Api.Settings;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
@@ -65,7 +66,7 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPut("me/image")]
         public async Task<IActionResult> UpdateProfileImage(
             IFormFile image,
-            [FromServices] VideoManager videoManager)
+            [FromServices] IFileManager fileManager)
         {
             if (image == null) return BadRequest();
 
@@ -74,8 +75,8 @@ namespace TrickingLibrary.Api.Controllers
 
             if (user == null) return NoContent();
 
-            var fileName = VideoManager.GenerateProfileFileName();
-            await using (var stream = System.IO.File.Create(videoManager.GetSavePath(fileName)))
+            var fileName = TrickingLibraryConstants.Files.GenerateProfileFileName();
+            await using (var stream = System.IO.File.Create(fileManager.GetSavePath(fileName)))
             using (var imageProcessor = await Image.LoadAsync(image.OpenReadStream()))
             {
                 imageProcessor.Mutate(x => x.Resize(48, 48));
@@ -83,7 +84,7 @@ namespace TrickingLibrary.Api.Controllers
                 await imageProcessor.SaveAsync(stream, new JpegEncoder());
             }
 
-            user.Image = fileName;
+            user.Image = fileManager.GetFileUrl(fileName, FileType.Image);
             await _ctx.SaveChangesAsync();
             return Ok(user);
         }
