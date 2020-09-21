@@ -1,7 +1,10 @@
-﻿namespace TrickingLibrary.Models.Moderation
+﻿using TrickingLibrary.Models.Abstractions;
+
+namespace TrickingLibrary.Models.Moderation
 {
-    public class Review : BaseModel<int>
+    public class Review : TemporalModel
     {
+        public int Id { get; set; }
         public int ModerationItemId { get; set; }
         public ModerationItem ModerationItem { get; set; }
         

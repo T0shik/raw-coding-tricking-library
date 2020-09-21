@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using TrickingLibrary.Models.Abstractions;
 using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Models
 {
-    public class Comment : BaseModel<int>
+    public class Comment : TemporalModel
     {
+        public int Id { get; set; }
         public string Content { get; set; }
         public string HtmlContent { get; set; }
 

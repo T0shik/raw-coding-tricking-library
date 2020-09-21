@@ -41,6 +41,7 @@ namespace TrickingLibrary.Api
 
             services.AddHostedService<VideoEditingBackgroundService>()
                 .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
+                .AddScoped<VersionMigrationContext>()
                 .AddFileManager(_config)
                 .AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
                     .AllowAnyOrigin()

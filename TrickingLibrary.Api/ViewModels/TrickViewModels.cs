@@ -12,7 +12,7 @@ namespace TrickingLibrary.Api.ViewModels
         public static Expression<Func<Trick, object>> Projection =>
             trick => new
             {
-                trick.Id,
+                trick.Slug,
                 trick.Name,
                 trick.Description,
                 trick.Difficulty,

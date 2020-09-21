@@ -26,21 +26,35 @@ namespace TrickingLibrary.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Trick>().HasKey(x => new {x.Slug, x.Version});
+            modelBuilder.Entity<Category>().HasKey(x => new {x.Slug, x.Version});
+            modelBuilder.Entity<Difficulty>().HasKey(x => new {x.Slug, x.Version});
+
             modelBuilder.Entity<TrickCategory>()
-                .HasKey(x => new {x.CategoryId, x.TrickId});
+                .HasKey(x => new {x.CategoryId, x.CategoryVersion, x.TrickId, x.TrickVersion});
+
+            modelBuilder.Entity<Trick>()
+                .HasMany(x => x.TrickCategories)
+                .WithOne(x => x.Trick)
+                .HasForeignKey(x => new {x.TrickId, x.TrickVersion});
+
+            modelBuilder.Entity<Category>()
+                .HasMany(x => x.Tricks)
+                .WithOne(x => x.Category)
+                .HasForeignKey(x => new {x.CategoryId, x.CategoryVersion});
 
             modelBuilder.Entity<TrickRelationship>()
-                .HasKey(x => new {x.PrerequisiteId, x.ProgressionId});
+                .HasKey(x => new {x.PrerequisiteId, x.PrerequisiteVersion, x.ProgressionId, x.ProgressionVersion});
 
             modelBuilder.Entity<TrickRelationship>()
                 .HasOne(x => x.Progression)
                 .WithMany(x => x.Prerequisites)
-                .HasForeignKey(x => x.ProgressionId);
+                .HasForeignKey(x => new {x.ProgressionId, x.ProgressionVersion});
 
             modelBuilder.Entity<TrickRelationship>()
                 .HasOne(x => x.Prerequisite)
                 .WithMany(x => x.Progressions)
-                .HasForeignKey(x => x.PrerequisiteId);
+                .HasForeignKey(x => new {x.PrerequisiteId, x.PrerequisiteVersion});
         }
     }
 }

@@ -35,32 +35,38 @@ namespace TrickingLibrary.Api
                         .GetAwaiter()
                         .GetResult();
 
-                    ctx.Add(new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"});
-                    ctx.Add(new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"});
-                    ctx.Add(new Difficulty {Id = "hard", Name = "Hard", Description = "Hard Test"});
-                    ctx.Add(new Category {Id = "kick", Name = "Kick", Description = "Kick Test"});
-                    ctx.Add(new Category {Id = "flip", Name = "Flip", Description = "Flip Test"});
-                    ctx.Add(new Category {Id = "transition", Name = "Transition", Description = "Transition Test"});
+                    ctx.Add(new Difficulty {Slug = "easy", Active = true, Version = 1, Name = "Easy", Description = "Easy Test"});
+                    ctx.Add(new Difficulty {Slug = "medium", Active = true, Version = 1, Name = "Medium", Description = "Medium Test"});
+                    ctx.Add(new Difficulty {Slug = "hard", Active = true, Version = 1, Name = "Hard", Description = "Hard Test"});
+                    ctx.Add(new Category {Slug = "kick", Active = true, Version = 1, Name = "Kick", Description = "Kick Test"});
+                    ctx.Add(new Category {Slug = "flip", Active = true, Version = 1, Name = "Flip", Description = "Flip Test"});
+                    ctx.Add(new Category {Slug = "transition", Active = true, Version = 1, Name = "Transition", Description = "Transition Test"});
                     ctx.Add(new Trick
                     {
-                        Id = "backwards-roll",
+                        Slug = "backwards-roll",
                         Name = "Backwards Roll",
+                        Active = true,
+                        Version = 1,
                         Description = "This is a test backwards roll",
                         Difficulty = "easy",
                         TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}}
                     });
                     ctx.Add(new Trick
                     {
-                        Id = "forwards-roll",
+                        Slug = "forwards-roll",
                         Name = "Forwards Roll",
+                        Active = true,
+                        Version = 1,
                         Description = "This is a test forwards roll",
                         Difficulty = "easy",
                         TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}}
                     });
                     ctx.Add(new Trick
                     {
-                        Id = "back-flip",
+                        Slug = "back-flip",
                         Name = "Back Flip",
+                        Active = true,
+                        Version = 1,
                         Description = "This is a test back flip",
                         Difficulty = "medium",
                         TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}},

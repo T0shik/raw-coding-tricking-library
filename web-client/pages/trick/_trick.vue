@@ -2,8 +2,8 @@
   <item-content-layout>
     <template v-slot:content>
       <div v-if="submissions">
-        <v-card class="mb-3" v-for="s in submissions" :key="`${trick.id}-${s.id}`">
-          <video-player :video="s.video" :key="`v-${trick.id}-${s.id}`"/>
+        <v-card class="mb-3" v-for="s in submissions" :key="`${trick.slug}-${s.id}`">
+          <video-player :video="s.video" :key="`v-${trick.slug}-${s.id}`"/>
           <v-card-text>{{s.description}}</v-card-text>
         </v-card>
       </div>
@@ -11,7 +11,7 @@
     <template v-slot:item>
       <div class="text-h5">
         <span>{{ trick.name }}</span>
-        <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.id}`">
+        <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.slug}`">
           {{ difficulty.name }}
         </v-chip>
       </div>
@@ -50,21 +50,21 @@
         return [
           {
             title: "Categories",
-            data: this.categories.filter(x => this.trick.categories.indexOf(x.id) >= 0),
-            idFactory: c => `category-${c.id}`,
-            routeFactory: c => `/category/${c.id}`,
+            data: this.categories.filter(x => this.trick.categories.indexOf(x.slug) >= 0),
+            idFactory: c => `category-${c.slug}`,
+            routeFactory: c => `/category/${c.slug}`,
           },
           {
             title: "Prerequisites",
-            data: this.tricks.filter(x => this.trick.prerequisites.indexOf(x.id) >= 0),
-            idFactory: t => `trick-${t.id}`,
-            routeFactory: t => `/trick/${t.id}`,
+            data: this.tricks.filter(x => this.trick.prerequisites.indexOf(x.slug) >= 0),
+            idFactory: t => `trick-${t.slug}`,
+            routeFactory: t => `/trick/${t.slug}`,
           },
           {
             title: "Progressions",
-            data: this.tricks.filter(x => this.trick.progressions.indexOf(x.id) >= 0),
-            idFactory: t => `trick-${t.id}`,
-            routeFactory: t => `/trick/${t.id}`,
+            data: this.tricks.filter(x => this.trick.progressions.indexOf(x.slug) >= 0),
+            idFactory: t => `trick-${t.slug}`,
+            routeFactory: t => `/trick/${t.slug}`,
           },
         ]
       },

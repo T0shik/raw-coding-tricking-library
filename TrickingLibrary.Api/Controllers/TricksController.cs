@@ -10,6 +10,7 @@ using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api.Controllers
 {
@@ -25,23 +26,15 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<object> All() => _ctx.Tricks.Select(TrickViewModels.Projection).ToList();
-
-
-        [HttpGet("test")]
-        [Authorize(Policy = IdentityServerConstants.LocalApi.PolicyName)]
-        public string TestAuth() => "test";
-
-
-        [HttpGet("mod")]
-        [Authorize(Policy = TrickingLibraryConstants.Policies.Mod)]
-        public string ModAuth() => "mod";
-
+        public IEnumerable<object> All() => _ctx.Tricks
+            .Where(x => x.Active)
+            .Select(TrickViewModels.Projection).ToList();
 
         [HttpGet("{id}")]
         public object Get(string id) =>
             _ctx.Tricks
-                .Where(x => x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x.Active)
+                .Where(x => x.Slug.Equals(id, StringComparison.InvariantCultureIgnoreCase))
                 .Select(TrickViewModels.Projection)
                 .FirstOrDefault();
 
@@ -57,34 +50,66 @@ namespace TrickingLibrary.Api.Controllers
         {
             var trick = new Trick
             {
-                Id = trickForm.Name.Replace(" ", "-").ToLowerInvariant(),
+                Slug = trickForm.Name.Replace(" ", "-").ToLowerInvariant(),
                 Name = trickForm.Name,
+                Version = 1,
                 Description = trickForm.Description,
                 Difficulty = trickForm.Difficulty,
                 TrickCategories = trickForm.Categories.Select(x => new TrickCategory {CategoryId = x}).ToList()
             };
             _ctx.Add(trick);
+            _ctx.Add(new ModerationItem
+            {
+                Target = trick.Slug,
+                TargetVersion = trick.Version,
+                Type = ModerationTypes.Trick,
+            });
             await _ctx.SaveChangesAsync();
             return TrickViewModels.Create(trick);
         }
 
         [HttpPut]
-        public async Task<object> Update([FromBody] Trick trick)
+        public async Task<IActionResult> Update([FromBody] TrickForm trickForm)
         {
-            if (string.IsNullOrEmpty(trick.Id))
+            var trick = _ctx.Tricks.FirstOrDefault(x => x.Slug == trickForm.Id);
+            if (trick == null)
             {
-                return null;
+                return NoContent();
             }
 
-            _ctx.Add(trick);
+            var newTrick = new Trick
+            {
+                Slug = trick.Slug,
+                Name = trick.Name,
+                Version = _ctx.Tricks.LatestVersion(1),
+                Description = trickForm.Description,
+                Difficulty = trickForm.Difficulty,
+                Prerequisites = trickForm.Prerequisites
+                    .Select(x => new TrickRelationship {PrerequisiteId = x})
+                    .ToList(),
+                Progressions = trickForm.Progressions
+                    .Select(x => new TrickRelationship {ProgressionId = x})
+                    .ToList(),
+                TrickCategories = trickForm.Categories.Select(x => new TrickCategory {CategoryId = x}).ToList()
+            };
+
+            _ctx.Add(newTrick);
+            _ctx.Add(new ModerationItem
+            {
+                Target = trick.Slug,
+                TargetVersion = newTrick.Version,
+                Type = ModerationTypes.Trick,
+            });
             await _ctx.SaveChangesAsync();
-            return TrickViewModels.Create(trick);
+
+            // todo redirect to the mod item instead of returning the trick
+            return Ok(TrickViewModels.Create(newTrick));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var trick = _ctx.Tricks.FirstOrDefault(x => x.Id.Equals(id));
+            var trick = _ctx.Tricks.FirstOrDefault(x => x.Slug.Equals(id));
             trick.Deleted = true;
             await _ctx.SaveChangesAsync();
             return Ok();

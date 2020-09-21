@@ -9,8 +9,8 @@
         <p class="text-h5">{{ s.title }}</p>
         <div>
           <v-btn class="mx-1" v-for="item in s.collection"
-                 :key="`${s.title}-${item.id}`"
-                 :to="s.routeFactory(item.id)">{{ item.name }}
+                 :key="`${s.title}-${item.slug}`"
+                 :to="s.routeFactory(item.slug)">{{ item.name }}
           </v-btn>
         </div>
       </div>
