@@ -49,5 +49,8 @@ export const actions = {
   },
   createTrick({state, commit, dispatch}, {form}) {
     return this.$axios.$post("/api/tricks", form)
+  },
+  updateTrick({state, commit, dispatch}, {form}) {
+    return this.$axios.$put("/api/tricks", form)
   }
 }

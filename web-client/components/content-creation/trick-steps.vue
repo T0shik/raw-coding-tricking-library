@@ -44,39 +44,49 @@
 </template>
 
 <script>
-  import {mapState, mapGetters, mapActions, mapMutations} from 'vuex';
-  import {close} from "./_shared";
+import {mapState, mapGetters, mapActions, mapMutations} from 'vuex';
+import {close} from "./_shared";
 
-  export default {
-    name: "trick-steps",
-    mixins: [close],
-    data: () => ({
-      step: 1,
-      form: {
-        name: "",
-        description: "",
-        difficulty: "",
-        prerequisites: [],
-        progressions: [],
-        categories: [],
-      },
-      testData: [
-        {text: "Foo", value: 1},
-        {text: "Bar", value: 2},
-        {text: "Baz", value: 3},
-      ]
-    }),
-    computed: {
-      ...mapGetters('tricks', ['categoryItems', 'difficultyItems', 'trickItems']),
+export default {
+  name: "trick-steps",
+  mixins: [close],
+  data: () => ({
+    step: 1,
+    form: {
+      name: "",
+      description: "",
+      difficulty: "",
+      prerequisites: [],
+      progressions: [],
+      categories: [],
     },
-    methods: {
-      ...mapActions('tricks', ['createTrick']),
-      async save() {
-        await this.createTrick({form: this.form})
-        this.close();
-      },
+    testData: [
+      {text: "Foo", value: 1},
+      {text: "Bar", value: 2},
+      {text: "Baz", value: 3},
+    ]
+  }),
+  created() {
+    if (this.editing) {
+      Object.assign(this.form, this.editPayload)
     }
+  },
+  computed: {
+    ...mapState('video-upload', ['editing', 'editPayload']),
+    ...mapGetters('tricks', ['categoryItems', 'difficultyItems', 'trickItems']),
+  },
+  methods: {
+    ...mapActions('tricks', ['createTrick', 'updateTrick']),
+    async save() {
+      if (this.editing) {
+        await this.updateTrick({form: this.form})
+      } else {
+        await this.createTrick({form: this.form})
+      }
+      this.close();
+    },
   }
+}
 </script>
 
 <style scoped>

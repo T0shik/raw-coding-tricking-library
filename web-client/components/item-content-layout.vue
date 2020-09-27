@@ -12,7 +12,7 @@
              lg="4"
              xl="3">
         <v-sheet class="pa-3 sticky">
-          <slot name="item"></slot>
+          <slot name="item" :close="() => {}"></slot>
         </v-sheet>
       </v-col>
     </v-row>
@@ -23,7 +23,7 @@
         </v-btn>
       </template>
       <v-sheet class="pa-2" rounded>
-        <slot name="item"></slot>
+        <slot name="item" :close="() => dialog = false"></slot>
       </v-sheet>
     </v-dialog>
   </div>

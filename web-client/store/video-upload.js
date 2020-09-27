@@ -3,15 +3,21 @@
   uploadCancelSource: null,
   uploadCompleted: false,
   active: false,
-  component: null
+  component: null,
+  editing: false,
+  editPayload: null,
 })
 
 export const state = initState
 
 export const mutations = {
-  activate(state, {component}) {
+  activate(state, {component, edit = false, editPayload = null}) {
     state.active = true;
-    state.component = component
+    state.component = component;
+    if(edit){
+      state.editing = true;
+      state.editPayload = editPayload
+    }
   },
   hide(state) {
     state.active = false;

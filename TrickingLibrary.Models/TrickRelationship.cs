@@ -2,11 +2,9 @@
 {
     public class TrickRelationship
     {
-        public string PrerequisiteId { get; set; }
-        public int PrerequisiteVersion { get; set; }
+        public int PrerequisiteId { get; set; }
         public Trick Prerequisite { get; set; }
-        public string ProgressionId { get; set; }
-        public int ProgressionVersion { get; set; }
+        public int ProgressionId { get; set; }
         public Trick Progression { get; set; }
     }
 }

@@ -29,10 +29,10 @@ namespace TrickingLibrary.Api.Controllers
                 .FirstOrDefault(x => x.Slug.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
         [HttpGet("{id}/tricks")]
-        public IEnumerable<Trick> ListCategoryTricks(string id) =>
+        public IEnumerable<Trick> ListCategoryTricks(int id) =>
             _ctx.TrickCategories
                 .Include(x => x.Trick)
-                .Where(x => x.CategoryId.Equals(id, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x.CategoryId == id)
                 .Select(x => x.Trick)
                 .ToList();
 

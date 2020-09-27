@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <v-btn :to="`/moderation/${i.id}/${i.type}/${i.target}`" :key="i.id" v-for="i in items">
+    <v-btn :to="`/moderation/${i.id}`" :key="i.id" v-for="i in items">
       {{i.target}}
     </v-btn>
   </div>

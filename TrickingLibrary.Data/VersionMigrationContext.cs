@@ -12,32 +12,54 @@ namespace TrickingLibrary.Data
 
         public VersionMigrationContext(AppDbContext ctx) => _ctx = ctx;
 
-        public void Migrate(string targetId, int targetVersion, string targetType)
+        public void Migrate(ModerationItem modItem)
         {
-            var (current, next) = ResolveCurrentAndNextEntities(targetId, targetVersion, targetType);
+            var source = GetSource(modItem.Type);
+
+            var current = source.FirstOrDefault(x => x.Id == modItem.Current);
+            var target = source.FirstOrDefault(x => x.Id == modItem.Target);
+
+            if (target == null)
+            {
+                throw new InvalidOperationException("Target not found");
+            }
 
             if (current != null)
             {
+                if (target.Version - current.Version <= 0)
+                {
+                    throw new InvalidVersionException($"Current Version is {current.Version}, Target version is {target.Version}, for {modItem.Type}.");
+                }
+
                 current.Active = false;
+
+                var outdatedModerationItems = _ctx.ModerationItems
+                    .Where(x => !x.Deleted && x.Type == modItem.Type && x.Id != modItem.Id)
+                    .ToList();
+
+                foreach (var outdatedModItem in outdatedModerationItems)
+                {
+                    outdatedModItem.Current = target.Id;
+                }
             }
 
-            next.Active = true;
-            next.Temporary = false;
-
-            //todo roll id's of temporary versions
+            target.Active = true;
         }
 
-        private (VersionedModel Current, VersionedModel Next) ResolveCurrentAndNextEntities(
-            string targetId, int targetVersion, string targetType)
+
+        private IQueryable<VersionedModel> GetSource(string type)
         {
-            if (targetType == ModerationTypes.Trick)
+            if (type == ModerationTypes.Trick)
             {
-                var current = _ctx.Tricks.FirstOrDefault(x => x.Slug == targetId && x.Active);
-                var next = _ctx.Tricks.FirstOrDefault(x => x.Slug == targetId && x.Version == targetVersion);
-                return (current, next);
+                return _ctx.Tricks;
             }
 
-            throw new ArgumentException(nameof(targetType));
+            throw new ArgumentException(nameof(type));
+        }
+
+        public class InvalidVersionException : Exception
+        {
+            public InvalidVersionException(string message) : base(message){ }
         }
     }
 }

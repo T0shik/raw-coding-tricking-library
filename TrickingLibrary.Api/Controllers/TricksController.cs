@@ -31,12 +31,31 @@ namespace TrickingLibrary.Api.Controllers
             .Select(TrickViewModels.Projection).ToList();
 
         [HttpGet("{id}")]
-        public object Get(string id) =>
-            _ctx.Tricks
-                .Where(x => x.Active)
-                .Where(x => x.Slug.Equals(id, StringComparison.InvariantCultureIgnoreCase))
+        public IActionResult Get(string id)
+        {
+            var query = _ctx.Tricks.AsQueryable();
+
+            if (int.TryParse(id, out var intId))
+            {
+                query = query.Where(x => x.Id == intId);
+            }
+            else
+            {
+                query = query.Where(x => x.Slug.Equals(id, StringComparison.InvariantCultureIgnoreCase)
+                                         && x.Active);
+            }
+
+            var trick = query
                 .Select(TrickViewModels.Projection)
                 .FirstOrDefault();
+
+            if (trick == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(trick);
+        }
 
         [HttpGet("{trickId}/submissions")]
         public IEnumerable<Submission> ListSubmissionsForTrick(string trickId) =>
@@ -58,10 +77,10 @@ namespace TrickingLibrary.Api.Controllers
                 TrickCategories = trickForm.Categories.Select(x => new TrickCategory {CategoryId = x}).ToList()
             };
             _ctx.Add(trick);
+            await _ctx.SaveChangesAsync();
             _ctx.Add(new ModerationItem
             {
-                Target = trick.Slug,
-                TargetVersion = trick.Version,
+                Target = trick.Id,
                 Type = ModerationTypes.Trick,
             });
             await _ctx.SaveChangesAsync();
@@ -71,7 +90,7 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] TrickForm trickForm)
         {
-            var trick = _ctx.Tricks.FirstOrDefault(x => x.Slug == trickForm.Id);
+            var trick = _ctx.Tricks.FirstOrDefault(x => x.Id == trickForm.Id);
             if (trick == null)
             {
                 return NoContent();
@@ -81,7 +100,7 @@ namespace TrickingLibrary.Api.Controllers
             {
                 Slug = trick.Slug,
                 Name = trick.Name,
-                Version = _ctx.Tricks.LatestVersion(1),
+                Version = trick.Version + 1,
                 Description = trickForm.Description,
                 Difficulty = trickForm.Difficulty,
                 Prerequisites = trickForm.Prerequisites
@@ -94,10 +113,11 @@ namespace TrickingLibrary.Api.Controllers
             };
 
             _ctx.Add(newTrick);
+            await _ctx.SaveChangesAsync();
             _ctx.Add(new ModerationItem
             {
-                Target = trick.Slug,
-                TargetVersion = newTrick.Version,
+                Current = trick.Id,
+                Target = newTrick.Id,
                 Type = ModerationTypes.Trick,
             });
             await _ctx.SaveChangesAsync();
