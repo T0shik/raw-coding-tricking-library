@@ -14,7 +14,8 @@
   })
     .signinRedirectCallback()
     .then((user) => {
-      window.location = '/'
+      var returnPath = localStorage.getItem('post-login-redirect-path')
+      window.location = returnPath ? returnPath : '/'
     })
 </script>
 </body>

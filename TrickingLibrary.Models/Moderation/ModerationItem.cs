@@ -3,7 +3,7 @@ using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Models.Moderation
 {
-    public class ModerationItem : TemporalModel
+    public class ModerationItem : BaseModel<int>
     {
         public int Current { get; set; }
         public int Target { get; set; }

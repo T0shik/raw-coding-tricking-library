@@ -1,34 +1,38 @@
 ﻿const initState = () => ({
-  tricks: [],
-  categories: [],
-  difficulties: [],
+  dictionary: {
+    tricks: null,
+    categories: null,
+    difficulties: null,
+  },
+  lists: {
+    tricks: [],
+    categories: [],
+    difficulties: [],
+  }
 })
 
 export const state = initState
 
-export const getters = {
-  trickById: state => id => state.tricks.find(x => x.slug === id),
-  categoryById: state => id => state.categories.find(x => x.slug === id),
-  difficultyById: state => id => state.difficulties.find(x => x.slug === id),
-  trickItems: state => state.tricks.map(x => ({
-    text: x.name,
-    value: x.slug
-  })),
-  categoryItems: state => state.categories.map(x => ({
-    text: x.name,
-    value: x.slug
-  })),
-  difficultyItems: state => state.difficulties.map(x => ({
-    text: x.name,
-    value: x.slug
-  }))
+const setEntities = (state, type, data) => {
+  state.dictionary[type] = {}
+  data.forEach(x => {
+    state.lists[type].push(x)
+    state.dictionary[type][x.id] = x
+    if (x.slug) {
+      state.dictionary[type][x.slug] = x
+    }
+  })
 }
 
 export const mutations = {
-  setTricks(state, {tricks, difficulties, categories}) {
-    state.tricks = tricks
-    state.difficulties = difficulties
-    state.categories = categories
+  setTricks(state, {tricks}) {
+    setEntities(state, 'tricks', tricks)
+  },
+  setDifficulties(state, {difficulties}) {
+    setEntities(state, 'difficulties', difficulties)
+  },
+  setCategories(state, {categories}) {
+    setEntities(state, 'categories', categories)
   },
   reset(state) {
     Object.assign(state, initState())
@@ -36,16 +40,12 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchTricks({commit}) {
-    try {
-      const tricks = await this.$axios.$get("/api/tricks");
-      const difficulties = await this.$axios.$get("/api/difficulties");
-      const categories = await this.$axios.$get("/api/categories");
-      console.log(tricks, difficulties, categories)
-      commit("setTricks", {tricks, difficulties, categories})
-    } catch (err) {
-      console.log(err)
-    }
+  fetchTricks({commit}) {
+    return Promise.all([
+      this.$axios.$get("/api/tricks").then(tricks => commit('setTricks', {tricks})),
+      this.$axios.$get("/api/difficulties").then(difficulties => commit('setDifficulties', {difficulties})),
+      this.$axios.$get("/api/categories").then(categories => commit('setCategories', {categories})),
+    ])
   },
   createTrick({state, commit, dispatch}, {form}) {
     return this.$axios.$post("/api/tricks", form)

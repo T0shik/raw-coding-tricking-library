@@ -18,6 +18,15 @@
         <input asp-for="Form.Password">
         <span asp-validation-for="Form.Password"></span>
     </div>
+    @if (Model.CustomErrors.Count > 0)
+    {
+        <div class="field">
+            @foreach (var error in Model.CustomErrors)
+            {
+                <div class="error">@error</div>
+            }
+        </div>
+    }
     <div class="field flex-row">
         <button type="submit">Log In</button>
     </div>

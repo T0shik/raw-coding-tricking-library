@@ -5,8 +5,8 @@
     </div>
     <video ref="video"
            muted loop
-           :src="video.videoLink"
-           :poster="video.thumbLink"
+           :src="video"
+           :poster="thumb"
            preload="none"
            playsinline
     ></video>
@@ -21,7 +21,11 @@
     props: {
       video: {
         required: true,
-        type: Object,
+        type: String,
+      },
+      thumb: {
+        required: true,
+        type: String,
       }
     },
     data: () => ({

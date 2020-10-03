@@ -2,7 +2,7 @@
 
 namespace TrickingLibrary.Models
 {
-    public class Submission : TemporalModel
+    public class Submission : BaseModel<int>
     {
         public string TrickId { get; set; }
         public int VideoId { get; set; }

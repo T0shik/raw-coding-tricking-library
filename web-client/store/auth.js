@@ -40,40 +40,40 @@ export const actions = {
           commit('saveUser', {user})
           this.$axios.setToken(`Bearer ${user.access_token}`)
           const profile = await this.$axios.$get('/api/users/me')
-          console.log("auth store profile", profile)
           commit('saveProfile', {profile})
         }
       })
       .catch(err => {
-        console.log(err.message)
         if (err.message === "login_required") {
           return this.$auth.removeUser();
         }
       })
       .finally(() => commit('finish'))
   },
-  _watchUserLoaded({state, getters}, action) {
+  login(){
+    if (process.server) return;
+    localStorage.setItem('post-login-redirect-path', location.pathname)
+    return this.$auth.signinRedirect();
+  },
+  _watchUserLoaded({state, getters, dispatch}, action) {
     if (process.server) return;
 
     return new Promise((resolve, reject) => {
 
       if (state.loading) {
-        console.log("start watching")
         const unwatch = this.watch(
           (s) => s.auth.loading,
           (n, o) => {
             unwatch();
             if (!getters.authenticated) {
-              this.$auth.signinRedirect()
+              dispatch('login')
             } else if (!n) {
-              console.log("user finished loading executing action")
               resolve(action())
             }
           }
         )
 
       } else {
-        console.log("user is already loaded executing action")
         resolve(action())
       }
     })

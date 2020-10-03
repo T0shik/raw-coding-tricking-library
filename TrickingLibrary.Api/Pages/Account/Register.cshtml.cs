@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace TrickingLibrary.Api.Pages.Account
 {
-    public class Register : PageModel
+    public class Register : BasePage
     {
         [BindProperty] public RegisterForm Form { get; set; }
 
@@ -31,6 +31,11 @@ namespace TrickingLibrary.Api.Pages.Account
                 await signInManager.SignInAsync(user, true);
 
                 return Redirect(Form.ReturnUrl);
+            }
+
+            foreach (var error in createUserResult.Errors)
+            {
+                CustomErrors.Add(error.Description);
             }
 
             return Page();

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace TrickingLibrary.Api.Pages.Account
 {
-    public class Login : PageModel
+    public class Login : BasePage
     {
         [BindProperty] public LoginForm Form { get; set; }
 
@@ -28,6 +28,8 @@ namespace TrickingLibrary.Api.Pages.Account
             {
                 return Redirect(Form.ReturnUrl);
             }
+
+            CustomErrors.Add("Invalid login attempt, please try again.");
 
             return Page();
         }

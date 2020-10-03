@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
   import TrickList from "../../components/trick-list";
   import ItemContentLayout from "../../components/item-content-layout";
 
@@ -24,10 +24,10 @@
       difficulty: null,
       tricks: [],
     }),
-    computed: mapGetters('tricks', ['difficultyById']),
+    computed: mapState('tricks', ['dictionary']),
     async fetch() {
       const difficultyId = this.$route.params.difficulty;
-      this.difficulty = this.difficultyById(difficultyId)
+      this.difficulty = this.dictionary.difficulties[difficultyId]
       this.tricks = await this.$axios.$get(`/api/difficulties/${difficultyId}/tricks`)
     },
     head() {

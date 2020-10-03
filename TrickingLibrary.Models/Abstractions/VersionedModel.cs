@@ -2,7 +2,7 @@
 
 namespace TrickingLibrary.Models.Abstractions
 {
-    public abstract class VersionedModel : TemporalModel
+    public abstract class VersionedModel : BaseModel<int>
     {
         public int Version { get; set; }
         public bool Active { get; set; }

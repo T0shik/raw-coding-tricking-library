@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
   import TrickList from "../../components/trick-list";
   import ItemContentLayout from "../../components/item-content-layout";
 
@@ -24,10 +24,10 @@
       category: null,
       tricks: [],
     }),
-    computed: mapGetters('tricks', ['categoryById']),
+    computed: mapState('tricks', ['dictionary']),
     async fetch() {
       const categoryId = this.$route.params.category;
-      this.category = this.categoryById(categoryId)
+      this.category = this.dictionary.categories[categoryId]
       this.tricks = await this.$axios.$get(`/api/categories/${categoryId}/tricks`)
     },
     head() {

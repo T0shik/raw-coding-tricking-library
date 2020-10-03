@@ -8,6 +8,15 @@
 
 <form method="post">
     <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl">
+    @if (Model.CustomErrors.Count > 0)
+    {
+        <div class="field">
+            @foreach (var error in Model.CustomErrors)
+            {
+                <div class="error">@error</div>
+            }
+        </div>
+    }
     <div class="field">
         <label>Username</label>
         <input asp-for="Form.Username">

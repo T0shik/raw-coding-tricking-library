@@ -26,10 +26,10 @@ namespace TrickingLibrary.Api.Controllers
         [HttpGet("{id}")]
         public Category Get(string id) =>
             _ctx.Categories
-                .FirstOrDefault(x => x.Slug.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(x => x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
         [HttpGet("{id}/tricks")]
-        public IEnumerable<Trick> ListCategoryTricks(int id) =>
+        public IEnumerable<Trick> ListCategoryTricks(string id) =>
             _ctx.TrickCategories
                 .Include(x => x.Trick)
                 .Where(x => x.CategoryId == id)
@@ -39,7 +39,7 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPost]
         public async Task<Category> Create([FromBody] Category category)
         {
-            category.Slug = category.Name.Replace(" ", "-").ToLowerInvariant();
+            category.Id = category.Name.Replace(" ", "-").ToLowerInvariant();
             _ctx.Add(category);
             await _ctx.SaveChangesAsync();
             return category;

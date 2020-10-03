@@ -2,7 +2,7 @@
 
 namespace TrickingLibrary.Models.Moderation
 {
-    public class Review : TemporalModel
+    public class Review : BaseModel<int>
     {
         public int ModerationItemId { get; set; }
         public ModerationItem ModerationItem { get; set; }
