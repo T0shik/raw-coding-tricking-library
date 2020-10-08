@@ -50,6 +50,7 @@ namespace TrickingLibrary.Api
                     ctx.Add(new Trick
                     {
                         Id = 1,
+                        UserId = testUser.Id,
                         Slug = "backwards-roll",
                         Name = "Backwards Roll",
                         Active = true,
@@ -61,6 +62,7 @@ namespace TrickingLibrary.Api
                     ctx.Add(new Trick
                     {
                         Id = 2,
+                        UserId = testUser.Id,
                         Slug = "forwards-roll",
                         Name = "Forwards Roll",
                         Active = true,
@@ -72,6 +74,7 @@ namespace TrickingLibrary.Api
                     ctx.Add(new Trick
                     {
                         Id = 3,
+                        UserId = testUser.Id,
                         Slug = "back-flip",
                         Name = "Back Flip",
                         Active = true,
@@ -81,7 +84,7 @@ namespace TrickingLibrary.Api
                         TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = "flip"}},
                         Prerequisites = new List<TrickRelationship>
                         {
-                            new TrickRelationship {PrerequisiteId = 1}
+                            new TrickRelationship {PrerequisiteId = 1, Active = true},
                         }
                     });
                     ctx.Add(new Submission

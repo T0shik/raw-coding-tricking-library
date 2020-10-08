@@ -20,12 +20,20 @@
           <div>
             <v-text-field label="Name" v-model="form.name"></v-text-field>
             <v-text-field label="Description" v-model="form.description"></v-text-field>
-            <v-select :items="difficultyItems" v-model="form.difficulty" label="Difficulty"></v-select>
-            <v-select :items="trickItems" v-model="form.prerequisites" label="Prerequisites"
+            <v-select :items="lists.difficulties.map(x => ({value: x.id, text: x.name}))"
+                      v-model="form.difficulty"
+                      label="Difficulty"></v-select>
+            <v-select :items="lists.tricks.filter(x => !form.id || x.id !== form.id).map(x => ({value: x.id, text: x.name}))"
+                      v-model="form.prerequisites"
+                      label="Prerequisites"
                       multiple small-chips chips deletable-chips></v-select>
-            <v-select :items="trickItems" v-model="form.progressions" label="Progressions"
+            <v-select :items="lists.tricks.filter(x => !form.id || x.id !== form.id).map(x => ({value: x.id, text: x.name}))"
+                      v-model="form.progressions"
+                      label="Progressions"
                       multiple small-chips chips deletable-chips></v-select>
-            <v-select :items="categoryItems" v-model="form.categories" label="Categories"
+            <v-select :items="lists.categories.map(x => ({value: x.id, text: x.name}))"
+                      v-model="form.categories"
+                      label="Categories"
                       multiple small-chips chips deletable-chips></v-select>
             <div class="d-flex justify-center">
               <v-btn @click="step++">Next</v-btn>
@@ -44,7 +52,7 @@
 </template>
 
 <script>
-import {mapState, mapGetters, mapActions, mapMutations} from 'vuex';
+import {mapState, mapActions} from 'vuex';
 import {close} from "./_shared";
 
 export default {
@@ -73,7 +81,7 @@ export default {
   },
   computed: {
     ...mapState('video-upload', ['editing', 'editPayload']),
-    ...mapGetters('tricks', ['categoryItems', 'difficultyItems', 'trickItems']),
+    ...mapState('tricks', ['lists']),
   },
   methods: {
     ...mapActions('tricks', ['createTrick', 'updateTrick']),

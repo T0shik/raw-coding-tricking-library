@@ -44,8 +44,8 @@ namespace TrickingLibrary.Data
             }
 
             target.Active = true;
+            MigrateRelationships(modItem.Current, modItem.Target, modItem.Type);
         }
-
 
         private IQueryable<VersionedModel> GetSource(string type)
         {
@@ -57,9 +57,35 @@ namespace TrickingLibrary.Data
             throw new ArgumentException(nameof(type));
         }
 
+        private void MigrateRelationships(int current, int target, string type)
+        {
+            if (type == ModerationTypes.Trick)
+            {
+                if (current > 0)
+                {
+                    _ctx.TrickRelationships
+                        .Where(x => x.PrerequisiteId == current || x.ProgressionId == current)
+                        .ToList()
+                        .ForEach(x => x.Active = false);
+                }
+
+                _ctx.TrickRelationships
+                    .Where(x => x.PrerequisiteId == target || x.ProgressionId == target)
+                    .ToList()
+                    .ForEach(x => x.Active = true);
+            }
+            else
+            {
+                throw new ArgumentException(nameof(type));
+            }
+        }
+
+
         public class InvalidVersionException : Exception
         {
-            public InvalidVersionException(string message) : base(message){ }
+            public InvalidVersionException(string message) : base(message)
+            {
+            }
         }
     }
 }

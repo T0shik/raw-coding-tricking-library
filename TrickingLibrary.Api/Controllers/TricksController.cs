@@ -14,9 +14,8 @@ using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [ApiController]
     [Route("api/tricks")]
-    public class TricksController : ControllerBase
+    public class TricksController : ApiController
     {
         private readonly AppDbContext _ctx;
 
@@ -27,8 +26,13 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpGet]
         public IEnumerable<object> All() => _ctx.Tricks
+            .AsNoTracking()
             .Where(x => x.Active)
-            .Select(TrickViewModels.Projection).ToList();
+            .Include(x => x.TrickCategories)
+            .Include(x => x.Progressions)
+            .Include(x => x.Prerequisites)
+            .Include(x => x.User)
+            .Select(TrickViewModels.UserProjection).ToList();
 
         [HttpGet("{id}")]
         public IActionResult Get(string id)
@@ -46,7 +50,11 @@ namespace TrickingLibrary.Api.Controllers
             }
 
             var trick = query
-                .Select(TrickViewModels.Projection)
+                .Include(x => x.TrickCategories)
+                .Include(x => x.Progressions)
+                .Include(x => x.Prerequisites)
+                .Include(x => x.User)
+                .Select(TrickViewModels.FullProjection)
                 .FirstOrDefault();
 
             if (trick == null)
@@ -67,6 +75,7 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpPost]
+        [Authorize(Policy = TrickingLibraryConstants.Policies.User)]
         public async Task<object> Create([FromBody] TrickForm trickForm)
         {
             var trick = new Trick
@@ -76,7 +85,16 @@ namespace TrickingLibrary.Api.Controllers
                 Version = 1,
                 Description = trickForm.Description,
                 Difficulty = trickForm.Difficulty,
-                TrickCategories = trickForm.Categories.Select(x => new TrickCategory {CategoryId = x}).ToList()
+                Prerequisites = trickForm.Prerequisites
+                    .Select(x => new TrickRelationship {PrerequisiteId = x})
+                    .ToList(),
+                Progressions = trickForm.Progressions
+                    .Select(x => new TrickRelationship {ProgressionId = x})
+                    .ToList(),
+                TrickCategories = trickForm.Categories
+                    .Select(x => new TrickCategory {CategoryId = x})
+                    .ToList(),
+                UserId = UserId,
             };
             _ctx.Add(trick);
             await _ctx.SaveChangesAsync();
@@ -90,6 +108,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = TrickingLibraryConstants.Policies.User)]
         public async Task<IActionResult> Update([FromBody] TrickForm trickForm)
         {
             var trick = _ctx.Tricks.FirstOrDefault(x => x.Id == trickForm.Id);
@@ -111,7 +130,10 @@ namespace TrickingLibrary.Api.Controllers
                 Progressions = trickForm.Progressions
                     .Select(x => new TrickRelationship {ProgressionId = x})
                     .ToList(),
-                TrickCategories = trickForm.Categories.Select(x => new TrickCategory {CategoryId = x}).ToList()
+                TrickCategories = trickForm.Categories
+                    .Select(x => new TrickCategory {CategoryId = x})
+                    .ToList(),
+                UserId = UserId,
             };
 
             _ctx.Add(newTrick);

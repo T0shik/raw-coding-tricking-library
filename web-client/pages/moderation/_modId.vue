@@ -1,14 +1,21 @@
 ﻿<template>
   <div>
-    <div v-if="item">
-      {{ item.description }}
-    </div>
-
     <v-row>
-      <v-col cols="7">
+      <v-col cols="8">
+        <v-row justify="center">
+          <v-col cols="4" v-if="current">
+            <trick-info-card :trick="current" />
+          </v-col>
+          <v-col cols="4" class="d-flex justify-center" v-if="current">
+            <v-icon size="46">mdi-arrow-right</v-icon>
+          </v-col>
+          <v-col cols="4" v-if="target">
+            <trick-info-card :trick="target" />
+          </v-col>
+        </v-row>
         <comment-section :comments="comments" @send="sendComment"/>
       </v-col>
-      <v-col cols="5">
+      <v-col cols="4">
         <v-card>
           <v-card-title>Reviews ({{ approveCount }} / 3)</v-card-title>
           <v-card-text>
@@ -47,6 +54,7 @@
 <script>
 
 import CommentSection from "@/components/comments/comment-section";
+import TrickInfoCard from "@/components/trick-info-card";
 
 const endpointResolver = (type) => {
   if (type === 'trick') return 'tricks'
@@ -73,10 +81,10 @@ const reviewStatusIcon = (status) => {
 }
 
 export default {
-  components: {CommentSection},
+  components: {TrickInfoCard, CommentSection},
   data: () => ({
     current: null,
-    item: null,
+    target: null,
     comments: [],
     reviews: [],
     reviewComment: "",
@@ -94,7 +102,7 @@ export default {
     this.$axios.$get(`/api/${endpoint}/${modItem.current}`)
       .then((item) => this.current = item)
     this.$axios.$get(`/api/${endpoint}/${modItem.target}`)
-      .then((item) => this.item = item)
+      .then((item) => this.target = item)
   },
   methods: {
     sendComment(content) {
@@ -129,7 +137,7 @@ export default {
       return this.reviews.filter(x => x.status === REVIEW_STATUS.APPROVED).length
     },
     outdated() {
-      return this.current && this.item && this.item.version - this.current.version <= 0
+      return this.current && this.target && this.target.version - this.current.version <= 0
     }
   }
 }
