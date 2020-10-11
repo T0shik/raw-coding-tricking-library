@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import {mapState, mapMutations} from 'vuex';
+import {mapState, mapMutations, mapGetters} from 'vuex';
   import TrickSteps from "./trick-steps";
   import SubmissionSteps from "./submission-steps";
   import DifficultyForm from "./difficulty-form";
@@ -35,13 +35,14 @@
     components: {CategoryForm, DifficultyForm, SubmissionSteps, TrickSteps},
     computed: {
       ...mapState('video-upload', ['active', 'component']),
+      ...mapGetters('auth', ['moderator']),
       menuItems() {
         return [
-          {component: TrickSteps, title: "Trick"},
-          {component: SubmissionSteps, title: "Submission"},
-          {component: DifficultyForm, title: "Difficulty"},
-          {component: CategoryForm, title: "Category"},
-        ]
+          {component: TrickSteps, title: "Trick", display: true},
+          {component: SubmissionSteps, title: "Submission", display: true},
+          {component: DifficultyForm, title: "Difficulty", display: this.moderator},
+          {component: CategoryForm, title: "Category", display: this.moderator},
+        ].filter(x => x.display)
       }
     },
     methods: mapMutations('video-upload', ['activate']),

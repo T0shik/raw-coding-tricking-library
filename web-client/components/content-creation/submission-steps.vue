@@ -32,7 +32,8 @@
 
         <v-stepper-content step="2">
           <div>
-            <v-select :items="trickItems" v-model="form.trickId" label="Select Trick"></v-select>
+            <v-select :items="lists.tricks.map(x => ({value: x.slug, text: x.name}))" v-model="form.trickId"
+                      label="Select Trick"></v-select>
             <div class="d-flex justify-center">
               <v-btn @click="step++">Next</v-btn>
             </div>
@@ -59,38 +60,40 @@
 </template>
 
 <script>
-  import {mapGetters, mapActions, mapMutations} from 'vuex';
-  import {close} from "./_shared";
+import {mapActions, mapMutations, mapState} from 'vuex';
+import {close, form} from "@/components/content-creation/_shared";
 
-  export default {
-    name: "submission-steps",
-    mixins: [close],
-    data: () => ({
-      step: 1,
-      form: {
-        trickId: "",
-        video: "",
-        description: ""
-      }
-    }),
-    computed: mapGetters('tricks', ['trickItems']),
-    methods: {
-      ...mapMutations('video-upload', ['hide']),
-      ...mapActions('video-upload', ['startVideoUpload', 'createSubmission']),
-      async handleFile(file) {
-        if (!file) return;
+export default {
+  name: "submission-steps",
+  mixins: [
+    close,
+    form(() => ({
+      trickId: "",
+      video: "",
+      description: ""
+    }))
+  ],
+  data: () => ({
+    step: 1,
+  }),
+  computed: mapState('tricks', ['lists']),
+  methods: {
+    ...mapMutations('video-upload', ['hide']),
+    ...mapActions('video-upload', ['startVideoUpload', 'createSubmission']),
+    async handleFile(file) {
+      if (!file) return;
 
-        const form = new FormData();
-        form.append("video", file)
-        this.startVideoUpload({form});
-        this.step++;
-      },
-      save() {
-        this.createSubmission({form: this.form})
-        this.hide();
-      }
+      const form = new FormData();
+      form.append("video", file)
+      this.startVideoUpload({form});
+      this.step++;
+    },
+    save() {
+      this.createSubmission({form: this.form})
+      this.hide();
     }
   }
+}
 </script>
 
 <style scoped>

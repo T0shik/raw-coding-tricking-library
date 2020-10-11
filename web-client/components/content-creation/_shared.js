@@ -1,4 +1,4 @@
-﻿import {mapActions} from 'vuex';
+﻿import {mapActions, mapState} from 'vuex';
 
 export const close = {
   methods: {
@@ -8,3 +8,15 @@ export const close = {
     }
   }
 }
+
+export const form = (formFactory) => ({
+  data: () => ({
+    form: formFactory()
+  }),
+  created: function () {
+    this.setup(this.form)
+  },
+  computed: {
+    ...mapState('video-upload', ['setup']),
+  }
+})

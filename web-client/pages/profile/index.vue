@@ -27,6 +27,7 @@
 import ItemContentLayout from "@/components/item-content-layout";
 import {mapMutations, mapState} from "vuex";
 import Submission from "@/components/submission";
+import {guard, GUARD_LEVEL} from "@/components/auth/auth-mixins";
 
 export default {
   components: {Submission, ItemContentLayout},
@@ -34,6 +35,7 @@ export default {
     submissions: [],
     uploadingImage: false
   }),
+  mixins: [guard(GUARD_LEVEL.AUTH)],
   mounted() {
     return this.$store.dispatch('auth/_watchUserLoaded', async () => {
       const profile = this.$store.state.auth.profile

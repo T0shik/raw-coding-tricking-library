@@ -55,6 +55,7 @@
 
 import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
+import {guard, GUARD_LEVEL} from "@/components/auth/auth-mixins";
 
 const endpointResolver = (type) => {
   if (type === 'trick') return 'tricks'
@@ -82,6 +83,7 @@ const reviewStatusIcon = (status) => {
 
 export default {
   components: {TrickInfoCard, CommentSection},
+  mixins: [guard(GUARD_LEVEL.AUTH)],
   data: () => ({
     current: null,
     target: null,

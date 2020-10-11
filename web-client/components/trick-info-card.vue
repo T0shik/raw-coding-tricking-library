@@ -18,22 +18,36 @@
       </v-chip-group>
     </div>
     <v-divider class="mb-2"></v-divider>
-    <div>
-      <v-btn @click="edit(); close();" outlined small>edit</v-btn>
-    </div>
+    <if-auth>
+      <template v-slot:allowed>
+        <div>
+          <v-btn @click="edit(); close();" outlined small>edit</v-btn>
+          <v-btn @click="upload(); close();" outlined small>upload</v-btn>
+        </div>
+      </template>
+      <template v-slot:forbidden="{login}">
+        <v-btn small outlined @click="login">
+          Log in to edit/update
+        </v-btn>
+      </template>
+    </if-auth>
     <v-divider class="mt-2"></v-divider>
-    <user-header :username="trick.user.username" :image-url="trick.user.image" append="Edited by" reverse />
+    <user-header :username="trick.user.username" :image-url="trick.user.image"
+                 :append="trick.version === 1 ? 'Created by' : 'Edited by'"
+                 reverse/>
   </div>
 </template>
 
 <script>
 import {mapMutations, mapState} from "vuex";
 import TrickSteps from "@/components/content-creation/trick-steps";
+import SubmissionSteps from "@/components/content-creation/submission-steps";
 import UserHeader from "@/components/user-header";
+import IfAuth from "@/components/auth/if-auth";
 
 export default {
   name: "trick-info-card",
-  components: {UserHeader},
+  components: {IfAuth, UserHeader},
   props: {
     trick: {
       required: true,
@@ -42,7 +56,8 @@ export default {
     close: {
       required: false,
       type: Function,
-      defaults: () => {}
+      defaults: () => {
+      }
     }
   },
   methods: {
@@ -50,6 +65,12 @@ export default {
     edit() {
       this.activate({
         component: TrickSteps, edit: true, editPayload: this.trick
+      })
+    },
+    upload() {
+      this.activate({
+        component: SubmissionSteps,
+        setup: (form) => form.trickId = this.trick.slug
       })
     }
   },
