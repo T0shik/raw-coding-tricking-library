@@ -1,10 +1,10 @@
 ﻿<template>
   <item-content-layout>
     <template v-slot:content>
-      <submission :submission="s" v-for="s in submissions" :key="`submission-${s.id}`"/>
+      <submission-feed :load-submissions="loadSubmissions"/>
     </template>
     <template v-slot:item="{close}">
-      <trick-info-card :trick="trick" :close="close" />
+      <trick-info-card :trick="trick" :close="close"/>
     </template>
   </item-content-layout>
 </template>
@@ -16,20 +16,20 @@ import TrickSteps from "@/components/content-creation/trick-steps";
 import ItemContentLayout from "../../components/item-content-layout";
 import Submission from "@/components/submission";
 import TrickInfoCard from "@/components/trick-info-card";
+import SubmissionFeed from "@/components/submission-feed";
 
 export default {
-  components: {TrickInfoCard, Submission, ItemContentLayout},
-  data: () => ({
-    trick: null,
-  }),
+  components: {SubmissionFeed, TrickInfoCard, Submission, ItemContentLayout},
   computed: {
-    ...mapState('submissions', ['submissions']),
     ...mapState('tricks', ['dictionary']),
+    trick() {
+      return this.dictionary.tricks[this.$route.params.trick]
+    }
   },
-  async fetch() {
-    const trickSlug = this.$route.params.trick;
-    this.trick = this.dictionary.tricks[trickSlug]
-    await this.$store.dispatch("submissions/fetchSubmissionsForTrick", {trickId: trickSlug}, {root: true})
+  methods: {
+    loadSubmissions(query) {
+      return this.$axios.$get(`/api/tricks/${this.trick.slug}/submissions${query}`)
+    }
   },
   head() {
     if (!this.trick) return {}

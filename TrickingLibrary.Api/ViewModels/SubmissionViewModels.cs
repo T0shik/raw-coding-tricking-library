@@ -7,7 +7,7 @@ namespace TrickingLibrary.Api.ViewModels
 {
     public static class SubmissionViewModels
     {
-        public static readonly Func<Submission, object> Create = Projection.Compile();
+        public static readonly Func<Submission, object> Created = Projection.Compile();
 
         public static Expression<Func<Submission, object>> Projection =>
             submissions => new
@@ -16,6 +16,10 @@ namespace TrickingLibrary.Api.ViewModels
                 submissions.Description,
                 Video = submissions.Video.VideoLink,
                 Thumb = submissions.Video.ThumbLink,
+                Created = submissions.Created
+                    .ToLocalTime()
+                    .ToString("HH:mm dd/MM/yyyy"),
+                UpVotes = submissions.UpVotes.Count,
                 User = new
                 {
                     submissions.User.Image,

@@ -56,11 +56,12 @@ namespace TrickingLibrary.Api.Controllers
         public IActionResult GetUser(string id) => Ok();
 
         [HttpGet("{id}/submissions")]
-        public Task<List<object>> GetUserSubmissions(string id) =>
+        public Task<List<object>> GetUserSubmissions(string id, string order, int cursor) =>
             _ctx.Submissions
                 .Include(x => x.Video)
                 .Include(x => x.User)
                 .Where(x => x.UserId.Equals(id))
+                .PickSubmissions(order, cursor)
                 .Select(SubmissionViewModels.Projection)
                 .ToListAsync();
 

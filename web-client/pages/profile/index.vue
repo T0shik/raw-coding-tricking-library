@@ -1,6 +1,7 @@
 ﻿<template>
   <item-content-layout>
     <template v-slot:content>
+      <submission-feed :load-submissions="loadSubmissions"/>
       <submission :submission="s" v-for="s in submissions" :key="`submission-${s.id}`"/>
     </template>
     <template v-slot:item>
@@ -12,7 +13,7 @@
               <v-btn icon v-if="hover" :disabled="uploadingImage" @click="$refs.profileImageInput.click()">
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
-              <img v-else-if="profile.image" :src="profile.image" alt="profile image" />
+              <img v-else-if="profile.image" :src="profile.image" alt="profile image"/>
               <v-icon v-else>mdi-account</v-icon>
             </v-avatar>
           </v-hover>
@@ -28,22 +29,20 @@ import ItemContentLayout from "@/components/item-content-layout";
 import {mapMutations, mapState} from "vuex";
 import Submission from "@/components/submission";
 import {guard, GUARD_LEVEL} from "@/components/auth/auth-mixins";
+import SubmissionFeed from "@/components/submission-feed";
 
 export default {
-  components: {Submission, ItemContentLayout},
+  components: {SubmissionFeed, Submission, ItemContentLayout},
   data: () => ({
     submissions: [],
     uploadingImage: false
   }),
   mixins: [guard(GUARD_LEVEL.AUTH)],
-  mounted() {
-    return this.$store.dispatch('auth/_watchUserLoaded', async () => {
-      const profile = this.$store.state.auth.profile
-      console.log("mounted profile", profile)
-      this.submissions = await this.$axios.$get(`/api/users/${profile.id}/submissions`)
-    })
-  },
   methods: {
+    loadSubmissions(query) {
+      const profileId = this.$store.state.auth.profile.id
+      return this.$axios.$get(`/api/users/${profileId}/submissions${query}`)
+    },
     changeProfileImage(e) {
       if (this.uploadingImage) return;
       this.uploadingImage = true

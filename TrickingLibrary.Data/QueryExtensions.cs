@@ -1,11 +1,28 @@
-﻿using System.Linq;
-using TrickingLibrary.Models.Abstractions;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using TrickingLibrary.Models;
 
 namespace TrickingLibrary.Data
 {
     public static class QueryExtensions
     {
-        public static int LatestVersion<TSource>(this IQueryable<TSource> source, int offset = 0)
-            where TSource : VersionedModel => source.Max(x => x.Version) + offset;
+        public static IQueryable<Submission> PickSubmissions(
+            this IQueryable<Submission> source,
+            string order,
+            int cursor)
+        {
+            Expression<Func<Submission, object>> orderBySelector = order switch
+            {
+                "latest" => submission => submission.Created,
+                "top" => submission => submission.UpVotes.Count,
+                _ => _ => 1,
+            };
+
+            return source
+                .OrderByDescending(orderBySelector)
+                .Skip(cursor)
+                .Take(10);
+        }
     }
 }

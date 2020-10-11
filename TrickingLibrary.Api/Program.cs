@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -23,11 +25,21 @@ namespace TrickingLibrary.Api
 
                 if (env.IsDevelopment())
                 {
+                    var fakeCounter = 20;
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                    var testUser = new IdentityUser("test"){Email = "test@test.com"};
+                    var testUser = new IdentityUser("test") {Email = "test@test.com"};
                     userMgr.CreateAsync(testUser, "password").GetAwaiter().GetResult();
 
-                    var mod = new IdentityUser("mod"){Email = "mod@test.com"};
+                    var fakeUsers = Enumerable.Range(0, fakeCounter)
+                        .Select(i => new IdentityUser($"fake{i}") {Email = $"fake{i}@test.com"})
+                        .ToList();
+
+                    foreach (var fakeUser in fakeUsers)
+                    {
+                        userMgr.CreateAsync(fakeUser, "password").GetAwaiter().GetResult();
+                    }
+
+                    var mod = new IdentityUser("mod") {Email = "mod@test.com"};
                     userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
                     userMgr.AddClaimAsync(mod,
                             new Claim(TrickingLibraryConstants.Claims.Role,
@@ -116,6 +128,32 @@ namespace TrickingLibrary.Api
                         Target = 3,
                         Type = ModerationTypes.Trick,
                     });
+                    ctx.SaveChanges();
+
+                    for (var i = 1; i <= fakeCounter; i++)
+                    {
+                        ctx.Add(new Submission
+                        {
+                            TrickId = "back-flip",
+                            Description = $"Fake submission {i}",
+                            Video = new Video
+                            {
+                                VideoLink = "https://localhost:5001/api/files/video/two.mp4",
+                                ThumbLink = "https://localhost:5001/api/files/image/two.jpg"
+                            },
+                            VideoProcessed = true,
+                            UserId = testUser.Id,
+                            Created = DateTime.UtcNow.AddDays(-i),
+                            UpVotes = Enumerable
+                                .Range(0, i)
+                                .Select(ii => new SubmissionVote
+                                {
+                                    UserId = fakeUsers[ii].Id
+                                })
+                                .ToList()
+                        });
+                    }
+
                     ctx.SaveChanges();
                 }
             }

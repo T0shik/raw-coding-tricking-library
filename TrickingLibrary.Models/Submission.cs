@@ -1,4 +1,6 @@
-﻿using TrickingLibrary.Models.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Models
 {
@@ -12,5 +14,9 @@ namespace TrickingLibrary.Models
 
         public string UserId { get; set; }
         public User User { get; set; }
+
+        public DateTime Created { get; set; } = DateTime.UtcNow;
+
+        public IList<SubmissionVote> UpVotes { get; set; } = new List<SubmissionVote>();
     }
 }

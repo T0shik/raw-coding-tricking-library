@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authorization;
@@ -66,13 +67,16 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet("{trickId}/submissions")]
-        public IEnumerable<object> ListSubmissionsForTrick(string trickId) =>
-            _ctx.Submissions
+        public IEnumerable<object> ListSubmissionsForTrick(string trickId, string order, int cursor)
+        {
+            return _ctx.Submissions
                 .Include(x => x.Video)
                 .Include(x => x.User)
                 .Where(x => x.TrickId.Equals(trickId, StringComparison.InvariantCultureIgnoreCase))
+                .PickSubmissions(order, cursor)
                 .Select(SubmissionViewModels.Projection)
                 .ToList();
+        }
 
         [HttpPost]
         [Authorize(Policy = TrickingLibraryConstants.Policies.User)]
