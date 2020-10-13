@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Form;
+using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
@@ -86,5 +87,12 @@ namespace TrickingLibrary.Api.Controllers
             await _ctx.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpGet("{id}/comments")]
+        public IEnumerable<object> GetComments(int id) =>
+            _ctx.Comments
+                .Where(x => x.SubmissionId.Equals(id))
+                .Select(CommentViewModel.Projection)
+                .ToList();
     }
 }

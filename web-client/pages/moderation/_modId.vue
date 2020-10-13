@@ -1,19 +1,19 @@
 ﻿<template>
   <div>
-    <v-row>
+    <v-row v-if="modItem">
       <v-col cols="8">
         <v-row justify="center">
           <v-col cols="4" v-if="current">
-            <trick-info-card :trick="current" />
+            <trick-info-card :trick="current"/>
           </v-col>
           <v-col cols="4" class="d-flex justify-center" v-if="current">
             <v-icon size="46">mdi-arrow-right</v-icon>
           </v-col>
           <v-col cols="4" v-if="target">
-            <trick-info-card :trick="target" />
+            <trick-info-card :trick="target"/>
           </v-col>
         </v-row>
-        <comment-section :comments="comments" @send="sendComment"/>
+        <comment-section :parent-id="modItem.id" :parent-type="moderationItemParentType"/>
       </v-col>
       <v-col cols="4">
         <v-card>
@@ -56,6 +56,7 @@
 import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
 import {guard, GUARD_LEVEL} from "@/components/auth/auth-mixins";
+import {COMMENT_PARENT_TYPE} from "@/components/comments/_shared";
 
 const endpointResolver = (type) => {
   if (type === 'trick') return 'tricks'
@@ -87,23 +88,20 @@ export default {
   data: () => ({
     current: null,
     target: null,
-    comments: [],
-    reviews: [],
+    modItem: null,
     reviewComment: "",
-    replyId: 0,
   }),
   async created() {
     const {modId} = this.$route.params
 
-    const modItem = await this.$axios.$get(`/api/moderation-items/${modId}`)
-    this.comments = modItem.comments
-    this.reviews = modItem.reviews
+    this.modItem = await this.$axios.$get(`/api/moderation-items/${modId}`)
+    const {type, current, target} = this.modItem
 
-    const endpoint = endpointResolver(modItem.type)
+    const endpoint = endpointResolver(type)
 
-    this.$axios.$get(`/api/${endpoint}/${modItem.current}`)
+    this.$axios.$get(`/api/${endpoint}/${current}`)
       .then((item) => this.current = item)
-    this.$axios.$get(`/api/${endpoint}/${modItem.target}`)
+    this.$axios.$get(`/api/${endpoint}/${target}`)
       .then((item) => this.target = item)
   },
   methods: {
@@ -140,6 +138,12 @@ export default {
     },
     outdated() {
       return this.current && this.target && this.target.version - this.current.version <= 0
+    },
+    reviews() {
+      return this.modItem.reviews
+    },
+    moderationItemParentType() {
+      return COMMENT_PARENT_TYPE.MODERATION_ITEM
     }
   }
 }

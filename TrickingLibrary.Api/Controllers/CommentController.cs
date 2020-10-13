@@ -2,16 +2,18 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [ApiController]
     [Route("api/comments")]
-    public class CommentController : ControllerBase
+    [Authorize(TrickingLibraryConstants.Policies.User)]
+    public class CommentController : ApiController
     {
         private readonly AppDbContext _ctx;
 
@@ -27,32 +29,16 @@ namespace TrickingLibrary.Api.Controllers
                 .Select(CommentViewModel.Projection)
                 .ToList();
 
-        [HttpPost("{id}/replies")]
-        public async Task<IActionResult> Reply(int id, [FromBody] Comment reply)
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CommentForm commentForm,
+            [FromServices] CommentCreationContext commentCreationContext)
         {
-            var comment = _ctx.Comments.FirstOrDefault(x => x.Id == id);
+            var comment = await commentCreationContext
+                .Setup(UserId)
+                .CreateAsync(commentForm);
 
-            if (comment == null)
-            {
-                return NoContent();
-            }
-
-            var regex = new Regex(@"\B(?<tag>@[a-zA-Z0-9-_]+)");
-
-            reply.HtmlContent = regex.Matches(reply.Content)
-                                     .Aggregate(reply.Content,
-                                                (content, match) =>
-                                                {
-                                                    var tag = match.Groups["tag"].Value;
-                                                    return content
-                                                       .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
-                                                });
-
-            comment.Replies.Add(reply);
-
-            await _ctx.SaveChangesAsync();
-
-            return Ok(CommentViewModel.Create(reply));
+            return Ok(CommentViewModel.Create(comment));
         }
     }
 }

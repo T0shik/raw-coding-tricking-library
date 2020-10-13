@@ -18,5 +18,6 @@ namespace TrickingLibrary.Models
         public DateTime Created { get; set; } = DateTime.UtcNow;
 
         public IList<SubmissionVote> UpVotes { get; set; } = new List<SubmissionVote>();
+        public IList<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

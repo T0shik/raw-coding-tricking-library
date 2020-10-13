@@ -15,6 +15,7 @@ namespace TrickingLibrary.Api.ViewModels
                 comment.ParentId,
                 comment.Content,
                 comment.HtmlContent,
+                User = UserViewModels.CreateFlat(comment.User),
             };
     }
 }

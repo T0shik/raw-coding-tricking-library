@@ -4,26 +4,42 @@
       label="Comment"
       v-model="content"
       clearable
-      @keydown.ctrl.enter="$emit('send', content)" />
-    <v-btn v-if="$listeners['cancel']" @click="$emit('cancel')">Cancel</v-btn>
-    <v-btn :disabled="!content" @click="$emit('send', content)">{{label}}</v-btn>
+      @keydown.ctrl.enter="send"/>
+    <v-btn v-if="$listeners['cancel']" @click="cancel">Cancel</v-btn>
+    <v-btn :disabled="!content" @click="send">{{ label }}</v-btn>
   </div>
 </template>
 
 <script>
-  export default {
-    name: "comment-input",
-    props: {
-      label: {
-        required: false,
-        type: String,
-        default: "send"
+import {configurable, creator} from "@/components/comments/_shared";
+
+export default {
+  name: "comment-input",
+  mixins: [creator, configurable],
+  props: {
+    label: {
+      required: false,
+      type: String,
+      default: "send"
+    }
+  },
+  data: () => ({
+    content: ""
+  }),
+  methods: {
+    send() {
+      const data = {
+        parentId: this.parentId,
+        parentType: this.parentType,
+        content: this.content,
       }
-    },
-    data: () => ({
-      content: ""
-    })
+
+      return this.$axios.$post('/api/comments', data)
+        .then(this.emitComment)
+        .then(this.cancel)
+    }
   }
+}
 </script>
 
 <style scoped>

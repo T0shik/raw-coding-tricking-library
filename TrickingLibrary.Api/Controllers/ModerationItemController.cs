@@ -43,32 +43,6 @@ namespace TrickingLibrary.Api.Controllers
                 .Select(CommentViewModel.Projection)
                 .ToList();
 
-        [HttpPost("{id}/comments")]
-        public async Task<IActionResult> Comment(int id, [FromBody] Comment comment)
-        {
-            if (!_ctx.ModerationItems.Any(x => x.Id == id))
-            {
-                return NoContent();
-            }
-
-            var regex = new Regex(@"\B(?<tag>@[a-zA-Z0-9-_]+)");
-
-            comment.HtmlContent = regex.Matches(comment.Content)
-                .Aggregate(comment.Content,
-                    (content, match) =>
-                    {
-                        var tag = match.Groups["tag"].Value;
-                        return content
-                            .Replace(tag, $"<a href=\"{tag}-user-link\">{tag}</a>");
-                    });
-
-            comment.ModerationItemId = id;
-            _ctx.Add(comment);
-            await _ctx.SaveChangesAsync();
-
-            return Ok(CommentViewModel.Create(comment));
-        }
-
         [HttpGet("{id}/reviews")]
         public IEnumerable<Review> GetReviews(int id) =>
             _ctx.Reviews
