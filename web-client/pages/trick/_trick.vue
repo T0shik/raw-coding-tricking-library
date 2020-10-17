@@ -1,7 +1,7 @@
 ﻿<template>
   <item-content-layout>
     <template v-slot:content>
-      <submission-feed :load-submissions="loadSubmissions"/>
+      <submission-feed :content-endpoint="`/api/tricks/${trick.slug}/submissions`"/>
     </template>
     <template v-slot:item="{close}">
       <trick-info-card :trick="trick" :close="close"/>
@@ -24,11 +24,6 @@ export default {
     ...mapState('tricks', ['dictionary']),
     trick() {
       return this.dictionary.tricks[this.$route.params.trick]
-    }
-  },
-  methods: {
-    loadSubmissions(query) {
-      return this.$axios.$get(`/api/tricks/${this.trick.slug}/submissions${query}`)
     }
   },
   head() {

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -22,12 +24,27 @@ namespace TrickingLibrary.Api.Controllers
             _ctx = ctx;
         }
 
-        [HttpGet("{id}/replies")]
-        public IEnumerable<object> GetReplies(int id) =>
-            _ctx.Comments
-                .Where(x => x.ParentId == id)
+        [HttpGet("{parentId}/{parentType}")]
+        public IEnumerable<object> GetReplies(
+            int parentId,
+            CommentCreationContext.ParentType parentType,
+            [FromQuery] FeedQuery feedQuery
+        )
+        {
+            Expression<Func<Comment, bool>> filter = parentType switch
+            {
+                CommentCreationContext.ParentType.ModerationItem => comment => comment.ModerationItemId == parentId,
+                CommentCreationContext.ParentType.Submission => comment => comment.SubmissionId == parentId,
+                CommentCreationContext.ParentType.Comment => comment => comment.ParentId == parentId,
+                _ => throw new ArgumentException(),
+            };
+
+            return _ctx.Comments
+                .Where(filter)
+                .OrderFeed(feedQuery)
                 .Select(CommentViewModel.Projection)
                 .ToList();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(

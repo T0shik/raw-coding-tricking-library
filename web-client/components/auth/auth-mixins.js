@@ -1,9 +1,12 @@
-﻿export const GUARD_LEVEL = {
+﻿import {mapGetters} from "vuex";
+
+export const GUARD_LEVEL = {
   AUTH: 1,
   MOD: 2,
 }
 
 export const guard = (level) => ({
+    computed: mapGetters('auth', ['authenticated']),
     beforeRouteEnter(to, from, next) {
       if (process.server) {
         next();

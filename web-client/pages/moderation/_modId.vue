@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <v-row v-if="modItem">
+    <v-row v-if="modItem && authenticated">
       <v-col cols="8">
         <v-row justify="center">
           <v-col cols="4" v-if="current">

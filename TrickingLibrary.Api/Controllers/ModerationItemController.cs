@@ -36,13 +36,6 @@ namespace TrickingLibrary.Api.Controllers
             .Select(ModerationItemViewModels.Projection)
             .FirstOrDefault();
 
-        [HttpGet("{id}/comments")]
-        public IEnumerable<object> GetComments(int id) =>
-            _ctx.Comments
-                .Where(x => x.ModerationItemId.Equals(id))
-                .Select(CommentViewModel.Projection)
-                .ToList();
-
         [HttpGet("{id}/reviews")]
         public IEnumerable<Review> GetReviews(int id) =>
             _ctx.Reviews

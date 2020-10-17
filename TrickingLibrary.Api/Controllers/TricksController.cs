@@ -67,13 +67,13 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet("{trickId}/submissions")]
-        public IEnumerable<object> ListSubmissionsForTrick(string trickId, string order, int cursor)
+        public IEnumerable<object> ListSubmissionsForTrick(string trickId, [FromQuery] FeedQuery feedQuery)
         {
             return _ctx.Submissions
                 .Include(x => x.Video)
                 .Include(x => x.User)
                 .Where(x => x.TrickId.Equals(trickId, StringComparison.InvariantCultureIgnoreCase))
-                .PickSubmissions(order, cursor)
+                .OrderFeed(feedQuery)
                 .Select(SubmissionViewModels.Projection)
                 .ToList();
         }

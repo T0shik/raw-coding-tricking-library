@@ -1,8 +1,7 @@
 ﻿<template>
   <item-content-layout>
     <template v-slot:content>
-      <submission-feed :load-submissions="loadSubmissions"/>
-      <submission :submission="s" v-for="s in submissions" :key="`submission-${s.id}`"/>
+      <submission-feed :content-endpoint="`/api/users/${$store.state.auth.profile.id}/submissions`"/>
     </template>
     <template v-slot:item>
       <div v-if="profile">
@@ -34,15 +33,10 @@ import SubmissionFeed from "@/components/submission-feed";
 export default {
   components: {SubmissionFeed, Submission, ItemContentLayout},
   data: () => ({
-    submissions: [],
     uploadingImage: false
   }),
   mixins: [guard(GUARD_LEVEL.AUTH)],
   methods: {
-    loadSubmissions(query) {
-      const profileId = this.$store.state.auth.profile.id
-      return this.$axios.$get(`/api/users/${profileId}/submissions${query}`)
-    },
     changeProfileImage(e) {
       if (this.uploadingImage) return;
       this.uploadingImage = true

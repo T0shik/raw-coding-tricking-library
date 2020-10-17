@@ -37,6 +37,11 @@ namespace TrickingLibrary.Api
                     foreach (var fakeUser in fakeUsers)
                     {
                         userMgr.CreateAsync(fakeUser, "password").GetAwaiter().GetResult();
+                        ctx.Add(new User
+                        {
+                            Id = fakeUser.Id,
+                            Username = fakeUser.UserName,
+                        });
                     }
 
                     var mod = new IdentityUser("mod") {Email = "mod@test.com"};
@@ -149,6 +154,24 @@ namespace TrickingLibrary.Api
                                 .Select(ii => new SubmissionVote
                                 {
                                     UserId = fakeUsers[ii].Id
+                                })
+                                .ToList(),
+                            Comments = Enumerable
+                                .Range(0, fakeCounter)
+                                .Select(ii => new Comment
+                                {
+                                    Content = $"Main Comment {ii}",
+                                    HtmlContent = $"Main Comment {ii}",
+                                    UserId = fakeUsers[ii].Id,
+                                    Replies = Enumerable
+                                        .Range(0, fakeCounter)
+                                        .Select(iii => new Comment
+                                        {
+                                            Content = $"Reply {iii}",
+                                            HtmlContent = $"Reply {iii}",
+                                            UserId = fakeUsers[iii].Id,
+                                        })
+                                        .ToList()
                                 })
                                 .ToList()
                         });

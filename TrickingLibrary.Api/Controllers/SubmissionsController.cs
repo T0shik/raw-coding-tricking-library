@@ -87,12 +87,5 @@ namespace TrickingLibrary.Api.Controllers
             await _ctx.SaveChangesAsync();
             return Ok();
         }
-
-        [HttpGet("{id}/comments")]
-        public IEnumerable<object> GetComments(int id) =>
-            _ctx.Comments
-                .Where(x => x.SubmissionId.Equals(id))
-                .Select(CommentViewModel.Projection)
-                .ToList();
     }
 }
