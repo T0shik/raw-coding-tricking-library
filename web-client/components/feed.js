@@ -1,4 +1,4 @@
-﻿export const feed = (order) => ({
+﻿export const feed = (order, waitAuth = false) => ({
   props: {
     contentEndpoint: {
       required: false,
@@ -12,7 +12,8 @@
     order: order,
     started: false,
     finished: false,
-    loading: false
+    loading: false,
+    enabled: !waitAuth
   }),
   watch: {
     'order': function () {
@@ -22,6 +23,13 @@
       this.started = false
       this.loadContent()
     }
+  },
+  created() {
+    return this.$store.dispatch('auth/_waitAuthenticated')
+      .then(() => {
+        this.enabled = true
+        this.loadContent()
+      })
   },
   methods: {
     getContentUrl() {
@@ -36,8 +44,10 @@
       }
     },
     loadContent() {
+      if (process.server) return;
       this.started = true
       this.loading = true
+      if (!this.enabled) return;
       return this.$axios.$get(this.getContentUrl())
         .then(content => {
           this.finished = content.length < this.limit

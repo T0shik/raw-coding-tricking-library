@@ -15,7 +15,7 @@ import {feed} from "@/components/feed";
 export default {
   name: "submission-feed",
   components: {Submission},
-  mixins: [feed('')],
+  mixins: [feed('', true)],
   data: () => ({
     tab: 0
   }),

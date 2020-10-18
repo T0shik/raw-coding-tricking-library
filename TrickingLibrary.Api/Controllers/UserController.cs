@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -52,9 +53,15 @@ namespace TrickingLibrary.Api.Controllers
             return Ok(user);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetUser(string id) => Ok();
+        [AllowAnonymous]
+        [HttpGet("{username}")]
+        public object GetUser(string username) =>
+            _ctx.Users
+                .Where(x => x.Username.Equals(username, StringComparison.InvariantCultureIgnoreCase))
+                .Select(UserViewModels.FlatProjection)
+                .FirstOrDefault();
 
+        [AllowAnonymous]
         [HttpGet("{id}/submissions")]
         public Task<List<object>> GetUserSubmissions(string id, [FromQuery] FeedQuery feedQuery) =>
             _ctx.Submissions

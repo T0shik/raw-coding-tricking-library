@@ -53,7 +53,7 @@ namespace TrickingLibrary.Api
                 comment.ParentId = commentForm.ParentId;
             }
 
-            comment.Content = comment.Content;
+            comment.Content = commentForm.Content;
             comment.UserId = _userId;
             comment.HtmlContent = _tagMatch.Matches(commentForm.Content)
                 .Aggregate(commentForm.Content,

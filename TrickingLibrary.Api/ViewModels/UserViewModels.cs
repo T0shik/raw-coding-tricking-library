@@ -13,6 +13,7 @@ namespace TrickingLibrary.Api.ViewModels
         public static Expression<Func<User, object>> FlatProjection =>
             user => new
             {
+                user.Id,
                 user.Username,
                 user.Image,
             };

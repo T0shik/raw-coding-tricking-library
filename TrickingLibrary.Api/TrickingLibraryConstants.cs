@@ -7,6 +7,7 @@ namespace TrickingLibrary.Api
     {
         public struct Policies
         {
+            public const string Anon = nameof(Anon);
             public const string User = IdentityServerConstants.LocalApi.PolicyName;
             public const string Mod = nameof(Mod);
         }

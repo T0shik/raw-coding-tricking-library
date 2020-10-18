@@ -115,6 +115,14 @@ namespace TrickingLibrary.Api
                         },
                         VideoProcessed = true,
                         UserId = testUser.Id,
+                        Votes = new List<SubmissionVote>
+                        {
+                            new SubmissionVote
+                            {
+                                UserId = testUser.Id,
+                                Value = 1,
+                            },
+                        },
                     });
                     ctx.Add(new Submission
                     {
@@ -149,7 +157,7 @@ namespace TrickingLibrary.Api
                             VideoProcessed = true,
                             UserId = testUser.Id,
                             Created = DateTime.UtcNow.AddDays(-i),
-                            UpVotes = Enumerable
+                            Votes = Enumerable
                                 .Range(0, i)
                                 .Select(ii => new SubmissionVote
                                 {

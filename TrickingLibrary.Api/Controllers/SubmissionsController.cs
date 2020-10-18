@@ -87,5 +87,36 @@ namespace TrickingLibrary.Api.Controllers
             await _ctx.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpPut("{id}/vote")]
+        [Authorize(TrickingLibraryConstants.Policies.User)]
+        public async Task<IActionResult> Vote(int id, int value)
+        {
+            if (value != -1 && value != 1)
+            {
+                return BadRequest();
+            }
+
+            var vote = _ctx.SubmissionVotes
+                .FirstOrDefault(x => x.SubmissionId == id && x.UserId == UserId);
+
+            if (vote == null)
+            {
+                _ctx.Add(new SubmissionVote
+                {
+                    SubmissionId = id,
+                    UserId = UserId,
+                    Value = value,
+                });
+            }
+            else
+            {
+                vote.Value = value;
+            }
+
+            await _ctx.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

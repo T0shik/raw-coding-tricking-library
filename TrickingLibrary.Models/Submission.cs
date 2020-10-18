@@ -15,7 +15,7 @@ namespace TrickingLibrary.Models
         public string UserId { get; set; }
         public User User { get; set; }
 
-        public IList<SubmissionVote> UpVotes { get; set; } = new List<SubmissionVote>();
+        public IList<SubmissionVote> Votes { get; set; } = new List<SubmissionVote>();
         public IList<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

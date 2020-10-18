@@ -12,22 +12,23 @@ export const guard = (level) => ({
         next();
       } else {
         next(nuxt => {
-          nuxt.$store.dispatch('auth/_watchUserLoaded', () => {
-            let allowed = false
-            if (level === GUARD_LEVEL.AUTH) {
-              allowed = nuxt.$store.getters["auth/authenticated"]
-            } else if (level === GUARD_LEVEL.MOD) {
-              allowed = nuxt.$store.getters["auth/moderator"]
-            }
-
-            if (allowed) {
-              if (nuxt.$fetch) {
-                nuxt.$fetch();
+          nuxt.$store.dispatch('auth/_waitAuthenticated')
+            .then(() => {
+              let allowed = false
+              if (level === GUARD_LEVEL.AUTH) {
+                allowed = nuxt.$store.getters["auth/authenticated"]
+              } else if (level === GUARD_LEVEL.MOD) {
+                allowed = nuxt.$store.getters["auth/moderator"]
               }
-            } else {
-              nuxt.$store.dispatch('auth/login')
-            }
-          })
+
+              if (allowed) {
+                if (nuxt.$fetch) {
+                  nuxt.$fetch();
+                }
+              } else {
+                nuxt.$store.dispatch('auth/login')
+              }
+            })
         })
       }
     }

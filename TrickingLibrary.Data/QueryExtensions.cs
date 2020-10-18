@@ -14,7 +14,7 @@ namespace TrickingLibrary.Data
             Expression<Func<Submission, object>> orderBySelector = order switch
             {
                 "latest" => submission => submission.Created,
-                "top" => submission => submission.UpVotes.Count,
+                "top" => submission => submission.Votes.Count,
                 _ => _ => 1,
             };
 

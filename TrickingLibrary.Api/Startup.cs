@@ -1,7 +1,9 @@
 using System.Threading.Channels;
+using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -166,6 +168,11 @@ namespace TrickingLibrary.Api
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy(TrickingLibraryConstants.Policies.Anon, policy =>
+                {
+                    policy.AddAuthenticationSchemes(IdentityServerConstants.LocalApi.AuthenticationScheme);
+                    policy.AddRequirements(new AnonymousRequirement());
+                });
                 options.AddPolicy(TrickingLibraryConstants.Policies.Mod, policy =>
                 {
                     var is4Policy = options.GetPolicy(IdentityServerConstants.LocalApi.PolicyName);
@@ -174,6 +181,15 @@ namespace TrickingLibrary.Api
                         TrickingLibraryConstants.Roles.Mod);
                 });
             });
+        }
+    }
+
+    internal class AnonymousRequirement : IAuthorizationHandler, IAuthorizationRequirement
+    {
+        public Task HandleAsync(AuthorizationHandlerContext context)
+        {
+            context.Succeed(this);
+            return Task.CompletedTask;
         }
     }
 }

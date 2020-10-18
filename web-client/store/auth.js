@@ -50,12 +50,12 @@ export const actions = {
       })
       .finally(() => commit('finish'))
   },
-  login(){
+  login() {
     if (process.server) return;
     localStorage.setItem('post-login-redirect-path', location.pathname)
     return this.$auth.signinRedirect();
   },
-  _watchUserLoaded({state, getters, dispatch}, action) {
+  _waitAuthenticated({state, getters}) {
     if (process.server) return;
 
     return new Promise((resolve, reject) => {
@@ -65,16 +65,12 @@ export const actions = {
           (s) => s.auth.loading,
           (n, o) => {
             unwatch();
-            if (!getters.authenticated) {
-              dispatch('login')
-            } else if (!n) {
-              resolve(action())
-            }
+            resolve(getters.authenticated)
           }
         )
 
       } else {
-        resolve(action())
+        resolve(getters.authenticated)
       }
     })
   }

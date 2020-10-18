@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.Form;
@@ -12,9 +13,8 @@ using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [ApiController]
     [Route("api/moderation-items")]
-    public class ModerationItemController : ControllerBase
+    public class ModerationItemController : ApiController
     {
         private readonly AppDbContext _ctx;
 
@@ -30,7 +30,6 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpGet("{id}")]
         public object Get(int id) => _ctx.ModerationItems
-            .Include(x => x.Comments)
             .Include(x => x.Reviews)
             .Where(x => x.Id.Equals(id))
             .Select(ModerationItemViewModels.Projection)
@@ -43,6 +42,7 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpPost("{id}/reviews")]
+        [Authorize(TrickingLibraryConstants.Policies.Mod)]
         public async Task<IActionResult> Review(int id,
             [FromBody] ReviewForm reviewForm,
             [FromServices] VersionMigrationContext migrationContext)
@@ -67,6 +67,7 @@ namespace TrickingLibrary.Api.Controllers
                 ModerationItemId = id,
                 Comment = reviewForm.Comment,
                 Status = reviewForm.Status,
+                UserId = UserId
             };
 
             _ctx.Add(review);

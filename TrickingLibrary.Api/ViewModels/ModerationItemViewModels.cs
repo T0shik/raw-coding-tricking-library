@@ -17,7 +17,6 @@ namespace TrickingLibrary.Api.ViewModels
                 modItem.Current,
                 modItem.Target,
                 modItem.Type,
-                Comments = modItem.Comments.AsQueryable().Select(CommentViewModel.Projection).ToList(),
                 Reviews = modItem.Reviews.AsQueryable().Select(ReviewViewModel.Projection).ToList(),
             };
     }

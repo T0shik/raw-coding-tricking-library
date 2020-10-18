@@ -67,6 +67,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet("{trickId}/submissions")]
+        [Authorize(Policy = TrickingLibraryConstants.Policies.Anon)]
         public IEnumerable<object> ListSubmissionsForTrick(string trickId, [FromQuery] FeedQuery feedQuery)
         {
             return _ctx.Submissions
@@ -74,7 +75,7 @@ namespace TrickingLibrary.Api.Controllers
                 .Include(x => x.User)
                 .Where(x => x.TrickId.Equals(trickId, StringComparison.InvariantCultureIgnoreCase))
                 .OrderFeed(feedQuery)
-                .Select(SubmissionViewModels.Projection)
+                .Select(SubmissionViewModels.PerspectiveProjection(UserId))
                 .ToList();
         }
 

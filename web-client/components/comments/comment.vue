@@ -12,7 +12,7 @@
                     :parent-type="commentParentType"
                     @comment-created="(x) => content.push(x)"
                     :key="`reply-${c.id}`"/>
-      <div class="d-flex justify-center" v-if="content.length > 0 && !finished">
+      <div class="d-flex justify-center" v-if="started && !finished">
         <v-btn outlined small @click="loadContent">load more</v-btn>
       </div>
     </div>
@@ -44,7 +44,7 @@ export default {
       return COMMENT_PARENT_TYPE.COMMENT
     },
     loadRepliesEvent() {
-      return this.content.length === 0 ? 'load-replies' : ''
+      return this.started ? 'load-replies' : ''
     }
   }
 }

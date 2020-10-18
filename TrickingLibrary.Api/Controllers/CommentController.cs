@@ -10,6 +10,7 @@ using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Api.Controllers
 {
@@ -51,11 +52,18 @@ namespace TrickingLibrary.Api.Controllers
             [FromBody] CommentForm commentForm,
             [FromServices] CommentCreationContext commentCreationContext)
         {
-            var comment = await commentCreationContext
-                .Setup(UserId)
-                .CreateAsync(commentForm);
+            try
+            {
+                var comment = await commentCreationContext
+                    .Setup(UserId)
+                    .CreateAsync(commentForm);
 
-            return Ok(CommentViewModel.Create(comment));
+                return Ok(CommentViewModel.Create(comment));
+            }
+            catch (CommentCreationContext.ParentNotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
