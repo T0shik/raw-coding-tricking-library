@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Hosting;
 
 namespace TrickingLibrary.Api.Pages.Account
 {
@@ -16,7 +18,8 @@ namespace TrickingLibrary.Api.Pages.Account
         }
 
         public async Task<IActionResult> OnPostAsync(
-            [FromServices] SignInManager<IdentityUser> signInManager)
+            [FromServices] SignInManager<IdentityUser> signInManager,
+            [FromServices] IWebHostEnvironment env)
         {
             if (!ModelState.IsValid)
                 return Page();
@@ -26,6 +29,11 @@ namespace TrickingLibrary.Api.Pages.Account
 
             if (signInResult.Succeeded)
             {
+                if (string.IsNullOrEmpty(Form.ReturnUrl))
+                {
+                    return Redirect(env.IsDevelopment() ? "https://localhost:3000/" : "/");
+                }
+
                 return Redirect(Form.ReturnUrl);
             }
 
@@ -36,7 +44,7 @@ namespace TrickingLibrary.Api.Pages.Account
 
         public class LoginForm
         {
-            [Required] public string ReturnUrl { get; set; }
+            public string ReturnUrl { get; set; }
             [Required] public string Username { get; set; }
 
             [Required]

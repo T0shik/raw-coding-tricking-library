@@ -18,7 +18,7 @@ using TrickingLibrary.Models;
 namespace TrickingLibrary.Api.Controllers
 {
     [Route("api/users")]
-    [Authorize(TrickingLibraryConstants.Policies.User)]
+    [Authorize]
     public class UserController : ApiController
     {
         private readonly AppDbContext _ctx;
@@ -37,20 +37,23 @@ namespace TrickingLibrary.Api.Controllers
                 return BadRequest();
             }
 
-            var user = await _ctx.Users.FirstOrDefaultAsync(x => x.Id.Equals(userId));
+            var user = await _ctx.Users
+                .Where(x => x.Id.Equals(userId))
+                .Select(UserViewModels.ProfileProjection(IsMod))
+                .FirstOrDefaultAsync();
 
             if (user != null) return Ok(user);
 
-            user = new User
+            var newUser = new User
             {
                 Id = userId,
-                Username = Username
+                Username = Username,
             };
 
-            _ctx.Add(user);
+            _ctx.Add(newUser);
             await _ctx.SaveChangesAsync();
 
-            return Ok(user);
+            return Ok(UserViewModels.CreateProfile(newUser, IsMod));
         }
 
         [AllowAnonymous]

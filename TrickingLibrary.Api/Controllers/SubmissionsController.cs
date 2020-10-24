@@ -32,7 +32,7 @@ namespace TrickingLibrary.Api.Controllers
         public Submission Get(int id) => _ctx.Submissions.FirstOrDefault(x => x.Id.Equals(id));
 
         [HttpPost]
-        [Authorize(TrickingLibraryConstants.Policies.User)]
+        [Authorize]
         public async Task<IActionResult> Create(
             [FromBody] SubmissionForm submissionForm,
             [FromServices] Channel<EditVideoMessage> channel,
@@ -89,7 +89,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpPut("{id}/vote")]
-        [Authorize(TrickingLibraryConstants.Policies.User)]
+        [Authorize]
         public async Task<IActionResult> Vote(int id, int value)
         {
             if (value != -1 && value != 1)

@@ -27,7 +27,6 @@
 import ItemContentLayout from "@/components/item-content-layout";
 import {mapMutations, mapState} from "vuex";
 import Submission from "@/components/submission";
-import {guard, GUARD_LEVEL} from "@/components/auth/auth-mixins";
 import SubmissionFeed from "@/components/submission-feed";
 
 export default {
@@ -35,7 +34,6 @@ export default {
   data: () => ({
     uploadingImage: false
   }),
-  mixins: [guard(GUARD_LEVEL.AUTH)],
   methods: {
     changeProfileImage(e) {
       if (this.uploadingImage) return;

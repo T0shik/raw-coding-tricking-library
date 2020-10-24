@@ -44,7 +44,7 @@ export default {
       return COMMENT_PARENT_TYPE.COMMENT
     },
     loadRepliesEvent() {
-      return this.started ? 'load-replies' : ''
+      return !this.started ? 'load-replies' : ''
     }
   }
 }

@@ -28,7 +28,7 @@
                     Profile
                   </v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="$auth.signoutRedirect()">
+                <v-list-item @click="logout">
                   <v-list-item-title>
                     <v-icon left>mdi-logout</v-icon>
                     Logout
@@ -60,10 +60,16 @@ import {mapActions, mapGetters, mapState} from "vuex";
 import IfAuth from "@/components/auth/if-auth";
 
 export default {
+  name: "default",
   components: {IfAuth, ContentCreationDialog},
   computed: {
     ...mapState('auth', ['profile']),
     ...mapGetters('auth', ['moderator']),
   },
+  methods: {
+    logout() {
+      console.log("Logout not implemnted")
+    }
+  }
 }
 </script>

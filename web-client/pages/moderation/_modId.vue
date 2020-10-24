@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <v-row v-if="modItem && authenticated">
+    <v-row v-if="modItem">
       <v-col cols="8">
         <v-row justify="center">
           <v-col cols="4" v-if="current">
@@ -52,10 +52,8 @@
 </template>
 
 <script>
-
 import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
-import {guard, GUARD_LEVEL} from "@/components/auth/auth-mixins";
 import {COMMENT_PARENT_TYPE} from "@/components/comments/_shared";
 
 const endpointResolver = (type) => {
@@ -84,7 +82,6 @@ const reviewStatusIcon = (status) => {
 
 export default {
   components: {TrickInfoCard, CommentSection},
-  mixins: [guard(GUARD_LEVEL.AUTH)],
   data: () => ({
     current: null,
     target: null,

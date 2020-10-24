@@ -15,7 +15,7 @@ using TrickingLibrary.Models.Abstractions;
 namespace TrickingLibrary.Api.Controllers
 {
     [Route("api/comments")]
-    [Authorize(TrickingLibraryConstants.Policies.User)]
+    [Authorize]
     public class CommentController : ApiController
     {
         private readonly AppDbContext _ctx;

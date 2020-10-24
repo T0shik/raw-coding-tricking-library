@@ -6,6 +6,10 @@ export default {
   mode: 'universal',
 
   publicRuntimeConfig: {
+    auth: {
+      loginPath: process.env.LOGIN_PATH,
+      logoutPath: process.env.LOGOUT_PATH,
+    },
     axios: {
       baseURL: "https://localhost:5001",
       https: true
@@ -52,7 +56,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    {src: '~/plugins/client-init.js', mode: 'client'}
+    "~/plugins/axios"
   ],
   /*
   ** Nuxt.js dev-modules

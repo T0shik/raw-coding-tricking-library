@@ -67,9 +67,9 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet("{trickId}/submissions")]
-        [Authorize(Policy = TrickingLibraryConstants.Policies.Anon)]
         public IEnumerable<object> ListSubmissionsForTrick(string trickId, [FromQuery] FeedQuery feedQuery)
         {
+
             return _ctx.Submissions
                 .Include(x => x.Video)
                 .Include(x => x.User)
@@ -80,7 +80,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = TrickingLibraryConstants.Policies.User)]
+        [Authorize]
         public async Task<object> Create([FromBody] TrickForm trickForm)
         {
             var trick = new Trick
@@ -113,7 +113,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = TrickingLibraryConstants.Policies.User)]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] TrickForm trickForm)
         {
             var trick = _ctx.Tricks.FirstOrDefault(x => x.Id == trickForm.Id);

@@ -21,7 +21,7 @@ namespace TrickingLibrary.Api
     {
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
-        private const string AllCors = "All";
+        private const string NuxtJsApp = "NuxtJsApp";
 
         public Startup(
             IConfiguration config,
@@ -46,9 +46,11 @@ namespace TrickingLibrary.Api
                 .AddScoped<VersionMigrationContext>()
                 .AddTransient<CommentCreationContext>()
                 .AddFileManager(_config)
-                .AddCors(options => options.AddPolicy(AllCors, build => build.AllowAnyHeader()
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()));
+                .AddCors(options => options.AddPolicy(NuxtJsApp, build => build
+                    .WithHeaders("X-Requested-With")
+                    .WithOrigins("https://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowCredentials()));
         }
 
         public void Configure(IApplicationBuilder app)
@@ -58,7 +60,7 @@ namespace TrickingLibrary.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(AllCors);
+            app.UseCors(NuxtJsApp);
 
             app.UseRouting();
 
@@ -168,28 +170,11 @@ namespace TrickingLibrary.Api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(TrickingLibraryConstants.Policies.Anon, policy =>
-                {
-                    policy.AddAuthenticationSchemes(IdentityServerConstants.LocalApi.AuthenticationScheme);
-                    policy.AddRequirements(new AnonymousRequirement());
-                });
-                options.AddPolicy(TrickingLibraryConstants.Policies.Mod, policy =>
-                {
-                    var is4Policy = options.GetPolicy(IdentityServerConstants.LocalApi.PolicyName);
-                    policy.Combine(is4Policy);
-                    policy.RequireClaim(TrickingLibraryConstants.Claims.Role,
-                        TrickingLibraryConstants.Roles.Mod);
-                });
+                options.AddPolicy(TrickingLibraryConstants.Policies.Mod, policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(TrickingLibraryConstants.Claims.Role, TrickingLibraryConstants.Roles.Mod)
+                );
             });
-        }
-    }
-
-    internal class AnonymousRequirement : IAuthorizationHandler, IAuthorizationRequirement
-    {
-        public Task HandleAsync(AuthorizationHandlerContext context)
-        {
-            context.Succeed(this);
-            return Task.CompletedTask;
         }
     }
 }

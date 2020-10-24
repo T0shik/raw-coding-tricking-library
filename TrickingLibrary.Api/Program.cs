@@ -27,11 +27,11 @@ namespace TrickingLibrary.Api
                 {
                     var fakeCounter = 20;
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                    var testUser = new IdentityUser("test") {Email = "test@test.com"};
+                    var testUser = new IdentityUser("test") {Id = "test_user_id", Email = "test@test.com"};
                     userMgr.CreateAsync(testUser, "password").GetAwaiter().GetResult();
 
                     var fakeUsers = Enumerable.Range(0, fakeCounter)
-                        .Select(i => new IdentityUser($"fake{i}") {Email = $"fake{i}@test.com"})
+                        .Select(i => new IdentityUser($"fake{i}") {Id = $"fake_{i}_id", Email = $"fake{i}@test.com"})
                         .ToList();
 
                     foreach (var fakeUser in fakeUsers)
@@ -44,7 +44,7 @@ namespace TrickingLibrary.Api
                         });
                     }
 
-                    var mod = new IdentityUser("mod") {Email = "mod@test.com"};
+                    var mod = new IdentityUser("mod") {Id = "mod_user_id", Email = "mod@test.com"};
                     userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
                     userMgr.AddClaimAsync(mod,
                             new Claim(TrickingLibraryConstants.Claims.Role,
@@ -161,7 +161,8 @@ namespace TrickingLibrary.Api
                                 .Range(0, i)
                                 .Select(ii => new SubmissionVote
                                 {
-                                    UserId = fakeUsers[ii].Id
+                                    UserId = fakeUsers[ii].Id,
+                                    Value = 1,
                                 })
                                 .ToList(),
                             Comments = Enumerable
