@@ -85,5 +85,18 @@ namespace TrickingLibrary.Api.ViewModels
                     .ToList(),
                 User = UserViewModels.CreateFlat(trick.User),
             };
+
+        public static readonly Func<Trick, object> CreateFlat = FlatProjection.Compile();
+        public static Expression<Func<Trick, object>> FlatProjection =>
+            trick => new
+            {
+                trick.Id,
+                trick.Slug,
+                trick.Name,
+                trick.Description,
+                trick.Difficulty,
+                trick.Version,
+                User = UserViewModels.CreateFlat(trick.User),
+            };
     }
 }

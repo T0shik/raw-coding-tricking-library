@@ -3,48 +3,86 @@
     <v-row v-if="modItem">
       <v-col cols="8">
         <v-row justify="center">
-          <v-col cols="4" v-if="current">
+          <v-col cols="5" v-if="current">
             <trick-info-card :trick="current"/>
           </v-col>
-          <v-col cols="4" class="d-flex justify-center" v-if="current">
+          <v-col cols="2" class="d-flex justify-center" v-if="current">
             <v-icon size="46">mdi-arrow-right</v-icon>
           </v-col>
-          <v-col cols="4" v-if="target">
-            <trick-info-card :trick="target"/>
+          <v-col cols="5" v-if="target">
+            <v-sheet class="pa-3" rounded>
+              <trick-info-card :trick="target"/>
+            </v-sheet>
           </v-col>
         </v-row>
-        <comment-section :parent-id="modItem.id" :parent-type="moderationItemParentType"/>
+        <v-divider class="my-2"/>
+        <if-auth>
+          <template v-slot:allowed>
+            <div class="text-h4">Change Discussion</div>
+            <comment-section :parent-id="modItem.id" :parent-type="moderationItemParentType"/>
+          </template>
+          <template v-slot:forbidden="{login}">
+            <div class="d-flex justify-center">
+              <v-btn outlined @click="login">sign in to join the discussion</v-btn>
+            </div>
+          </template>
+        </if-auth>
       </v-col>
       <v-col cols="4">
         <v-card>
-          <v-card-title>Reviews ({{ approveCount }} / 3)</v-card-title>
           <v-card-text>
             <div v-if="reviews.length > 0">
-              <div v-for="review in reviews" :key="`review-${review.id}`">
-                <v-icon :color="reviewStatusColor(review.status)">{{ reviewStatusIcon(review.status) }}</v-icon>
-                Username
-                <span v-if="review.comment">- {{ review.comment }}</span>
+              <div class="d-flex mb-2" v-for="review in reviews" :key="`review-${review.id}`">
+                <div class="mr-3">
+                  <v-badge bottom overlap
+                           :color="reviewStatusColor(review.status)"
+                           :icon="reviewStatusIcon(review.status)">
+                    <user-header :image-url="review.user.image"/>
+                  </v-badge>
+                </div>
+                <div>
+                  <div>{{ review.user.username }}</div>
+                  <div class="body-1 white--text" v-if="review.comment">{{ review.comment }}</div>
+                </div>
               </div>
             </div>
-            <div v-else>No Reviews</div>
-
+            <div class="d-flex justify-center" v-else>No Reviews</div>
             <v-divider class="my-3"></v-divider>
 
-            <v-text-field label="Review Comment" v-model="reviewComment"></v-text-field>
+            <div v-if="moderator">
+              <div v-if="outdated">
+                Outdated
+              </div>
+              <v-select :label="'Review'" v-else v-model="review.status" :items="reviewActions">
+                <template v-slot:item="{on, attrs, item}">
+                  <v-list-item v-on="on" :attrs="attrs" :value="item.value">
+                    <v-list-item-icon>
+                      <v-icon :color="reviewStatusColor(item.value)">
+                        {{ reviewStatusIcon(item.value) }}
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>{{ item.text }}</v-list-item-content>
+                  </v-list-item>
+                </template>
+              </v-select>
+              <v-dialog :value="review.status >= 0" persistent width="400">
+                <v-card v-if="selectedReview">
+                  <v-card-text class="pt-4">
+                    <v-text-field label="Review Comment" v-model="review.comment"></v-text-field>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn text @click="resetReviewForm">Cancel</v-btn>
+                    <v-spacer/>
+                    <v-btn :color="reviewStatusColor(review.status)"
+                           :disabled="selectedReview.commentRequired && review.comment.length < 5"
+                           @click="createReview">
+                      {{ selectedReview.text }}
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </div>
           </v-card-text>
-          <div v-if="outdated">
-            Outdated
-          </div>
-          <v-card-actions v-else class="justify-center">
-            <v-btn v-for="action in reviewActions"
-                   :color="reviewStatusColor(action.status)"
-                   :key="`ra-${action.title}`"
-                   :disabled="action.disabled"
-                   @click="createReview(action.status)">
-              <v-icon>{{ reviewStatusIcon(action.status) }}</v-icon>
-              {{ action.title }}
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -55,79 +93,66 @@
 import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
 import {COMMENT_PARENT_TYPE} from "@/components/comments/_shared";
+import {modItemRenderer, REVIEW_STATUS} from "@/components/moderation";
+import IfAuth from "@/components/auth/if-auth";
+import UserHeader from "@/components/user-header";
+import {mapGetters} from "vuex";
 
-const endpointResolver = (type) => {
-  if (type === 'trick') return 'tricks'
-}
-
-const REVIEW_STATUS = {
-  APPROVED: 0,
-  REJECTED: 1,
-  WAITING: 2,
-}
-
-const reviewStatusColor = (status) => {
-  if (REVIEW_STATUS.APPROVED === status) return "green"
-  if (REVIEW_STATUS.REJECTED === status) return "red"
-  if (REVIEW_STATUS.WAITING === status) return "orange"
-  return ''
-}
-
-const reviewStatusIcon = (status) => {
-  if (REVIEW_STATUS.APPROVED === status) return "mdi-check"
-  if (REVIEW_STATUS.REJECTED === status) return "mdi-close"
-  if (REVIEW_STATUS.WAITING === status) return "mdi-clock"
-  return ''
-}
+const initReview = () => ({
+  status: -1,
+  comment: ""
+})
 
 export default {
-  components: {TrickInfoCard, CommentSection},
+  components: {UserHeader, IfAuth, TrickInfoCard, CommentSection},
+  mixins: [modItemRenderer],
   data: () => ({
     current: null,
     target: null,
     modItem: null,
-    reviewComment: "",
+    reviews: [],
+    review: initReview()
   }),
-  async created() {
+  async fetch() {
     const {modId} = this.$route.params
 
     this.modItem = await this.$axios.$get(`/api/moderation-items/${modId}`)
     const {type, current, target} = this.modItem
 
-    const endpoint = endpointResolver(type)
-
+    const endpoint = this.endpointResolver(type)
+    this.loadReviews()
     this.$axios.$get(`/api/${endpoint}/${current}`)
       .then((item) => this.current = item)
     this.$axios.$get(`/api/${endpoint}/${target}`)
       .then((item) => this.target = item)
   },
   methods: {
-    sendComment(content) {
+    createReview() {
       const {modId} = this.$route.params
 
-      return this.$axios.$post(`/api/moderation-items/${modId}/comments`,
-        {content})
-        .then((comment) => this.comments.push(comment))
-    },
-    createReview(status) {
-      const {modId} = this.$route.params
-
-      return this.$axios.$post(`/api/moderation-items/${modId}/reviews`,
+      return this.$axios.$put(`/api/moderation-items/${modId}/reviews`,
         {
-          comment: this.reviewComment,
-          status: status,
+          comment: this.review.comment,
+          status: this.review.status,
         })
-        .then((review) => this.reviews.push(review))
+        .then(this.loadReviews)
+        .then(this.resetReviewForm)
     },
-    reviewStatusColor,
-    reviewStatusIcon,
+    loadReviews() {
+      return this.$axios.$get(`/api/moderation-items/${this.modItem.id}/reviews`)
+        .then((reviews) => this.reviews = reviews)
+    },
+    resetReviewForm() {
+      this.review = initReview()
+    }
   },
   computed: {
+    ...mapGetters('auth', ['moderator']),
     reviewActions() {
       return [
-        {title: "Approve", status: REVIEW_STATUS.APPROVED, disabled: false},
-        {title: "Reject", status: REVIEW_STATUS.REJECTED, disabled: !this.reviewComment},
-        {title: "Wait", status: REVIEW_STATUS.WAITING, disabled: !this.reviewComment},
+        {text: "Approve", value: REVIEW_STATUS.APPROVED, commentRequired: false},
+        {text: "Reject", value: REVIEW_STATUS.REJECTED, commentRequired: true},
+        {text: "Wait", value: REVIEW_STATUS.WAITING, commentRequired: true},
       ]
     },
     approveCount() {
@@ -136,11 +161,12 @@ export default {
     outdated() {
       return this.current && this.target && this.target.version - this.current.version <= 0
     },
-    reviews() {
-      return this.modItem.reviews
-    },
     moderationItemParentType() {
       return COMMENT_PARENT_TYPE.MODERATION_ITEM
+    },
+    selectedReview() {
+      const review = this.reviewActions.find(x => x.value === this.review.status)
+      return review === undefined ? null : review
     }
   }
 }

@@ -42,8 +42,10 @@
         </v-stepper-content>
 
         <v-stepper-content step="2">
+          <v-text-field v-if="editing" label="Reason For Change" v-model="form.reason"></v-text-field>
+
           <div class="d-flex justify-center">
-            <v-btn @click="save">Save</v-btn>
+            <v-btn :disabled="editing && form.reason.length <= 5" @click="save">Save</v-btn>
           </div>
         </v-stepper-content>
       </v-stepper-items>
@@ -64,6 +66,7 @@ export default {
       name: "",
       description: "",
       difficulty: "",
+      reason: "",
       prerequisites: [],
       progressions: [],
       categories: [],

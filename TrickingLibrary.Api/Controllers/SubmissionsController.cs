@@ -102,7 +102,7 @@ namespace TrickingLibrary.Api.Controllers
 
             if (vote == null)
             {
-                _ctx.Add(new SubmissionVote
+                _ctx.Add(new SubmissionMutable
                 {
                     SubmissionId = id,
                     UserId = UserId,

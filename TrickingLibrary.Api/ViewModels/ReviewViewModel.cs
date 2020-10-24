@@ -16,5 +16,17 @@ namespace TrickingLibrary.Api.ViewModels
                 review.Comment,
                 review.Status,
             };
+
+        public static readonly Func<Review, object> CreateWithUser = WithUserProjection.Compile();
+
+        public static Expression<Func<Review, object>> WithUserProjection =>
+            review => new
+            {
+                review.Id,
+                review.ModerationItemId,
+                review.Comment,
+                review.Status,
+                User = UserViewModels.CreateFlat(review.User),
+            };
     }
 }

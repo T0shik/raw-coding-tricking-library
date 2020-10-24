@@ -66,10 +66,6 @@ export default {
     ...mapState('auth', ['profile']),
     ...mapGetters('auth', ['moderator']),
   },
-  methods: {
-    logout() {
-      console.log("Logout not implemnted")
-    }
-  }
+  methods: mapActions('auth', ['logout']),
 }
 </script>

@@ -2,7 +2,7 @@
 
 namespace TrickingLibrary.Models
 {
-    public class SubmissionVote : Vote
+    public class SubmissionMutable : Mutable
     {
         public int SubmissionId { get; set; }
         public Submission Submission { get; set; }

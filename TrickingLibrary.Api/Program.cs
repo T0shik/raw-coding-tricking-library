@@ -29,6 +29,12 @@ namespace TrickingLibrary.Api
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                     var testUser = new IdentityUser("test") {Id = "test_user_id", Email = "test@test.com"};
                     userMgr.CreateAsync(testUser, "password").GetAwaiter().GetResult();
+                    ctx.Add(new User
+                    {
+                        Id = testUser.Id,
+                        Username = testUser.UserName,
+                        Image = "https://localhost:5001/api/files/image/user.jpg"
+                    });
 
                     var fakeUsers = Enumerable.Range(0, fakeCounter)
                         .Select(i => new IdentityUser($"fake{i}") {Id = $"fake_{i}_id", Email = $"fake{i}@test.com"})
@@ -54,9 +60,9 @@ namespace TrickingLibrary.Api
 
                     ctx.Add(new User
                     {
-                        Id = testUser.Id,
-                        Username = testUser.UserName,
-                        Image = "https://localhost:5001/api/files/image/user.jpg"
+                        Id = mod.Id,
+                        Username = mod.UserName,
+                        Image = "https://localhost:5001/api/files/image/judge.jpg",
                     });
                     ctx.Add(new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"});
                     ctx.Add(new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"});
@@ -115,9 +121,9 @@ namespace TrickingLibrary.Api
                         },
                         VideoProcessed = true,
                         UserId = testUser.Id,
-                        Votes = new List<SubmissionVote>
+                        Votes = new List<SubmissionMutable>
                         {
-                            new SubmissionVote
+                            new SubmissionMutable
                             {
                                 UserId = testUser.Id,
                                 Value = 1,
@@ -159,7 +165,7 @@ namespace TrickingLibrary.Api
                             Created = DateTime.UtcNow.AddDays(-i),
                             Votes = Enumerable
                                 .Range(0, i)
-                                .Select(ii => new SubmissionVote
+                                .Select(ii => new SubmissionMutable
                                 {
                                     UserId = fakeUsers[ii].Id,
                                     Value = 1,

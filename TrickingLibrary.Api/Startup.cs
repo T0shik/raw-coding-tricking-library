@@ -47,7 +47,7 @@ namespace TrickingLibrary.Api
                 .AddTransient<CommentCreationContext>()
                 .AddFileManager(_config)
                 .AddCors(options => options.AddPolicy(NuxtJsApp, build => build
-                    .WithHeaders("X-Requested-With")
+                    .AllowAnyHeader()
                     .WithOrigins("https://localhost:3000")
                     .AllowAnyMethod()
                     .AllowCredentials()));

@@ -32,7 +32,7 @@
       </template>
     </if-auth>
     <v-divider class="mt-2"></v-divider>
-    <user-header :username="trick.user.username" :image-url="trick.user.image" reverse>
+    <user-header class="pa-2" :username="trick.user.username" :image-url="trick.user.image" reverse>
       <template v-slot:append>
         <span>{{ trick.version === 1 ? 'Created by' : 'Edited by' }}</span>
       </template>

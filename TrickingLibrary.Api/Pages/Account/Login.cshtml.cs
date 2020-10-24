@@ -17,9 +17,7 @@ namespace TrickingLibrary.Api.Pages.Account
             Form = new LoginForm {ReturnUrl = returnUrl};
         }
 
-        public async Task<IActionResult> OnPostAsync(
-            [FromServices] SignInManager<IdentityUser> signInManager,
-            [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> OnPostAsync([FromServices] SignInManager<IdentityUser> signInManager)
         {
             if (!ModelState.IsValid)
                 return Page();
@@ -29,11 +27,6 @@ namespace TrickingLibrary.Api.Pages.Account
 
             if (signInResult.Succeeded)
             {
-                if (string.IsNullOrEmpty(Form.ReturnUrl))
-                {
-                    return Redirect(env.IsDevelopment() ? "https://localhost:3000/" : "/");
-                }
-
                 return Redirect(Form.ReturnUrl);
             }
 
@@ -44,7 +37,7 @@ namespace TrickingLibrary.Api.Pages.Account
 
         public class LoginForm
         {
-            public string ReturnUrl { get; set; }
+            [Required] public string ReturnUrl { get; set; }
             [Required] public string Username { get; set; }
 
             [Required]

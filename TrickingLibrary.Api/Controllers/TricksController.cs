@@ -148,6 +148,9 @@ namespace TrickingLibrary.Api.Controllers
                 Current = trick.Id,
                 Target = newTrick.Id,
                 Type = ModerationTypes.Trick,
+                // todo validation for reason
+                Reason = trickForm.Reason,
+                UserId = UserId,
             });
             await _ctx.SaveChangesAsync();
 

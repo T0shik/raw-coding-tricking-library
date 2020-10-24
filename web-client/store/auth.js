@@ -23,13 +23,16 @@ export const actions = {
   initialize({commit}) {
     return this.$axios.$get('/api/users/me')
       .then(profile => commit('saveProfile', {profile}))
-      .catch(e => {
-        console.error("loading profile error", e.response)
+      .catch(() => {
       })
   },
   login() {
     if (process.server) return;
-    localStorage.setItem('post-login-redirect-path', location.pathname)
-    window.location = this.$config.auth.loginPath
+    const returnUrl = encodeURIComponent(location.href)
+    window.location = `${this.$config.auth.loginPath}?returnUrl=${returnUrl}`
+  },
+  logout() {
+    if (process.server) return;
+    window.location = this.$config.auth.logoutPath
   }
 }

@@ -36,16 +36,18 @@
       }
     },
     loadContent() {
-      if (process.server) return;
       this.started = true
       this.loading = true
       return this.$axios.$get(this.getContentUrl())
         .then(content => {
           this.finished = content.length < this.limit
-          content.forEach(x => this.content.push(x))
+          this.parseContent(content)
           this.cursor += content.length;
         })
         .finally(() => this.loading = false)
+    },
+    parseContent(content) {
+      content.forEach(x => this.content.push(x))
     }
   },
   computed: {
