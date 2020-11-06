@@ -79,7 +79,7 @@ export default {
   computed: mapState('tricks', ['lists']),
   methods: {
     ...mapMutations('video-upload', ['hide']),
-    ...mapActions('video-upload', ['startVideoUpload']),
+    ...mapActions('video-upload', ['startVideoUpload', 'createSubmission']),
     async handleFile(file) {
       if (!file) return;
 
@@ -89,7 +89,7 @@ export default {
       this.step++;
     },
     save() {
-      this.$axios.$post("/api/submissions", this.form)
+      this.createSubmission({form: this.form})
       this.hide();
     }
   }

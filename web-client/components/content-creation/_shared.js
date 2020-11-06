@@ -14,7 +14,8 @@ export const form = (formFactory) => ({
     form: formFactory()
   }),
   created: function () {
-    this.setup(this.form)
+    if (this.setup)
+      this.setup(this.form)
   },
   computed: {
     ...mapState('video-upload', ['setup']),

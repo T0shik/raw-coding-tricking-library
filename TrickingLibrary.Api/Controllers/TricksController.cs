@@ -69,7 +69,6 @@ namespace TrickingLibrary.Api.Controllers
         [HttpGet("{trickId}/submissions")]
         public IEnumerable<object> ListSubmissionsForTrick(string trickId, [FromQuery] FeedQuery feedQuery)
         {
-
             return _ctx.Submissions
                 .Include(x => x.Video)
                 .Include(x => x.User)
@@ -77,6 +76,18 @@ namespace TrickingLibrary.Api.Controllers
                 .OrderFeed(feedQuery)
                 .Select(SubmissionViewModels.PerspectiveProjection(UserId))
                 .ToList();
+        }
+
+        [HttpGet("{trickId}/best-submission")]
+        public object ListSubmissionsForTrick(string trickId)
+        {
+            return _ctx.Submissions
+                .Include(x => x.Video)
+                .Include(x => x.User)
+                .Where(x => x.TrickId.Equals(trickId, StringComparison.InvariantCultureIgnoreCase))
+                .OrderByDescending(x => x.Votes.Sum(v => v.Value))
+                .Select(SubmissionViewModels.PerspectiveProjection(UserId))
+                .FirstOrDefault();
         }
 
         [HttpPost]

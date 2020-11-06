@@ -10,6 +10,7 @@ namespace TrickingLibrary.Models.Moderation
         public int Target { get; set; }
         public string Type { get; set; }
         public string Reason { get; set; }
+        public bool Rejected { get; set; }
         public IList<Comment> Comments { get; set; } = new List<Comment>();
         public IList<Review> Reviews { get; set; } = new List<Review>();
     }

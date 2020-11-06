@@ -120,11 +120,13 @@ export default {
     const {type, current, target} = this.modItem
 
     const endpoint = this.endpointResolver(type)
-    this.loadReviews()
-    this.$axios.$get(`/api/${endpoint}/${current}`)
+    const loadReviews = this.loadReviews()
+    const loadCurrent = this.$axios.$get(`/api/${endpoint}/${current}`)
       .then((item) => this.current = item)
-    this.$axios.$get(`/api/${endpoint}/${target}`)
+    const loadTarget = this.$axios.$get(`/api/${endpoint}/${target}`)
       .then((item) => this.target = item)
+
+    await Promise.all([loadReviews, loadCurrent, loadTarget])
   },
   methods: {
     createReview() {

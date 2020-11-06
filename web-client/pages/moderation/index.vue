@@ -3,7 +3,7 @@
     <v-list>
       <v-list-item :to="`/moderation/${modItem.id}`" :key="modItem.id" v-for="modItem in content">
         <v-list-item-avatar>
-          <user-header :image-url="modItem.targetObject.user.image"/>
+          <user-header :image-url="modItem.user.image"/>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>{{ modItem.targetObject.name }}</v-list-item-title>
@@ -33,6 +33,9 @@
           </div>
         </v-list-item-content>
       </v-list-item>
+      <v-list-item v-if="!finished" @click="loadContent">
+        <v-list-item-content class="d-flex justify-center">Load More</v-list-item-content>
+      </v-list-item>
     </v-list>
   </div>
 </template>
@@ -52,13 +55,6 @@ export default {
     getContentUrl() {
       return `/api/moderation-items${this.query}`
     },
-    parseContent(content) {
-      const {moderationItems, targets} = content;
-      this.content = moderationItems.map(x => ({
-        ...x,
-        targetObject: targets.find(t => t.id === x.target)
-      }))
-    }
   }
 }
 </script>

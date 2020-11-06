@@ -28,32 +28,37 @@ namespace TrickingLibrary.Api.Controllers
         public object All([FromQuery] FeedQuery feedQuery)
         {
             var moderationItems = _ctx.ModerationItems
+                .Include(x => x.User)
                 .Include(x => x.Reviews)
                 .Where(x => !x.Deleted)
                 .OrderFeed(feedQuery)
                 .ToList();
 
-            var targets = moderationItems.GroupBy(x => x.Type)
-                .SelectMany(x =>
-                {
-                    var targetIds = x.Select(m => m.Target).ToArray();
-                    if (x.Key == ModerationTypes.Trick)
-                    {
-                        return _ctx.Tricks
-                            .Include(t => t.User)
-                            .Where(t => targetIds.Contains(t.Id))
-                            .Select(TrickViewModels.FlatProjection)
-                            .ToList();
-                    }
-
-                    return Enumerable.Empty<object>();
-                });
-
-            return new
+            var targetMapping = new Dictionary<int, object>();
+            foreach (var group in moderationItems.GroupBy(x => x.Type))
             {
-                ModerationItems = moderationItems.Select(ModerationItemViewModels.CreateFlat).ToList(),
-                Targets = targets,
-            };
+                var targetIds = group.Select(m => m.Target).ToArray();
+                if (group.Key == ModerationTypes.Trick)
+                {
+                    _ctx.Tricks
+                        .Where(t => targetIds.Contains(t.Id))
+                        .ToList()
+                        .ForEach(trick => targetMapping[trick.Id] = TrickViewModels.CreateFlat(trick));
+                }
+            }
+
+            return moderationItems.Select(x => new
+            {
+                x.Id,
+                x.Current,
+                x.Target,
+                x.Reason,
+                x.Type,
+                Updated = x.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
+                Reviews = x.Reviews.Select(y => y.Status).ToList(),
+                User = UserViewModels.CreateFlat(x.User),
+                TargetObject = targetMapping[x.Target],
+            });
         }
 
         [HttpGet("{id}")]
@@ -114,10 +119,27 @@ namespace TrickingLibrary.Api.Controllers
             // todo use configuration replace the magic '3'
             try
             {
-                if (modItem.Reviews.Count >= 3)
+                int goal = 3, score = 0, wait = 0;
+                foreach (var r in modItem.Reviews)
+                {
+                    if (r.Status == ReviewStatus.Approved)
+                        score++;
+                    else if (r.Status == ReviewStatus.Rejected)
+                        score--;
+                    else if (r.Status == ReviewStatus.Waiting)
+                        wait++;
+                }
+
+                if (score >= goal + wait)
                 {
                     migrationContext.Migrate(modItem);
                     modItem.Deleted = true;
+                }
+                else if (score <= -goal - wait)
+                {
+                    // todo cleanup target
+                    modItem.Deleted = true;
+                    modItem.Rejected = true;
                 }
 
                 modItem.Updated = DateTime.UtcNow;

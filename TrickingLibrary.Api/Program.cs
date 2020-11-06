@@ -146,6 +146,7 @@ namespace TrickingLibrary.Api
                     {
                         Target = 3,
                         Type = ModerationTypes.Trick,
+                        UserId = testUser.Id,
                     });
                     ctx.SaveChanges();
 

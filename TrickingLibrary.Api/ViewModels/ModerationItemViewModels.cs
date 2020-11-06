@@ -20,19 +20,5 @@ namespace TrickingLibrary.Api.ViewModels
                 modItem.Type,
                 Updated = modItem.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
             };
-
-        public static readonly Func<ModerationItem, object> CreateFlat = FlatProjection.Compile();
-
-        public static Expression<Func<ModerationItem, object>> FlatProjection =>
-            modItem => new
-            {
-                modItem.Id,
-                modItem.Current,
-                modItem.Target,
-                modItem.Reason,
-                modItem.Type,
-                Updated = modItem.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
-                Reviews = modItem.Reviews.AsQueryable().Select(x => x.Status).ToList(),
-            };
     }
 }

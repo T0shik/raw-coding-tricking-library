@@ -2,7 +2,7 @@
   <div class="my-1">
     <div>
       <v-sheet class="d-flex align-center mb-1" rounded color="grey darken-3">
-        <user-header :username="comment.user.username" :image-url="comment.user.image" size="28"/>
+        <user-header class="pa-2" :username="comment.user.username" :image-url="comment.user.image" size="28"/>
         <div v-html="comment.htmlContent"></div>
       </v-sheet>
       <v-btn small text v-if="!replying" @click="replying = true">reply</v-btn>

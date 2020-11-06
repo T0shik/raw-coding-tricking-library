@@ -4,7 +4,7 @@
       <v-tab>Latest</v-tab>
       <v-tab>Top</v-tab>
     </v-tabs>
-    <submission :submission="s" v-for="s in content" :key="`submission-${s.id}`"/>
+    <submission class="my-3" :submission="s" v-for="s in content" :key="`submission-${s.id}`"/>
   </div>
 </template>
 

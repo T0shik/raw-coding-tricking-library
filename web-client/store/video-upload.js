@@ -12,16 +12,14 @@
 export const state = initState
 
 export const mutations = {
-  activate(state, {component, edit = false, editPayload = null, setup = null}) {
+  activate(state, {component, edit = false, editPayload = null, setup = () => {}}) {
     state.active = true;
     state.component = component;
     if(edit){
       state.editing = true;
       state.editPayload = editPayload
     }
-    if(setup) {
-      state.setup = setup
-    }
+    state.setup = setup
   },
   hide(state) {
     state.active = false;
@@ -41,13 +39,13 @@ export const mutations = {
 export const actions = {
   startVideoUpload({commit, dispatch}, {form}) {
     const source = this.$axios.CancelToken.source()
-    const uploadPromise = this.$axios.post("/api/files", form, {
+    const uploadPromise = this.$axios.$post("/api/files", form, {
       progress: false,
       cancelToken: source.token
     })
-      .then(({data}) => {
+      .then(video => {
         commit('completeUpload')
-        return data
+        return video
       })
       .catch(err => {
         if(this.$axios.isCancel(err)){
@@ -77,7 +75,7 @@ export const actions = {
     }
 
     form.video = await state.uploadPromise;
-    await dispatch('submissions/createSubmission', {form}, {root: true})
+    await this.$axios.$post("/api/submissions", form)
     commit('reset')
   }
 }
