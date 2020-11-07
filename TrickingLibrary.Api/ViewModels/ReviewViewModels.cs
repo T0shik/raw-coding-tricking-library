@@ -4,7 +4,7 @@ using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api.ViewModels
 {
-    public static class ReviewViewModel
+    public static class ReviewViewModels
     {
         public static readonly Func<Review, object> Create = Projection.Compile();
 

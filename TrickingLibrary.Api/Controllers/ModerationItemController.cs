@@ -72,7 +72,7 @@ namespace TrickingLibrary.Api.Controllers
             _ctx.Reviews
                 .Include(x => x.User)
                 .Where(x => x.ModerationItemId.Equals(id))
-                .Select(ReviewViewModel.WithUserProjection)
+                .Select(ReviewViewModels.WithUserProjection)
                 .ToList();
 
         [HttpPut("{id}/reviews")]

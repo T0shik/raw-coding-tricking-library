@@ -43,7 +43,7 @@ namespace TrickingLibrary.Api.Controllers
             return _ctx.Comments
                 .Where(filter)
                 .OrderFeed(feedQuery)
-                .Select(CommentViewModel.Projection)
+                .Select(CommentViewModels.Projection)
                 .ToList();
         }
 
@@ -58,7 +58,7 @@ namespace TrickingLibrary.Api.Controllers
                     .Setup(UserId)
                     .CreateAsync(commentForm);
 
-                return Ok(CommentViewModel.Create(comment));
+                return Ok(CommentViewModels.Create(comment));
             }
             catch (CommentCreationContext.ParentNotFoundException e)
             {

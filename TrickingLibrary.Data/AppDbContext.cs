@@ -30,6 +30,11 @@ namespace TrickingLibrary.Data
             modelBuilder.Entity<TrickCategory>()
                 .HasKey(x => new {x.CategoryId, x.TrickId});
 
+            modelBuilder.Entity<Difficulty>()
+                .HasMany(x => x.Tricks)
+                .WithOne()
+                .HasForeignKey(x => x.Difficulty);
+
             modelBuilder.Entity<TrickRelationship>()
                 .HasKey(x => new {x.PrerequisiteId, x.ProgressionId});
 

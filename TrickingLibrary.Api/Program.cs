@@ -64,12 +64,20 @@ namespace TrickingLibrary.Api
                         Username = mod.UserName,
                         Image = "https://localhost:5001/api/files/image/judge.jpg",
                     });
-                    ctx.Add(new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"});
-                    ctx.Add(new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"});
-                    ctx.Add(new Difficulty {Id = "hard", Name = "Hard", Description = "Hard Test"});
-                    ctx.Add(new Category {Id = "kick", Name = "Kick", Description = "Kick Test"});
-                    ctx.Add(new Category {Id = "flip", Name = "Flip", Description = "Flip Test"});
-                    ctx.Add(new Category {Id = "transition", Name = "Transition", Description = "Transition Test"});
+                    var difficulties = new List<Difficulty>
+                    {
+                        new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"},
+                        new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"},
+                        new Difficulty {Id = "hard", Name = "Hard", Description = "Hard Test"},
+                    };
+                    ctx.AddRange(difficulties);
+                    var categories = new List<Category>
+                    {
+                        new Category {Id = "kick", Name = "Kick", Description = "Kick Test"},
+                        new Category {Id = "flip", Name = "Flip", Description = "Flip Test"},
+                        new Category {Id = "transition", Name = "Transition", Description = "Transition Test"},
+                    };
+                    ctx.AddRange(categories);
                     ctx.Add(new Trick
                     {
                         Id = 1,
@@ -194,6 +202,47 @@ namespace TrickingLibrary.Api
                     }
 
                     ctx.SaveChanges();
+
+                    for (var i = 0; i < fakeCounter; i++)
+                    {
+                        var trick = new Trick
+                        {
+                            UserId = testUser.Id,
+                            Slug = $"fake-trick-{i}",
+                            Name = $"Fake Trickery Trick {i}",
+                            Active = true,
+                            Version = 1,
+                            Description = $"This is a really fake trick # {i}",
+                            Difficulty = difficulties[i % difficulties.Count].Id,
+                            TrickCategories = new List<TrickCategory>
+                            {
+                                new TrickCategory {CategoryId = categories[i % categories.Count].Id},
+                            },
+                        };
+                        ctx.Add(trick);
+                        ctx.Add(new Submission
+                        {
+                            TrickId = trick.Slug,
+                            Description = $"Fake submission IIII {i}",
+                            Video = new Video
+                            {
+                                VideoLink = "https://localhost:5001/api/files/video/three.mp4",
+                                ThumbLink = "https://localhost:5001/api/files/image/three.jpg",
+                            },
+                            VideoProcessed = true,
+                            UserId = testUser.Id,
+                            Created = DateTime.UtcNow.AddDays(-i),
+                            Votes = Enumerable
+                                .Range(0, i)
+                                .Select(ii => new SubmissionMutable
+                                {
+                                    UserId = fakeUsers[ii].Id,
+                                    Value = 1,
+                                })
+                                .ToList(),
+                        });
+                        ctx.SaveChanges();
+                    }
                 }
             }
 

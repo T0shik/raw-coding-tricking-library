@@ -78,18 +78,6 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
         }
 
-        [HttpGet("{trickId}/best-submission")]
-        public object ListSubmissionsForTrick(string trickId)
-        {
-            return _ctx.Submissions
-                .Include(x => x.Video)
-                .Include(x => x.User)
-                .Where(x => x.TrickId.Equals(trickId, StringComparison.InvariantCultureIgnoreCase))
-                .OrderByDescending(x => x.Votes.Sum(v => v.Value))
-                .Select(SubmissionViewModels.PerspectiveProjection(UserId))
-                .FirstOrDefault();
-        }
-
         [HttpPost]
         [Authorize]
         public async Task<object> Create([FromBody] TrickForm trickForm)

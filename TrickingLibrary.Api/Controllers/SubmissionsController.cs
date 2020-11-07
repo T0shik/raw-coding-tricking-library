@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
@@ -30,6 +32,20 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpGet("{id}")]
         public Submission Get(int id) => _ctx.Submissions.FirstOrDefault(x => x.Id.Equals(id));
+
+
+        [HttpGet("best-submission")]
+        public object ListSubmissionsForTrick(string byTricks)
+        {
+            var trickIds = byTricks.Split(';');
+            return _ctx.Submissions
+                .Include(x => x.Video)
+                .Include(x => x.User)
+                .Where(x => trickIds.Contains(x.TrickId))
+                .OrderByDescending(x => x.Votes.Sum(v => v.Value))
+                .Select(SubmissionViewModels.PerspectiveProjection(UserId))
+                .FirstOrDefault();
+        }
 
         [HttpPost]
         [Authorize]

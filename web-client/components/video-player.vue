@@ -14,65 +14,65 @@
 </template>
 
 <script>
-  //todo take care of the localhost address ^^^
+//todo take care of the localhost address ^^^
 
-  export default {
-    name: "video-player",
-    props: {
-      video: {
-        required: true,
-        type: String,
-      },
-      thumb: {
-        required: true,
-        type: String,
-      }
+export default {
+  name: "video-player",
+  props: {
+    video: {
+      required: true,
+      type: String,
     },
-    data: () => ({
-      playing: false
-    }),
-    watch: {
-      playing: function (v) {
-        if (v) {
-          this.$refs.video.play()
-        } else {
-          this.$refs.video.pause()
-        }
+    thumb: {
+      required: true,
+      type: String,
+    }
+  },
+  data: () => ({
+    playing: false
+  }),
+  watch: {
+    playing: function (v) {
+      if (v) {
+        this.$refs.video.play()
+      } else {
+        this.$refs.video.pause()
       }
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
-  .video-container {
+.video-container {
+  display: flex;
+  position: relative;
+  width: 100%;
+
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  .play-button {
+    position: absolute;
     display: flex;
-    position: relative;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.36);
     width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    &.hide {
+      opacity: 0;
+    }
+  }
+
+  video {
+    width: 100%;
+    z-index: 1;
 
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
-
-    .play-button {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: rgba(0, 0, 0, 0.36);
-      width: 100%;
-      height: 100%;
-      z-index: 2;
-
-      &.hide {
-        opacity: 0;
-      }
-    }
-
-    video {
-      width: 100%;
-      z-index: 1;
-
-      border-top-left-radius: inherit;
-      border-top-right-radius: inherit;
-    }
   }
+}
 </style>

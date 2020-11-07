@@ -4,7 +4,7 @@ using TrickingLibrary.Models;
 
 namespace TrickingLibrary.Api.ViewModels
 {
-    public static class CommentViewModel
+    public static class CommentViewModels
     {
         public static readonly Func<Comment, object> Create = Projection.Compile();
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
@@ -21,7 +22,10 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Category> All() => _ctx.Categories.ToList();
+        public IEnumerable<object> All() =>
+            _ctx.Categories
+                .Select(CategoryViewModels.Projection)
+                .ToList();
 
         [HttpGet("{id}")]
         public Category Get(string id) =>

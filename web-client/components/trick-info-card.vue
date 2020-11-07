@@ -26,9 +26,11 @@
         </div>
       </template>
       <template v-slot:forbidden="{login}">
-        <v-btn small outlined @click="login">
-          Log in to edit/update
-        </v-btn>
+        <div class="d-flex justify-center">
+          <v-btn small outlined @click="login">
+            Log in to edit/update
+          </v-btn>
+        </div>
       </template>
     </if-auth>
     <v-divider class="mt-2"></v-divider>

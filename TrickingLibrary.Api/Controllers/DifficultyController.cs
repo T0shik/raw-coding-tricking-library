@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
 
@@ -20,7 +22,10 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Difficulty> All() => _ctx.Difficulties.ToList();
+        public IEnumerable<object> All() =>
+            _ctx.Difficulties
+                .Select(DifficultyViewModels.Projection)
+                .ToList();
 
         [HttpGet("{id}")]
         public Difficulty Get(string id) =>
