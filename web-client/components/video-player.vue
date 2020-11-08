@@ -14,7 +14,6 @@
 </template>
 
 <script>
-//todo take care of the localhost address ^^^
 
 export default {
   name: "video-player",

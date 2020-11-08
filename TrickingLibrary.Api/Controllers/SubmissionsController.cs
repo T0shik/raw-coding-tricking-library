@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TrickingLibrary.Api.BackgroundServices.SubmissionVoting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
@@ -106,31 +107,23 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpPut("{id}/vote")]
         [Authorize]
-        public async Task<IActionResult> Vote(int id, int value)
+        public async Task<IActionResult> Vote(
+            int id,
+            int value,
+            [FromServices] ISubmissionVoteSink voteSink
+        )
         {
             if (value != -1 && value != 1)
             {
                 return BadRequest();
             }
 
-            var vote = _ctx.SubmissionVotes
-                .FirstOrDefault(x => x.SubmissionId == id && x.UserId == UserId);
-
-            if (vote == null)
+            await voteSink.Submit(new VoteForm
             {
-                _ctx.Add(new SubmissionMutable
-                {
-                    SubmissionId = id,
-                    UserId = UserId,
-                    Value = value,
-                });
-            }
-            else
-            {
-                vote.Value = value;
-            }
-
-            await _ctx.SaveChangesAsync();
+                SubmissionId = id,
+                UserId = UserId,
+                Value = value,
+            });
 
             return Ok();
         }

@@ -129,9 +129,9 @@ namespace TrickingLibrary.Api
                         },
                         VideoProcessed = true,
                         UserId = testUser.Id,
-                        Votes = new List<SubmissionMutable>
+                        Votes = new List<SubmissionVote>
                         {
-                            new SubmissionMutable
+                            new SubmissionVote
                             {
                                 UserId = testUser.Id,
                                 Value = 1,
@@ -174,7 +174,7 @@ namespace TrickingLibrary.Api
                             Created = DateTime.UtcNow.AddDays(-i),
                             Votes = Enumerable
                                 .Range(0, i)
-                                .Select(ii => new SubmissionMutable
+                                .Select(ii => new SubmissionVote
                                 {
                                     UserId = fakeUsers[ii].Id,
                                     Value = 1,
@@ -234,7 +234,7 @@ namespace TrickingLibrary.Api
                             Created = DateTime.UtcNow.AddDays(-i),
                             Votes = Enumerable
                                 .Range(0, i)
-                                .Select(ii => new SubmissionMutable
+                                .Select(ii => new SubmissionVote
                                 {
                                     UserId = fakeUsers[ii].Id,
                                     Value = 1,

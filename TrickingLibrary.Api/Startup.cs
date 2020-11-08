@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TrickingLibrary.Api.BackgroundServices.SubmissionVoting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Data;
 
@@ -23,8 +24,7 @@ namespace TrickingLibrary.Api
         private readonly IWebHostEnvironment _env;
         private const string NuxtJsApp = "NuxtJsApp";
 
-        public Startup(
-            IConfiguration config,
+        public Startup(IConfiguration config,
             IWebHostEnvironment env)
         {
             _config = config;
@@ -41,9 +41,14 @@ namespace TrickingLibrary.Api
 
             services.AddRazorPages();
 
+            services.Configure<ModerationItemReviewContext.ModerationSettings>(_config.GetSection(nameof(ModerationItemReviewContext.ModerationSettings)));
+
             services.AddHostedService<VideoEditingBackgroundService>()
                 .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
                 .AddScoped<VersionMigrationContext>()
+                .AddSingleton<ModerationItemReviewContext>()
+                .AddSingleton<ISubmissionVoteSink, SubmissionVotingService>()
+                .AddHostedService(provider => (SubmissionVotingService) provider.GetRequiredService<ISubmissionVoteSink>())
                 .AddTransient<CommentCreationContext>()
                 .AddFileManager(_config)
                 .AddCors(options => options.AddPolicy(NuxtJsApp, build => build

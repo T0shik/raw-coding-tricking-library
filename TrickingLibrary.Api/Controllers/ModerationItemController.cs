@@ -77,77 +77,23 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpPut("{id}/reviews")]
         [Authorize(TrickingLibraryConstants.Policies.Mod)]
-        public async Task<IActionResult> Review(int id,
-            [FromBody] ReviewForm reviewForm,
-            [FromServices] VersionMigrationContext migrationContext)
+        public async Task<IActionResult> Review(
+            int id,
+            [FromBody] ModerationItemReviewContext.ReviewForm reviewForm,
+            [FromServices] ModerationItemReviewContext moderationItemReviewContext
+        )
         {
-            var modItem = _ctx.ModerationItems
-                .Include(x => x.Reviews)
-                .FirstOrDefault(x => x.Id == id);
-
-            if (modItem == null)
-            {
-                return NoContent();
-            }
-
-            if (modItem.Deleted)
-            {
-                return BadRequest("Moderation item no longer exists.");
-            }
-
-            // todo make this async safe
-            var review = _ctx.Reviews.FirstOrDefault(x => x.ModerationItemId == id && x.UserId == UserId);
-
-            if (review == null)
-            {
-                review = new Review
-                {
-                    ModerationItemId = id,
-                    Comment = reviewForm.Comment,
-                    Status = reviewForm.Status,
-                    UserId = UserId,
-                };
-
-                _ctx.Add(review);
-            }
-            else
-            {
-                review.Comment = reviewForm.Comment;
-                review.Status = reviewForm.Status;
-            }
-
-            // todo use configuration replace the magic '3'
             try
             {
-                int goal = 3, score = 0, wait = 0;
-                foreach (var r in modItem.Reviews)
-                {
-                    if (r.Status == ReviewStatus.Approved)
-                        score++;
-                    else if (r.Status == ReviewStatus.Rejected)
-                        score--;
-                    else if (r.Status == ReviewStatus.Waiting)
-                        wait++;
-                }
-
-                if (score >= goal + wait)
-                {
-                    migrationContext.Migrate(modItem);
-                    modItem.Deleted = true;
-                }
-                else if (score <= -goal - wait)
-                {
-                    // todo cleanup target
-                    modItem.Deleted = true;
-                    modItem.Rejected = true;
-                }
-
-                modItem.Updated = DateTime.UtcNow;
-                await _ctx.SaveChangesAsync();
+                await moderationItemReviewContext.Review(id, UserId, reviewForm);
             }
             catch (VersionMigrationContext.InvalidVersionException e)
             {
                 return BadRequest(e.Message);
+            }
+            catch (ModerationItemReviewContext.ModerationItemNotFound)
+            {
+                return NoContent();
             }
 
             return Ok();
