@@ -1,9 +1,9 @@
-﻿const initState = () => ({
+﻿const initState = (active = false, component = null) => ({
   uploadPromise: null,
   uploadCancelSource: null,
   uploadCompleted: false,
-  active: false,
-  component: null,
+  active: active,
+  component: component,
   editing: false,
   editPayload: null,
   setup: null
@@ -12,10 +12,13 @@
 export const state = initState
 
 export const mutations = {
-  activate(state, {component, edit = false, editPayload = null, setup = () => {}}) {
+  activate(state, {
+    component, edit = false, editPayload = null, setup = () => {
+    }
+  }) {
     state.active = true;
     state.component = component;
-    if(edit){
+    if (edit) {
       state.editing = true;
       state.editPayload = editPayload
     }
@@ -31,8 +34,12 @@ export const mutations = {
   completeUpload(state) {
     state.uploadCompleted = true
   },
-  reset(state) {
-    Object.assign(state, initState())
+  reset(state, {hard}) {
+    if (hard) {
+      Object.assign(state, initState())
+    } else {
+      Object.assign(state, initState(true, state.component))
+    }
   }
 }
 
@@ -48,14 +55,14 @@ export const actions = {
         return video
       })
       .catch(err => {
-        if(this.$axios.isCancel(err)){
+        if (this.$axios.isCancel(err)) {
           // todo popup notify
         }
       })
 
     commit("setTask", {uploadPromise, source})
   },
-  async cancelUpload({state, commit}) {
+  async cancelUpload({state, commit}, {hard}) {
     if (state.uploadPromise) {
       if (state.uploadCompleted) {
         commit('hide')
@@ -66,7 +73,7 @@ export const actions = {
       }
     }
 
-    commit('reset')
+    commit('reset', {hard})
   },
   async createSubmission({state, commit, dispatch}, {form}) {
     if (!state.uploadPromise) {
@@ -76,6 +83,6 @@ export const actions = {
 
     form.video = await state.uploadPromise;
     await this.$axios.$post("/api/submissions", form)
-    commit('reset')
+    commit('reset', {hard: true})
   }
 }

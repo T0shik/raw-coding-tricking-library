@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
@@ -39,12 +41,16 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpPost]
-        public async Task<Difficulty> Create([FromBody] Difficulty category)
+        public async Task<IActionResult> Create([FromBody] DifficultyForm form)
         {
-            category.Id = category.Name.Replace(" ", "-").ToLowerInvariant();
-            _ctx.Add(category);
+            _ctx.Add(new Difficulty
+            {
+                Id = form.Name.Replace(" ", "-").ToLowerInvariant(),
+                Name = form.Name,
+                Description = form.Description,
+            });
             await _ctx.SaveChangesAsync();
-            return category;
+            return Ok();
         }
     }
 }

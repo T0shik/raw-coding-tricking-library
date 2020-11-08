@@ -20,6 +20,13 @@ namespace TrickingLibrary.Api
             _ctx = ctx;
         }
 
+        public class CommentForm
+        {
+            public int ParentId { get; set; }
+            public ParentType ParentType { get; set; }
+            public string Content { get; set; }
+        }
+
         public CommentCreationContext Setup(string userId)
         {
             if (string.IsNullOrEmpty(userId))

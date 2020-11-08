@@ -17,35 +17,60 @@
       </v-stepper-header>
       <v-stepper-items class="fpt-0">
         <v-stepper-content step="1">
-          <div>
-            <v-text-field label="Name" v-model="form.name"></v-text-field>
-            <v-text-field label="Description" v-model="form.description"></v-text-field>
+          <v-form ref="form" v-model="validation.valid">
+            <v-text-field :rules="validation.name"
+                          label="Name"
+                          v-model="form.name"/>
+            <v-text-field label="Description"
+                          :rules="validation.description"
+                          v-model="form.description"/>
             <v-select :items="lists.difficulties.map(x => ({value: x.id, text: x.name}))"
+                      :rules="validation.difficulty"
                       v-model="form.difficulty"
-                      label="Difficulty"></v-select>
-            <v-select :items="lists.tricks.filter(x => !form.id || x.id !== form.id).map(x => ({value: x.id, text: x.name}))"
-                      v-model="form.prerequisites"
-                      label="Prerequisites"
-                      multiple small-chips chips deletable-chips></v-select>
-            <v-select :items="lists.tricks.filter(x => !form.id || x.id !== form.id).map(x => ({value: x.id, text: x.name}))"
-                      v-model="form.progressions"
-                      label="Progressions"
-                      multiple small-chips chips deletable-chips></v-select>
+                      label="Difficulty"/>
+            <v-autocomplete
+              :items="lists.tricks.filter(x => !form.id || x.id !== form.id).map(x => ({value: x.id, text: x.name}))"
+              v-model="form.prerequisites"
+              label="Prerequisites"
+              multiple small-chips chips deletable-chips/>
+            <v-autocomplete
+              :items="lists.tricks.filter(x => !form.id || x.id !== form.id).map(x => ({value: x.id, text: x.name}))"
+              v-model="form.progressions"
+              label="Progressions"
+              multiple small-chips chips deletable-chips/>
             <v-select :items="lists.categories.map(x => ({value: x.id, text: x.name}))"
                       v-model="form.categories"
                       label="Categories"
-                      multiple small-chips chips deletable-chips></v-select>
+                      :rules="validation.categories"
+                      multiple small-chips chips deletable-chips/>
+
             <div class="d-flex justify-center">
-              <v-btn @click="step++">Next</v-btn>
+              <v-btn :disabled="!validation.valid" @click="$refs.form.validate() ? step++ : 0">Next</v-btn>
             </div>
-          </div>
+          </v-form>
         </v-stepper-content>
 
         <v-stepper-content step="2">
+
+          <div><strong>Name:</strong> {{ form.name }}</div>
+          <div><strong>Description:</strong> {{ form.description }}</div>
+          <div v-if="form.difficulty"><strong>Difficulty:</strong> {{ dictionary.difficulties[form.difficulty].name }}
+          </div>
+          <div><strong>Prerequisites:</strong> {{ form.prerequisites.map(x => dictionary.tricks[x].name).join(', ') }}
+          </div>
+          <div><strong>Progressions:</strong> {{ form.progressions.map(x => dictionary.tricks[x].name).join(', ') }}
+          </div>
+          <div><strong>Categories:</strong> {{ form.categories.map(x => dictionary.categories[x].name).join(', ') }}
+          </div>
+
           <v-text-field v-if="editing" label="Reason For Change" v-model="form.reason"></v-text-field>
 
-          <div class="d-flex justify-center">
-            <v-btn :disabled="editing && form.reason.length <= 5" @click="save">Save</v-btn>
+          <div class="d-flex mt-3">
+            <v-btn @click="step--">Edit</v-btn>
+            <v-spacer/>
+            <v-btn color="primary" :disabled="editing && form.reason.length <= 5" @click="save">
+              {{ editing ? "Update" : "Create" }}
+            </v-btn>
           </div>
         </v-stepper-content>
       </v-stepper-items>
@@ -71,6 +96,13 @@ export default {
       progressions: [],
       categories: [],
     },
+    validation: {
+      valid: false,
+      name: [v => !!v || "Name is required."],
+      description: [v => !!v || "Description is required."],
+      difficulty: [v => !!v || "Difficulty is required."],
+      categories: [v => v.length > 0 || "At least one category is required."],
+    },
     testData: [
       {text: "Foo", value: 1},
       {text: "Bar", value: 2},
@@ -84,7 +116,7 @@ export default {
   },
   computed: {
     ...mapState('video-upload', ['editing', 'editPayload']),
-    ...mapState('tricks', ['lists']),
+    ...mapState('tricks', ['lists', 'dictionary']),
   },
   methods: {
     ...mapActions('tricks', ['createTrick', 'updateTrick']),

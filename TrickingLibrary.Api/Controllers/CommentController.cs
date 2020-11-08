@@ -49,7 +49,7 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create(
-            [FromBody] CommentForm commentForm,
+            [FromBody] CommentCreationContext.CommentForm commentForm,
             [FromServices] CommentCreationContext commentCreationContext)
         {
             try

@@ -4,7 +4,7 @@ export const close = {
   methods: {
     ...mapActions('video-upload', ['cancelUpload']),
     close() {
-      this.cancelUpload()
+      return this.cancelUpload({hard: true})
     }
   }
 }

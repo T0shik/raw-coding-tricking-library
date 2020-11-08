@@ -80,22 +80,22 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<object> Create([FromBody] TrickForm trickForm)
+        public async Task<object> Create([FromBody] CreateTrickForm createTrickForm)
         {
             var trick = new Trick
             {
-                Slug = trickForm.Name.Replace(" ", "-").ToLowerInvariant(),
-                Name = trickForm.Name,
+                Slug = createTrickForm.Name.Replace(" ", "-").ToLowerInvariant(),
+                Name = createTrickForm.Name,
                 Version = 1,
-                Description = trickForm.Description,
-                Difficulty = trickForm.Difficulty,
-                Prerequisites = trickForm.Prerequisites
+                Description = createTrickForm.Description,
+                Difficulty = createTrickForm.Difficulty,
+                Prerequisites = createTrickForm.Prerequisites
                     .Select(x => new TrickRelationship {PrerequisiteId = x})
                     .ToList(),
-                Progressions = trickForm.Progressions
+                Progressions = createTrickForm.Progressions
                     .Select(x => new TrickRelationship {ProgressionId = x})
                     .ToList(),
-                TrickCategories = trickForm.Categories
+                TrickCategories = createTrickForm.Categories
                     .Select(x => new TrickCategory {CategoryId = x})
                     .ToList(),
                 UserId = UserId,
@@ -106,6 +106,7 @@ namespace TrickingLibrary.Api.Controllers
             {
                 Target = trick.Id,
                 Type = ModerationTypes.Trick,
+                UserId = UserId,
             });
             await _ctx.SaveChangesAsync();
             return TrickViewModels.Create(trick);
@@ -113,9 +114,9 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> Update([FromBody] TrickForm trickForm)
+        public async Task<IActionResult> Update([FromBody] UpdateTrickForm createTrickForm)
         {
-            var trick = _ctx.Tricks.FirstOrDefault(x => x.Id == trickForm.Id);
+            var trick = _ctx.Tricks.FirstOrDefault(x => x.Id == createTrickForm.Id);
             if (trick == null)
             {
                 return NoContent();
@@ -126,15 +127,15 @@ namespace TrickingLibrary.Api.Controllers
                 Slug = trick.Slug,
                 Name = trick.Name,
                 Version = trick.Version + 1,
-                Description = trickForm.Description,
-                Difficulty = trickForm.Difficulty,
-                Prerequisites = trickForm.Prerequisites
+                Description = createTrickForm.Description,
+                Difficulty = createTrickForm.Difficulty,
+                Prerequisites = createTrickForm.Prerequisites
                     .Select(x => new TrickRelationship {PrerequisiteId = x})
                     .ToList(),
-                Progressions = trickForm.Progressions
+                Progressions = createTrickForm.Progressions
                     .Select(x => new TrickRelationship {ProgressionId = x})
                     .ToList(),
-                TrickCategories = trickForm.Categories
+                TrickCategories = createTrickForm.Categories
                     .Select(x => new TrickCategory {CategoryId = x})
                     .ToList(),
                 UserId = UserId,
@@ -148,7 +149,7 @@ namespace TrickingLibrary.Api.Controllers
                 Target = newTrick.Id,
                 Type = ModerationTypes.Trick,
                 // todo validation for reason
-                Reason = trickForm.Reason,
+                Reason = createTrickForm.Reason,
                 UserId = UserId,
             });
             await _ctx.SaveChangesAsync();

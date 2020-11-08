@@ -1,5 +1,6 @@
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -37,7 +38,9 @@ namespace TrickingLibrary.Api
 
             AddIdentity(services);
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(x => x
+                    .RegisterValidatorsFromAssembly(typeof(Startup).Assembly));
 
             services.AddRazorPages();
 

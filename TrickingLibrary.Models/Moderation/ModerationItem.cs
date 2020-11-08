@@ -5,7 +5,6 @@ namespace TrickingLibrary.Models.Moderation
 {
     public class ModerationItem : Mutable
     {
-
         public int Current { get; set; }
         public int Target { get; set; }
         public string Type { get; set; }
