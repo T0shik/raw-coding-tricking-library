@@ -16,11 +16,7 @@
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn icon v-bind="attrs" v-on="on">
-                  <v-avatar size="36">
-                    <img v-if="profile.image" :src="profile.image"
-                         alt="profile image"/>
-                    <v-icon v-else>mdi-account-circle</v-icon>
-                  </v-avatar>
+                  <user-header :image-url="profile.image" :link="false" size="36"/>
                 </v-btn>
               </template>
               <v-list>
@@ -61,10 +57,11 @@ import ContentCreationDialog from "../components/content-creation/content-creati
 import {mapActions, mapGetters, mapState} from "vuex";
 import IfAuth from "@/components/auth/if-auth";
 import NavBarSearch from "@/components/nav-bar-search";
+import UserHeader from "@/components/user-header";
 
 export default {
   name: "default",
-  components: {NavBarSearch, IfAuth, ContentCreationDialog},
+  components: {UserHeader, NavBarSearch, IfAuth, ContentCreationDialog},
   computed: {
     ...mapState('auth', ['profile']),
     ...mapGetters('auth', ['moderator']),

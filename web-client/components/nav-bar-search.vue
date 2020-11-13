@@ -20,6 +20,7 @@
 
 <script>
 import {mapState} from "vuex";
+import {hasOccurrences} from "@/data/functions";
 
 const itemFactory = (name, type, slug) => ({
   name,
@@ -33,12 +34,7 @@ export default {
   name: "nav-bar-search",
   methods: {
     searchFilter(item, queryText, itemText) {
-      const queryParts = queryText.toLowerCase().split(' ');
-      if (queryParts.length > 0) {
-        return queryParts.map(x => item.searchIndex.indexOf(x) > -1).reduce((a, b) => a && b)
-      }
-
-      return true;
+      return hasOccurrences(item.searchIndex, queryText)
     }
   },
   computed: {

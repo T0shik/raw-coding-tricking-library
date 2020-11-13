@@ -96,7 +96,6 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Description,
                 trick.Difficulty,
                 trick.Version,
-                User = UserViewModels.CreateFlat(trick.User),
             };
     }
 }

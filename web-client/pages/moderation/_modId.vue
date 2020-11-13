@@ -10,9 +10,7 @@
             <v-icon size="46">mdi-arrow-right</v-icon>
           </v-col>
           <v-col cols="5" v-if="target">
-            <v-sheet class="pa-3" rounded>
-              <trick-info-card :trick="target"/>
-            </v-sheet>
+            <trick-info-card :trick="target"/>
           </v-col>
         </v-row>
         <v-divider class="my-2"/>

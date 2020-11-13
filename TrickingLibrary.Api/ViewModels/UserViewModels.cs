@@ -7,6 +7,21 @@ namespace TrickingLibrary.Api.ViewModels
 {
     public static class UserViewModels
     {
+        public static Expression<Func<User, object>> Projection =>
+            user => new
+            {
+                user.Id,
+                user.Username,
+                user.Image,
+                Submissions = user.Submissions.AsQueryable().Select(x => new
+                    {
+                        x.Id,
+                        x.TrickId,
+                        Score = x.Votes.Sum(v => v.Value),
+                    })
+                    .ToList(),
+            };
+
         public static readonly Func<User, object> CreateFlatCache = FlatProjection.Compile();
         public static object CreateFlat(User user) => CreateFlatCache(user);
 
@@ -20,6 +35,7 @@ namespace TrickingLibrary.Api.ViewModels
 
         public static readonly Func<User, object> CreateProfileCache = ProfileProjection(false).Compile();
         public static readonly Func<User, object> CreateModProfileCache = ProfileProjection(true).Compile();
+
         public static object CreateProfile(User user, bool isMod) =>
             isMod ? CreateModProfileCache(user) : CreateProfileCache(user);
 
@@ -29,6 +45,13 @@ namespace TrickingLibrary.Api.ViewModels
                 user.Id,
                 user.Username,
                 user.Image,
+                Submissions = user.Submissions.AsQueryable().Select(x => new
+                    {
+                        x.Id,
+                        x.TrickId,
+                        Score = x.Votes.Sum(v => v.Value),
+                    })
+                    .ToList(),
                 IsMod = isMod,
             };
     }

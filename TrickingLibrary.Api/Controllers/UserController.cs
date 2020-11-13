@@ -39,6 +39,8 @@ namespace TrickingLibrary.Api.Controllers
 
             var user = await _ctx.Users
                 .Where(x => x.Id.Equals(userId))
+                .Include(x => x.Submissions)
+                .ThenInclude(x => x.Votes)
                 .Select(UserViewModels.ProfileProjection(IsMod))
                 .FirstOrDefaultAsync();
 
@@ -61,7 +63,9 @@ namespace TrickingLibrary.Api.Controllers
         public object GetUser(string username) =>
             _ctx.Users
                 .Where(x => x.Username.Equals(username, StringComparison.InvariantCultureIgnoreCase))
-                .Select(UserViewModels.FlatProjection)
+                .Include(x => x.Submissions)
+                .ThenInclude(x => x.Votes)
+                .Select(UserViewModels.Projection)
                 .FirstOrDefault();
 
         [AllowAnonymous]

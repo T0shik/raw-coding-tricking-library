@@ -1,46 +1,46 @@
 ﻿<template>
-  <item-content-layout>
-    <template v-slot:content>
-      <trick-list :tricks="tricks"/>
-    </template>
-    <template v-slot:item>
-      <div v-if="category">
-        <div class="text-h6">{{ category.name }}</div>
-        <v-divider class="my-1"></v-divider>
-        <div class="text-body-2">{{ category.description }}</div>
-      </div>
-    </template>
-  </item-content-layout>
+  <div>
+    <div>
+      <div class="text-h4">{{ category.name }}</div>
+      <div class="text-body-1">{{ category.description }}</div>
+    </div>
+    <v-divider class="my-3"/>
+    <trick-list :tricks="tricks"/>
+  </div>
 </template>
 
 <script>
 import {mapState} from 'vuex'
-  import TrickList from "../../components/trick-list";
-  import ItemContentLayout from "../../components/item-content-layout";
+import TrickList from "../../components/trick-list";
+import ItemContentLayout from "../../components/item-content-layout";
 
-  export default {
-    components: {ItemContentLayout, TrickList},
-    data: () => ({
-      category: null,
-      tricks: [],
-    }),
-    computed: mapState('tricks', ['dictionary']),
-    async fetch() {
+export default {
+  components: {ItemContentLayout, TrickList},
+  computed: {
+    ...mapState('tricks', ['lists', 'dictionary']),
+    tricks() {
       const categoryId = this.$route.params.category;
-      this.category = this.dictionary.categories[categoryId]
-      this.tricks = await this.$axios.$get(`/api/categories/${categoryId}/tricks`)
+      return this.lists.tricks.filter(x => x.categories.indexOf(categoryId) > -1)
     },
-    head() {
-      if (!this.category) return {}
+    category() {
+      const categoryId = this.$route.params.category;
+      return this.dictionary.categories[categoryId]
+    }
+  },
+  async fetch() {
+    this.tricks = await this.$axios.$get(`/api/categories/${categoryId}/tricks`)
+  },
+  head() {
+    if (!this.category) return {}
 
-      return {
-        title: this.category.name,
-        meta: [
-          {hid: 'description', name: 'description', content: this.category.description}
-        ]
-      }
+    return {
+      title: this.category.name,
+      meta: [
+        {hid: 'description', name: 'description', content: this.category.description}
+      ]
     }
   }
+}
 </script>
 
 <style scoped>

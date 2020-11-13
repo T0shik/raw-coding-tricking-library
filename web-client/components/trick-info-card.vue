@@ -1,8 +1,8 @@
 ﻿<template>
-  <div>
+  <v-sheet class="pa-3" rounded min-width="300">
     <div class="text-h5">
       <span>{{ trick.name }}</span>
-      <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.slug}`">
+      <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.id}`">
         {{ difficulty.name }}
       </v-chip>
     </div>
@@ -39,7 +39,7 @@
         <span>{{ trick.version === 1 ? 'Created by' : 'Edited by' }}</span>
       </template>
     </user-header>
-  </div>
+  </v-sheet>
 </template>
 
 <script>

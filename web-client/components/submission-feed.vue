@@ -15,19 +15,29 @@ import {feed} from "@/components/feed";
 export default {
   name: "submission-feed",
   components: {Submission},
-  mixins: [feed('')],
+  mixins: [feed('latest')],
   data: () => ({
     tab: 0
   }),
-  watch: {
-    'tab': {
-      handler: function (n) {
-        this.order = n === 0 ? 'latest' :
-          n === 1 ? 'top' :
-            'latest'
-      },
-      immediate: true
+  async fetch() {
+    await this.loadContent()
+    if (this.$route.query.submission) {
+      const submission = await this.$axios.$get(`/api/submissions/${this.$route.query.submission}`)
+
+      const existingIndex = this.content.map(x => x.id).indexOf(submission.id)
+      if (existingIndex > -1) {
+        this.content.splice(existingIndex, 1)
+      }
+
+      this.content.unshift(submission)
     }
+  },
+  watch: {
+    'tab': function (n) {
+      this.order = n === 0 ? 'latest' :
+        n === 1 ? 'top' :
+          'latest'
+    },
   }
 }
 </script>

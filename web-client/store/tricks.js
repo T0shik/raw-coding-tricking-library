@@ -29,7 +29,6 @@ export const mutations = {
     setEntities(state, 'tricks', tricks)
   },
   setDifficulties(state, {difficulties}) {
-    console.log(difficulties)
     setEntities(state, 'difficulties', difficulties)
   },
   setCategories(state, {categories}) {

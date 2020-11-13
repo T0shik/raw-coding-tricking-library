@@ -32,7 +32,13 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpGet("{id}")]
-        public Submission Get(int id) => _ctx.Submissions.FirstOrDefault(x => x.Id.Equals(id));
+        public object Get(int id) =>
+            _ctx.Submissions
+                .Where(x => x.Id.Equals(id))
+                .Include(x => x.Video)
+                .Include(x => x.User)
+                .Select(SubmissionViewModels.PerspectiveProjection(UserId))
+                .FirstOrDefault();
 
 
         [HttpGet("best-submission")]
@@ -40,9 +46,9 @@ namespace TrickingLibrary.Api.Controllers
         {
             var trickIds = byTricks.Split(';');
             return _ctx.Submissions
+                .Where(x => trickIds.Contains(x.TrickId))
                 .Include(x => x.Video)
                 .Include(x => x.User)
-                .Where(x => trickIds.Contains(x.TrickId))
                 .OrderByDescending(x => x.Votes.Sum(v => v.Value))
                 .Select(SubmissionViewModels.PerspectiveProjection(UserId))
                 .FirstOrDefault();
