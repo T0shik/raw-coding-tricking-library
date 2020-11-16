@@ -15,6 +15,7 @@ namespace TrickingLibrary.Api.ViewModels
                 difficulty.Id,
                 difficulty.Name,
                 difficulty.Description,
+                Updated = difficulty.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
                 Tricks = difficulty.Tricks.AsQueryable().Select(x => x.Slug).ToList(),
             };
     }

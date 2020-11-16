@@ -10,7 +10,8 @@ const ROLES = {
 
 export const getters = {
   authenticated: state => state.profile != null,
-  moderator: (state, getters) => getters.authenticated && state.profile.isMod
+  moderator: (state, getters) => getters.authenticated && state.profile.isMod,
+  admin: (state, getters) => false
 }
 
 export const mutations = {

@@ -2,7 +2,7 @@
 
 namespace TrickingLibrary.Models.Moderation
 {
-    public class Review : Mutable
+    public class Review : Mutable<int>
     {
         public int ModerationItemId { get; set; }
         public ModerationItem ModerationItem { get; set; }

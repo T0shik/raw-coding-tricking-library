@@ -3,7 +3,7 @@ using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Models
 {
-    public class Difficulty : BaseModel<string>
+    public class Difficulty : Mutable<string>
     {
         public string Name { get; set; }
         public string Description { get; set; }

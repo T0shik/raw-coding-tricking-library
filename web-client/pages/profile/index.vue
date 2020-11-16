@@ -19,15 +19,7 @@
           {{ profile.username }}
         </div>
         <v-divider class="my-2"/>
-        <div>
-          <h6 class="text-h6 mb-2">Completed Tricks ({{ completedTricks.length }} / {{ lists.tricks.length }})</h6>
-          <v-chip class="mb-1 mr-1" small
-                  v-for="{submission, trick} in completedTricks"
-                  @click="goToSubmission(trick.slug, submission.id)"
-                  :key="`profile-trick-chip-${submission.id}`">
-            {{ trick.name }}
-          </v-chip>
-        </div>
+        <profile-completed-tricks :profile-submissions="profile.submissions"/>
       </div>
     </template>
   </item-content-layout>
@@ -38,11 +30,10 @@ import ItemContentLayout from "@/components/item-content-layout";
 import {mapMutations, mapState} from "vuex";
 import Submission from "@/components/submission";
 import SubmissionFeed from "@/components/submission-feed";
-import profile from "@/components/profile";
+import ProfileCompletedTricks from "@/components/profile-completed-tricks";
 
 export default {
-  components: {SubmissionFeed, Submission, ItemContentLayout},
-  mixins: [profile],
+  components: {ProfileCompletedTricks, SubmissionFeed, Submission, ItemContentLayout},
   data: () => ({
     uploadingImage: false
   }),

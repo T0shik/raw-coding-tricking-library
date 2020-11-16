@@ -1,17 +1,22 @@
 <template>
   <v-app dark>
     <v-app-bar app>
-      <nuxt-link class="text-h5 text--primary" style="text-decoration: none;" to="/">Tricking Library</nuxt-link>
+      <nuxt-link class="text-h5 text--primary mr-2" style="text-decoration: none;" to="/">
+        <span class="d-none d-md-flex">Tricking Library</span>
+        <span class="d-flex d-md-none">TL</span>
+      </nuxt-link>
 
       <v-spacer/>
       <nav-bar-search/>
       <v-spacer/>
 
-      <v-btn class="mx-1" depressed to="/moderation">Moderation</v-btn>
-
       <if-auth>
-        <template v-slot:allowed>
-          <div>
+        <template v-slot:allowed="{moderator}">
+          <div class="d-flex align-center">
+            <v-btn v-if="moderator"
+                   class="d-none d-md-flex mx-1"
+                   depressed
+                   to="/moderation">Moderation</v-btn>
             <content-creation-dialog/>
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
@@ -20,6 +25,12 @@
                 </v-btn>
               </template>
               <v-list>
+                <v-list-item class="d-flex d-md-none" to="/moderation">
+                  <v-list-item-title>
+                    <v-icon left>mdi-clipboard</v-icon>
+                    Moderation
+                  </v-list-item-title>
+                </v-list-item>
                 <v-list-item @click="$router.push('/profile')">
                   <v-list-item-title>
                     <v-icon left>mdi-account-circle</v-icon>

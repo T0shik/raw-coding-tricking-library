@@ -13,3 +13,11 @@
 .pointer {
   cursor: pointer;
 }
+
+@media (max-width: 600px) {
+  .v-autocomplete__content.v-menu__content {
+    width: 100% !important;
+    left: 0 !important;
+    max-width: 100% !important;
+  }
+}

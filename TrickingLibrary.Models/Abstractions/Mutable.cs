@@ -2,7 +2,7 @@
 
 namespace TrickingLibrary.Models.Abstractions
 {
-    public class Mutable : BaseModel<int>
+    public class Mutable<TKey> : BaseModel<TKey>
     {
         public string UserId { get; set; }
         public User User { get; set; }
