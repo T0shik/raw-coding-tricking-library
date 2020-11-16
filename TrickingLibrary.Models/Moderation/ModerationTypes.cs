@@ -4,5 +4,6 @@
     {
         public const string Trick = "trick";
         public const string Category = "category";
+        public const string Difficulty = "difficulty";
     }
 }

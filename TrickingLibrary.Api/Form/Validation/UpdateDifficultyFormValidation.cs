@@ -2,10 +2,11 @@
 
 namespace TrickingLibrary.Api.Form.Validation
 {
-    public class DifficultyFormValidation : AbstractValidator<DifficultyForm>
+    public class UpdateDifficultyFormValidation : AbstractValidator<UpdateDifficultyForm>
     {
-        public DifficultyFormValidation()
+        public UpdateDifficultyFormValidation()
         {
+            RuleFor(x => x.Id).GreaterThan(0);
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
         }

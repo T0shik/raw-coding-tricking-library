@@ -77,7 +77,10 @@ namespace TrickingLibrary.Api.Controllers
                 Name = createTrickForm.Name,
                 Version = 1,
                 Description = createTrickForm.Description,
-                Difficulty = createTrickForm.Difficulty,
+                TrickDifficulties = new List<TrickDifficulty>
+                {
+                    new TrickDifficulty {DifficultyId = createTrickForm.Difficulty}
+                },
                 Prerequisites = createTrickForm.Prerequisites
                     .Select(x => new TrickRelationship {PrerequisiteId = x})
                     .ToList(),
@@ -117,7 +120,10 @@ namespace TrickingLibrary.Api.Controllers
                 Name = trick.Name,
                 Version = trick.Version + 1,
                 Description = createTrickForm.Description,
-                Difficulty = createTrickForm.Difficulty,
+                TrickDifficulties = new List<TrickDifficulty>
+                {
+                    new TrickDifficulty {DifficultyId = createTrickForm.Difficulty}
+                },
                 Prerequisites = createTrickForm.Prerequisites
                     .Select(x => new TrickRelationship {PrerequisiteId = x})
                     .ToList(),

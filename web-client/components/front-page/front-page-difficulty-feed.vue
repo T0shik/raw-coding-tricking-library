@@ -3,7 +3,7 @@
     <v-row justify="space-around">
       <v-col lg="3" class="d-flex justify-center align-start" v-for="difficulty in content"
              :key="`difficulty-feed-${difficulty.id}`">
-        <v-card width="320" @click="() => $router.push(`/difficulty/${difficulty.id}`)" :ripple="false">
+        <v-card width="320" @click="() => $router.push(`/difficulty/${difficulty.slug}`)" :ripple="false">
           <v-card-title>{{ difficulty.name }}</v-card-title>
           <v-divider />
           <submission v-if="difficulty.submission"
@@ -45,12 +45,15 @@ export default {
       }
       const difficulties = this.lists.difficulties.slice(this.cursor, to)
       this.cursor += this.limit
-      const byTricks = (d) => d.tricks.reduce((a, b) => `${a};${b}`, "")
 
       const submissionRequests = difficulties.map(difficulty => {
         if (difficulty.tricks.length > 0) {
+          const byTricks = difficulty.tricks
+            .map(x => this.dictionary.tricks[x].slug)
+            .reduce((a, b) => `${a};${b}`, "")
+
           return this.$axios
-            .$get(`/api/submissions/best-submission?byTricks=${byTricks(difficulty)}`)
+            .$get(`/api/submissions/best-submission?byTricks=${byTricks}`)
             .then(submission => this.content.push({
               ...difficulty,
               submission
@@ -62,7 +65,7 @@ export default {
       return Promise.all(submissionRequests)
     }
   },
-  computed: mapState('tricks', ['lists'])
+  computed: mapState('tricks', ['lists', 'dictionary'])
 }
 </script>
 

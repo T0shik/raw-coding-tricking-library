@@ -1,6 +1,8 @@
 ﻿<template>
   <v-list>
-    <v-list-item :to="`/moderation/${modItem.id}`" :key="modItem.id" v-for="modItem in content">
+    <v-list-item :to="`/moderation/${modItem.id}`"
+                 :key="`moderation-item-${modItem.type}-${modItem.id}`"
+                 v-for="modItem in content">
       <v-list-item-avatar>
         <user-header :image-url="modItem.user.image"/>
       </v-list-item-avatar>

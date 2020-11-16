@@ -9,12 +9,12 @@ using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api.Controllers
 {
-    [ApiController]
     [Route("api/difficulties")]
-    public class DifficultyController : ControllerBase
+    public class DifficultyController : ApiController
     {
         private readonly AppDbContext _ctx;
 
@@ -26,28 +26,66 @@ namespace TrickingLibrary.Api.Controllers
         [HttpGet]
         public IEnumerable<object> All() =>
             _ctx.Difficulties
+                .Where(x => !x.Deleted && x.Active)
                 .Select(DifficultyViewModels.Projection)
                 .ToList();
 
-        [HttpGet("{id}")]
-        public Difficulty Get(string id) =>
+        [HttpGet("{value}")]
+        public object Get(string value) =>
             _ctx.Difficulties
-                .FirstOrDefault(x => x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-
-        [HttpGet("{id}/tricks")]
-        public IEnumerable<Trick> ListDifficultyTricks(string id) =>
-            _ctx.Tricks
-                .Where(x => x.Difficulty.Equals(id, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
+                .WhereIdOrSlug(value)
+                .Select(DifficultyViewModels.Projection)
+                .FirstOrDefault();
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] DifficultyForm form)
+        public async Task<IActionResult> Create([FromBody] CreateDifficultyForm form)
         {
-            _ctx.Add(new Difficulty
+            var difficulty = new Difficulty
             {
-                Id = form.Name.Replace(" ", "-").ToLowerInvariant(),
+                Slug = form.Name.Replace(" ", "-").ToLowerInvariant(),
                 Name = form.Name,
                 Description = form.Description,
+                UserId = UserId,
+            };
+            _ctx.Add(difficulty);
+            await _ctx.SaveChangesAsync();
+            _ctx.Add(new ModerationItem
+            {
+                Target = difficulty.Id,
+                UserId = UserId,
+                Type = ModerationTypes.Difficulty
+            });
+            await _ctx.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UpdateDifficultyForm form)
+        {
+            var difficulty = _ctx.Difficulties.FirstOrDefault(x => x.Id == form.Id);
+
+            if (difficulty == null)
+            {
+                return NoContent();
+            }
+
+            var newDifficulty = new Difficulty
+            {
+                Slug = form.Name.Replace(" ", "-").ToLowerInvariant(),
+                Name = form.Name,
+                Description = form.Description,
+                UserId = UserId,
+                Version = difficulty.Version + 1,
+            };
+            _ctx.Add(newDifficulty);
+
+            await _ctx.SaveChangesAsync();
+            _ctx.Add(new ModerationItem
+            {
+                Current = difficulty.Id,
+                Target = newDifficulty.Id,
+                UserId = UserId,
+                Type = ModerationTypes.Difficulty,
             });
             await _ctx.SaveChangesAsync();
             return Ok();

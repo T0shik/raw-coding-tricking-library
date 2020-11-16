@@ -16,7 +16,10 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Slug,
                 trick.Name,
                 trick.Description,
-                trick.Difficulty,
+                Difficulty = trick.TrickDifficulties.AsQueryable()
+                    .Where(x => x.Active)
+                    .Select(x => x.DifficultyId)
+                    .FirstOrDefault(),
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
@@ -44,7 +47,10 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Slug,
                 trick.Name,
                 trick.Description,
-                trick.Difficulty,
+                Difficulty = trick.TrickDifficulties.AsQueryable()
+                    .Where(x => x.Active)
+                    .Select(x => x.DifficultyId)
+                    .FirstOrDefault(),
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
@@ -73,7 +79,10 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Slug,
                 trick.Name,
                 trick.Description,
-                trick.Difficulty,
+                Difficulty = trick.TrickDifficulties.AsQueryable()
+                    .Where(x => x.Active)
+                    .Select(x => x.DifficultyId)
+                    .FirstOrDefault(),
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
@@ -100,7 +109,6 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Slug,
                 trick.Name,
                 trick.Description,
-                trick.Difficulty,
                 trick.Version,
             };
     }

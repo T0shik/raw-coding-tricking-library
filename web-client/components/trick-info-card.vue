@@ -2,7 +2,7 @@
   <v-sheet class="pa-3" rounded min-width="300">
     <div class="text-h5">
       <span>{{ trick.name }}</span>
-      <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.id}`">
+      <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.slug}`">
         {{ difficulty.name }}
       </v-chip>
     </div>

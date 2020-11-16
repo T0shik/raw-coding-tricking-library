@@ -28,7 +28,7 @@ namespace TrickingLibrary.Api.ViewModels
                 category.Description,
                 category.Version,
                 Updated = category.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
-                Tricks = category.Tricks.AsQueryable().Select(x => x.Trick.Slug).ToList(),
+                Tricks = category.Tricks.AsQueryable().Select(x => x.TrickId).ToList(),
             };
     }
 }

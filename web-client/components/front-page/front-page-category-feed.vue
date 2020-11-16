@@ -45,11 +45,15 @@ export default {
       }
       const categories = this.lists.categories.slice(this.cursor, to)
       this.cursor += this.limit
-      const byTricks = (c) => c.tricks.reduce((a, b) => `${a};${b}`, "")
+
       const submissionRequests = categories.map(category => {
         if (category.tricks.length > 0) {
+          const byTricks = category.tricks
+            .map(x => this.dictionary.tricks[x].slug)
+            .reduce((a, b) => `${a};${b}`, "")
+
           return this.$axios
-            .$get(`/api/submissions/best-submission?byTricks=${byTricks(category)}`)
+            .$get(`/api/submissions/best-submission?byTricks=${byTricks}`)
             .then(submission => this.content.push({
               ...category,
               submission
@@ -61,7 +65,7 @@ export default {
       return Promise.all(submissionRequests)
     }
   },
-  computed: mapState('tricks', ['lists'])
+  computed: mapState('tricks', ['lists', 'dictionary'])
 }
 </script>
 

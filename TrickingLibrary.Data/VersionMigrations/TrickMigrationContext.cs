@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Data.VersionMigrations
@@ -21,16 +22,38 @@ namespace TrickingLibrary.Data.VersionMigrations
         {
             if (current > 0)
             {
-                _ctx.TrickRelationships
-                    .Where(x => x.PrerequisiteId == current || x.ProgressionId == current)
-                    .ToList()
-                    .ForEach(x => x.Active = false);
+                var currentTrick = _ctx.Tricks
+                    .Include(x => x.TrickDifficulties)
+                    .Include(x => x.TrickCategories)
+                    .Include(x => x.Prerequisites)
+                    .Include(x => x.Progressions)
+                    .FirstOrDefault(x => x.Id == current);
+
+                foreach (var difficulty in currentTrick.TrickDifficulties)
+                    difficulty.Active = false;
+                foreach (var category in currentTrick.TrickCategories)
+                    category.Active = false;
+                foreach (var progression in currentTrick.Progressions)
+                    progression.Active = false;
+                foreach (var prerequisite in currentTrick.Prerequisites)
+                    prerequisite.Active = false;
             }
 
-            _ctx.TrickRelationships
-                .Where(x => x.PrerequisiteId == target || x.ProgressionId == target)
-                .ToList()
-                .ForEach(x => x.Active = true);
+            var targetTrick = _ctx.Tricks
+                .Include(x => x.TrickDifficulties)
+                .Include(x => x.TrickCategories)
+                .Include(x => x.Prerequisites)
+                .Include(x => x.Progressions)
+                .FirstOrDefault(x => x.Id == target);
+
+            foreach (var difficulty in targetTrick.TrickDifficulties)
+                difficulty.Active = true;
+            foreach (var category in targetTrick.TrickCategories)
+                category.Active = true;
+            foreach (var progression in targetTrick.Progressions)
+                progression.Active = true;
+            foreach (var prerequisite in targetTrick.Prerequisites)
+                prerequisite.Active = true;
         }
     }
 }

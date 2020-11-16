@@ -1,6 +1,6 @@
 ﻿<template>
   <v-list>
-    <v-list-item @click="$router.push(`/difficulty/${difficulty.id}`)"
+    <v-list-item @click="$router.push(`/difficulty/${difficulty.slug}`)"
                  :key="`moderation-difficulty-${difficulty.id}`"
                  v-for="difficulty in lists.difficulties">
       <v-list-item-content>
@@ -12,7 +12,7 @@
         <v-list-item-subtitle>{{ difficulty.updated }}</v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action>
-        <v-btn icon @click.stop="">
+        <v-btn icon @click.stop="edit(difficulty)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </v-list-item-action>
@@ -26,10 +26,22 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
+import DifficultyForm from "@/components/content-creation/difficulty-form";
 
 export default {
   name: "moderation-difficulty-overview",
+  methods: {
+    ...mapMutations('content-update', ['activate']),
+    edit(difficulty) {
+      this.activate({
+        component: DifficultyForm,
+        edit: true,
+        editPayload: difficulty,
+        setup: null
+      })
+    }
+  },
   computed: mapState('tricks', ['lists'])
 }
 </script>

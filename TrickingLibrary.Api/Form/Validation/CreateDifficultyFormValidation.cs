@@ -2,9 +2,9 @@
 
 namespace TrickingLibrary.Api.Form.Validation
 {
-    public class CreateCategoryFormValidation : AbstractValidator<CreateCategoryForm>
+    public class CreateDifficultyFormValidation : AbstractValidator<CreateDifficultyForm>
     {
-        public CreateCategoryFormValidation()
+        public CreateDifficultyFormValidation()
         {
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();

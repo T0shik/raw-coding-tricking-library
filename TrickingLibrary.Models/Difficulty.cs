@@ -3,10 +3,10 @@ using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Models
 {
-    public class Difficulty : Mutable<string>
+    public class Difficulty : VersionedModel
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public IList<Trick> Tricks { get; set; }
+        public IList<TrickDifficulty> Tricks { get; set; } = new List<TrickDifficulty>();
     }
 }

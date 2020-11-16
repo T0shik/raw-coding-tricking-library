@@ -173,6 +173,7 @@ export default {
       if (!this.modItem) return null;
       if (this.modItem.type === 'trick') return {is: TrickInfoCard, payload: 'trick'};
       if (this.modItem.type === 'category') return {is: SimpleInfoCard, payload: 'payload'};
+      if (this.modItem.type === 'difficulty') return {is: SimpleInfoCard, payload: 'payload'};
       return null
     }
   }

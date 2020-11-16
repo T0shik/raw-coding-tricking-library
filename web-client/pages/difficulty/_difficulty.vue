@@ -19,12 +19,13 @@ export default {
   computed: {
     ...mapState('tricks', ['lists', 'dictionary']),
     tricks() {
-      const difficultyId = this.$route.params.difficulty;
-      return this.lists.tricks.filter(x => x.difficulty === difficultyId)
+      const difficultySlug = this.$route.params.difficulty;
+      return this.dictionary.difficulties[difficultySlug]
+        .tricks
+        .map(x => this.dictionary.tricks[x])
     },
     difficulty() {
-      const difficultyId = this.$route.params.difficulty;
-      return this.dictionary.difficulties[difficultyId]
+      return this.dictionary.difficulties[this.$route.params.difficulty]
     }
   },
   head() {

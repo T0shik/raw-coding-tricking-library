@@ -35,7 +35,7 @@ namespace TrickingLibrary.Api.Controllers
                 .OrderFeed(feedQuery)
                 .ToList();
 
-            var targetMapping = new Dictionary<int, object>();
+            var targetMapping = new Dictionary<string, object>();
             foreach (var group in moderationItems.GroupBy(x => x.Type))
             {
                 var targetIds = group.Select(m => m.Target).ToArray();
@@ -44,15 +44,24 @@ namespace TrickingLibrary.Api.Controllers
                     _ctx.Tricks
                         .Where(t => targetIds.Contains(t.Id))
                         .ToList()
-                        .ForEach(trick => targetMapping[trick.Id] = TrickViewModels.CreateFlat(trick));
+                        .ForEach(trick => targetMapping[ModerationTypes.Trick + trick.Id] =
+                            TrickViewModels.CreateFlat(trick));
                 }
                 else if (group.Key == ModerationTypes.Category)
                 {
                     _ctx.Categories
-                        .Where(t => targetIds.Contains(t.Id))
+                        .Where(c => targetIds.Contains(c.Id))
                         .ToList()
-                        .ForEach(category => targetMapping[category.Id] =
+                        .ForEach(category => targetMapping[ModerationTypes.Category + category.Id] =
                             CategoryViewModels.CreateFlat(category));
+                }
+                else if (group.Key == ModerationTypes.Difficulty)
+                {
+                    _ctx.Difficulties
+                        .Where(d => targetIds.Contains(d.Id))
+                        .ToList()
+                        .ForEach(difficulty => targetMapping[ModerationTypes.Difficulty + difficulty.Id] =
+                            DifficultyViewModels.CreateFlat(difficulty));
                 }
             }
 
@@ -66,7 +75,7 @@ namespace TrickingLibrary.Api.Controllers
                 Updated = x.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
                 Reviews = x.Reviews.Select(y => y.Status).ToList(),
                 User = UserViewModels.CreateFlat(x.User),
-                TargetObject = targetMapping[x.Target],
+                TargetObject = targetMapping[x.Type + x.Target],
             });
         }
 

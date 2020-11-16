@@ -14,6 +14,7 @@ namespace TrickingLibrary.Data
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<SubmissionVote> SubmissionVotes { get; set; }
         public DbSet<Difficulty> Difficulties { get; set; }
+        public DbSet<TrickDifficulty> TrickDifficulties { get; set; }
         public DbSet<TrickRelationship> TrickRelationships { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<TrickCategory> TrickCategories { get; set; }
@@ -30,10 +31,8 @@ namespace TrickingLibrary.Data
             modelBuilder.Entity<TrickCategory>()
                 .HasKey(x => new {x.CategoryId, x.TrickId});
 
-            modelBuilder.Entity<Difficulty>()
-                .HasMany(x => x.Tricks)
-                .WithOne()
-                .HasForeignKey(x => x.Difficulty);
+            modelBuilder.Entity<TrickDifficulty>()
+                .HasKey(x => new {x.DifficultyId, x.TrickId});
 
             modelBuilder.Entity<TrickRelationship>()
                 .HasKey(x => new {x.PrerequisiteId, x.ProgressionId});

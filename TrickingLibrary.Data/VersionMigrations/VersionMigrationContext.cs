@@ -19,6 +19,7 @@ namespace TrickingLibrary.Data.VersionMigrations
             {
                 ModerationTypes.Trick => new TrickMigrationContext(_ctx),
                 ModerationTypes.Category => new CategoryMigrationContext(_ctx),
+                ModerationTypes.Difficulty => new DifficultyMigrationContext(_ctx),
                 _ => throw new ArgumentException(nameof(moderationItem.Type)),
             };
             return this;

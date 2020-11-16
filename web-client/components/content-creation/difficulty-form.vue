@@ -25,6 +25,7 @@
 
 <script>
 import {close} from "./_shared";
+import {mapState} from "vuex";
 
 export default {
   name: "difficulty-form",
@@ -40,12 +41,23 @@ export default {
       description: [v => !!v || "Description is required."],
     }
   }),
+  created() {
+    if (this.editPayload) {
+      const {id, name, description} = this.editPayload
+      Object.assign(this.form, {id, name, description})
+    }
+  },
   methods: {
     save() {
-      this.$axios.post("/api/difficulties", this.form)
+      if (this.form.id) {
+        this.$axios.put("/api/difficulties", this.form)
+      } else {
+        this.$axios.post("/api/difficulties", this.form)
+      }
       this.close()
     }
-  }
+  },
+  computed: mapState('content-update', ['editPayload'])
 }
 </script>
 

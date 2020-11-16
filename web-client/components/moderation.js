@@ -1,6 +1,7 @@
 ﻿const endpointResolver = (type) => {
   if (type === 'trick') return 'tricks'
   if (type === 'category') return 'categories'
+  if (type === 'difficulty') return 'difficulties'
 }
 
 export const REVIEW_STATUS = {

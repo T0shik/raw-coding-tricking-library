@@ -66,9 +66,9 @@ namespace TrickingLibrary.Api
                     });
                     var difficulties = new List<Difficulty>
                     {
-                        new Difficulty {Id = "easy", Name = "Easy", Description = "Easy Test"},
-                        new Difficulty {Id = "medium", Name = "Medium", Description = "Medium Test"},
-                        new Difficulty {Id = "hard", Name = "Hard", Description = "Hard Test"},
+                        new Difficulty {Id = 1, Slug = "easy", Name = "Easy", Description = "Easy Test", Active = true},
+                        new Difficulty {Id = 2, Slug = "medium", Name = "Medium", Description = "Medium Test", Active = true},
+                        new Difficulty {Id = 3, Slug = "hard", Name = "Hard", Description = "Hard Test", Active = true},
                     };
                     ctx.AddRange(difficulties);
                     var categories = new List<Category>
@@ -76,9 +76,9 @@ namespace TrickingLibrary.Api
                         new Category {Id = 1, Slug = "kick", Name = "Kick", Description = "Kick Test", Active = true},
                         new Category {Id = 2, Slug = "flip", Name = "Flip", Description = "Flip Test", Active = true},
                         new Category {Id = 3, Slug = "transition", Name = "Transition", Description = "Transition Test", Active = true},
-                        new Category {Id = 4, Slug = "mod", Name = "Mod", Description = "Category under moderation", Active = false, Version = 1},
                     };
                     ctx.AddRange(categories);
+                    ctx.Add(new Category {Id = 4, Slug = "mod", Name = "Mod", Description = "Category under moderation"});
                     ctx.Add(new Trick
                     {
                         Id = 1,
@@ -88,8 +88,8 @@ namespace TrickingLibrary.Api
                         Active = true,
                         Version = 1,
                         Description = "This is a test backwards roll",
-                        Difficulty = "easy",
-                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}}
+                        TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 1, Active = true}},
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2, Active = true}}
                     });
                     ctx.Add(new Trick
                     {
@@ -100,8 +100,8 @@ namespace TrickingLibrary.Api
                         Active = true,
                         Version = 1,
                         Description = "This is a test forwards roll",
-                        Difficulty = "easy",
-                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}}
+                        TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 1, Active = true}},
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2, Active = true}}
                     });
                     ctx.Add(new Trick
                     {
@@ -112,8 +112,8 @@ namespace TrickingLibrary.Api
                         Active = true,
                         Version = 1,
                         Description = "This is a test back flip",
-                        Difficulty = "medium",
-                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}},
+                        TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 2, Active = true}},
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2, Active = true}},
                         Prerequisites = new List<TrickRelationship>
                         {
                             new TrickRelationship {PrerequisiteId = 1, Active = true},
@@ -220,10 +220,13 @@ namespace TrickingLibrary.Api
                             Active = true,
                             Version = 1,
                             Description = $"This is a really fake trick # {i}",
-                            Difficulty = difficulties[i % difficulties.Count].Id,
+                            TrickDifficulties = new List<TrickDifficulty>
+                            {
+                                new TrickDifficulty {DifficultyId = difficulties[i % difficulties.Count].Id, Active = true},
+                            },
                             TrickCategories = new List<TrickCategory>
                             {
-                                new TrickCategory {CategoryId = categories[i % categories.Count].Id},
+                                new TrickCategory {CategoryId = categories[i % categories.Count].Id, Active = true},
                             },
                         };
                         ctx.Add(trick);
