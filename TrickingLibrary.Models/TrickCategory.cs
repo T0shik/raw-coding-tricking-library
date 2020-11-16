@@ -5,7 +5,8 @@
         public int TrickId { get; set; }
         public Trick Trick { get; set; }
 
-        public string CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public Category Category { get; set; }
+        public bool Active { get; set; }
     }
 }

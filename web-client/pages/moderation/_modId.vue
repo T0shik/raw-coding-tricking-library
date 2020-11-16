@@ -4,13 +4,13 @@
       <v-col cols="8">
         <v-row justify="center">
           <v-col cols="5" v-if="current">
-            <trick-info-card :trick="current"/>
+            <component v-if="itemComponent" :[itemComponent.payload]="current" :is="itemComponent.is"/>
           </v-col>
           <v-col cols="2" class="d-flex justify-center" v-if="current">
             <v-icon size="46">mdi-arrow-right</v-icon>
           </v-col>
           <v-col cols="5" v-if="target">
-            <trick-info-card :trick="target"/>
+            <component v-if="itemComponent" :[itemComponent.payload]="target" :is="itemComponent.is"/>
           </v-col>
         </v-row>
         <v-divider class="my-2"/>
@@ -90,6 +90,7 @@
 <script>
 import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
+import SimpleInfoCard from "@/components/moderation/simple-info-card";
 import {COMMENT_PARENT_TYPE} from "@/components/comments/_shared";
 import {modItemRenderer, REVIEW_STATUS} from "@/components/moderation";
 import IfAuth from "@/components/auth/if-auth";
@@ -167,6 +168,12 @@ export default {
     selectedReview() {
       const review = this.reviewActions.find(x => x.value === this.review.status)
       return review === undefined ? null : review
+    },
+    itemComponent() {
+      if (!this.modItem) return null;
+      if (this.modItem.type === 'trick') return {is: TrickInfoCard, payload: 'trick'};
+      if (this.modItem.type === 'category') return {is: SimpleInfoCard, payload: 'payload'};
+      return null
     }
   }
 }

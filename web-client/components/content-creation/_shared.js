@@ -2,7 +2,7 @@
 
 export const close = {
   methods: {
-    ...mapActions('video-upload', ['cancelUpload']),
+    ...mapActions('content-update', ['cancelUpload']),
     close() {
       return this.cancelUpload({hard: true})
     }
@@ -18,6 +18,6 @@ export const form = (formFactory) => ({
       this.setup(this.form)
   },
   computed: {
-    ...mapState('video-upload', ['setup']),
+    ...mapState('content-update', ['setup']),
   }
 })

@@ -3,7 +3,7 @@ using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Models
 {
-    public class Category : Mutable<string>
+    public class Category : VersionedModel
     {
         public string Name { get; set; }
         public string Description { get; set; }

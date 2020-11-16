@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using TrickingLibrary.Models;
+using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Data
 {
@@ -51,6 +52,22 @@ namespace TrickingLibrary.Data
             return source
                 .Skip(feedQuery.Cursor)
                 .Take(feedQuery.Limit);
+        }
+
+        public static IQueryable<T> WhereIdOrSlug<T>(this IQueryable<T> source, string value)
+            where T : VersionedModel
+        {
+            if (int.TryParse(value, out var number))
+            {
+                source = source.Where(x => x.Id == number);
+            }
+            else
+            {
+                source = source.Where(x => x.Slug.Equals(value, StringComparison.InvariantCultureIgnoreCase)
+                                           && x.Active);
+            }
+
+            return source;
         }
     }
 }

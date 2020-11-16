@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TrickingLibrary.Data;
+using TrickingLibrary.Data.VersionMigrations;
 using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Api
@@ -88,7 +89,7 @@ namespace TrickingLibrary.Api
 
             if (score >= goal + wait)
             {
-                migrationContext.Migrate(modItem);
+                migrationContext.Setup(modItem).Migrate();
                 modItem.Deleted = true;
             }
             else if (score <= -goal - wait)

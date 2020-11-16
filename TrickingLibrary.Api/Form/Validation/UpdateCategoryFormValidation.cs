@@ -2,10 +2,11 @@
 
 namespace TrickingLibrary.Api.Form.Validation
 {
-    public class CategoryFormValidation : AbstractValidator<CategoryForm>
+    public class UpdateCategoryFormValidation : AbstractValidator<UpdateCategoryForm>
     {
-        public CategoryFormValidation()
+        public UpdateCategoryFormValidation()
         {
+            RuleFor(x => x.Id).GreaterThan(0);
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
         }

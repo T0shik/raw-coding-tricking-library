@@ -35,22 +35,11 @@ namespace TrickingLibrary.Api.Controllers
             .Include(x => x.User)
             .Select(TrickViewModels.UserProjection).ToList();
 
-        [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        [HttpGet("{value}")]
+        public IActionResult Get(string value)
         {
-            var query = _ctx.Tricks.AsQueryable();
-
-            if (int.TryParse(id, out var intId))
-            {
-                query = query.Where(x => x.Id == intId);
-            }
-            else
-            {
-                query = query.Where(x => x.Slug.Equals(id, StringComparison.InvariantCultureIgnoreCase)
-                                         && x.Active);
-            }
-
-            var trick = query
+            var trick = _ctx.Tricks
+                .WhereIdOrSlug(value)
                 .Include(x => x.TrickCategories)
                 .Include(x => x.Progressions)
                 .Include(x => x.Prerequisites)

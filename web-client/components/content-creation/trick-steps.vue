@@ -115,7 +115,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('video-upload', ['editing', 'editPayload']),
+    ...mapState('content-update', ['editing', 'editPayload']),
     ...mapState('tricks', ['lists', 'dictionary']),
   },
   methods: {

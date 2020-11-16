@@ -1,6 +1,6 @@
 ﻿<template>
   <v-list>
-    <v-list-item @click="$router.push(`/category/${category.id}`)"
+    <v-list-item @click="$router.push(`/category/${category.slug}`)"
                  :key="`moderation-category-${category.id}`"
                  v-for="category in lists.categories">
       <v-list-item-content>
@@ -12,7 +12,7 @@
         <v-list-item-subtitle>{{ category.updated }}</v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action>
-        <v-btn icon @click.stop="">
+        <v-btn icon @click.stop="edit(category)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </v-list-item-action>
@@ -26,10 +26,22 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
+import CategoryForm from '@/components/content-creation/category-form'
 
 export default {
   name: "moderation-category-overview",
+  methods: {
+    ...mapMutations('content-update', ['activate']),
+    edit(category) {
+      this.activate({
+        component: CategoryForm,
+        edit: true,
+        editPayload: category,
+        setup: null
+      })
+    }
+  },
   computed: mapState('tricks', ['lists'])
 }
 </script>

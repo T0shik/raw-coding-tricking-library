@@ -37,7 +37,7 @@ export default {
   name: "content-creation-dialog",
   components: {CategoryForm, DifficultyForm, SubmissionSteps, TrickSteps},
   computed: {
-    ...mapState('video-upload', ['active', 'component']),
+    ...mapState('content-update', ['active', 'component']),
     ...mapGetters('auth', ['moderator']),
     menuItems() {
       return [
@@ -48,7 +48,7 @@ export default {
       ].filter(x => x.display)
     }
   },
-  methods: mapMutations('video-upload', ['activate']),
+  methods: mapMutations('content-update', ['activate']),
 }
 </script>
 

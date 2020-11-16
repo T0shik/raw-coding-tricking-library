@@ -20,6 +20,7 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
+                    .Where(x => x.Active)
                     .Select(x => x.CategoryId)
                     .ToList(),
                 Prerequisites = trick.Prerequisites
@@ -35,6 +36,7 @@ namespace TrickingLibrary.Api.ViewModels
             };
 
         public static readonly Func<Trick, object> CreateUser = UserProjection.Compile();
+
         public static Expression<Func<Trick, object>> UserProjection =>
             trick => new
             {
@@ -46,6 +48,7 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
+                    .Where(x => x.Active)
                     .Select(x => x.CategoryId)
                     .ToList(),
                 Prerequisites = trick.Prerequisites
@@ -62,6 +65,7 @@ namespace TrickingLibrary.Api.ViewModels
             };
 
         public static readonly Func<Trick, object> CreateFull = FullProjection.Compile();
+
         public static Expression<Func<Trick, object>> FullProjection =>
             trick => new
             {
@@ -73,6 +77,7 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
+                    .Where(x => x.Active)
                     .Select(x => x.CategoryId)
                     .ToList(),
                 Prerequisites = trick.Prerequisites
@@ -87,6 +92,7 @@ namespace TrickingLibrary.Api.ViewModels
             };
 
         public static readonly Func<Trick, object> CreateFlat = FlatProjection.Compile();
+
         public static Expression<Func<Trick, object>> FlatProjection =>
             trick => new
             {

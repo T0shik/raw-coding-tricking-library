@@ -17,18 +17,16 @@ import ItemContentLayout from "../../components/item-content-layout";
 export default {
   components: {ItemContentLayout, TrickList},
   computed: {
-    ...mapState('tricks', ['lists', 'dictionary']),
+    ...mapState('tricks', ['dictionary']),
     tricks() {
-      const categoryId = this.$route.params.category;
-      return this.lists.tricks.filter(x => x.categories.indexOf(categoryId) > -1)
+      const categorySlug = this.$route.params.category;
+      return this.dictionary.categories[categorySlug]
+        .tricks
+        .map(x => this.dictionary.tricks[x])
     },
     category() {
-      const categoryId = this.$route.params.category;
-      return this.dictionary.categories[categoryId]
+      return this.dictionary.categories[this.$route.params.category]
     }
-  },
-  async fetch() {
-    this.tricks = await this.$axios.$get(`/api/categories/${categoryId}/tricks`)
   },
   head() {
     if (!this.category) return {}

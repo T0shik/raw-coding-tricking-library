@@ -9,6 +9,6 @@ namespace TrickingLibrary.Api.Form
         public string Difficulty { get; set; }
         public IEnumerable<int> Prerequisites { get; set; }
         public IEnumerable<int> Progressions { get; set; }
-        public IEnumerable<string> Categories { get; set; }
+        public IEnumerable<int> Categories { get; set; }
     }
 }

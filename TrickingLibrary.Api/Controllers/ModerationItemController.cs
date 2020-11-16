@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.Form;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
+using TrickingLibrary.Data.VersionMigrations;
 using TrickingLibrary.Models;
 using TrickingLibrary.Models.Moderation;
 
@@ -44,6 +45,14 @@ namespace TrickingLibrary.Api.Controllers
                         .Where(t => targetIds.Contains(t.Id))
                         .ToList()
                         .ForEach(trick => targetMapping[trick.Id] = TrickViewModels.CreateFlat(trick));
+                }
+                else if (group.Key == ModerationTypes.Category)
+                {
+                    _ctx.Categories
+                        .Where(t => targetIds.Contains(t.Id))
+                        .ToList()
+                        .ForEach(category => targetMapping[category.Id] =
+                            CategoryViewModels.CreateFlat(category));
                 }
             }
 

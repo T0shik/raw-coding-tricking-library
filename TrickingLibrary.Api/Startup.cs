@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using TrickingLibrary.Api.BackgroundServices.SubmissionVoting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Data;
+using TrickingLibrary.Data.VersionMigrations;
 
 namespace TrickingLibrary.Api
 {

@@ -65,7 +65,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('video-upload', ['activate']),
+    ...mapMutations('content-update', ['activate']),
     edit() {
       this.activate({
         component: TrickSteps, edit: true, editPayload: this.trick
@@ -86,7 +86,7 @@ export default {
           title: "Categories",
           data: this.trick.categories.map(x => this.dictionary.categories[x]),
           idFactory: c => `category-${c.id}`,
-          routeFactory: c => `/category/${c.id}`,
+          routeFactory: c => `/category/${c.slug}`,
         },
         {
           title: "Prerequisites",
