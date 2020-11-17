@@ -157,21 +157,11 @@ namespace TrickingLibrary.Api.Controllers
                 Current = trick.Id,
                 Target = newTrick.Id,
                 Type = ModerationTypes.Trick,
-                // todo validation for reason
                 Reason = createTrickForm.Reason,
                 UserId = UserId,
             });
             await _ctx.SaveChangesAsync();
 
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            var trick = _ctx.Tricks.FirstOrDefault(x => x.Slug.Equals(id));
-            trick.Deleted = true;
-            await _ctx.SaveChangesAsync();
             return Ok();
         }
     }

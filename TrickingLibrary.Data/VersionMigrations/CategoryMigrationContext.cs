@@ -5,7 +5,7 @@ using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Data.VersionMigrations
 {
-    class CategoryMigrationContext : IEntityMigrationContext
+    public class CategoryMigrationContext : IEntityMigrationContext
     {
         private readonly AppDbContext _ctx;
 
@@ -38,6 +38,16 @@ namespace TrickingLibrary.Data.VersionMigrations
                     });
                 }
             }
+        }
+
+        public void VoidRelationships(int id)
+        {
+            var relationships = _ctx.TrickCategories
+                .Where(x => x.CategoryId == id)
+                .ToList();
+
+            foreach (var relationship in relationships)
+                relationship.Active = false;
         }
     }
 }

@@ -37,7 +37,19 @@ namespace TrickingLibrary.Data.VersionMigrations
 
             if (target == null)
             {
-                throw new InvalidOperationException("Target not found");
+                if (current == null) throw new InvalidOperationException("Current not found");
+                current.Deleted = true;
+                current.State = VersionState.Outdated;
+
+                var outdatedModerationItems = _ctx.ModerationItems
+                    .Where(x => !x.Deleted && x.Type == ModerationItem.Type && x.Id != ModerationItem.Id)
+                    .ToList();
+
+                foreach (var outdatedModItem in outdatedModerationItems)
+                    outdatedModItem.Deleted = true;
+
+                EntityMigrationContext.VoidRelationships(current.Id);
+                return;
             }
 
             if (current != null)

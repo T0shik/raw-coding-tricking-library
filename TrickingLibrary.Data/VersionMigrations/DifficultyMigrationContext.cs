@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Models;
 using TrickingLibrary.Models.Abstractions;
 
@@ -24,20 +25,29 @@ namespace TrickingLibrary.Data.VersionMigrations
             if (current > 0)
             {
                 var relationships = _ctx.TrickDifficulties
+                    .Include(x => x.Trick)
                     .Where(x => x.DifficultyId == current)
                     .ToList();
 
                 foreach (var relationship in relationships)
                 {
-                    relationship.Active = false;
                     _ctx.Add(new TrickDifficulty
                     {
                         DifficultyId = target,
                         TrickId = relationship.TrickId,
-                        Active = true,
+                        Active = relationship.Active,
                     });
+                    if (relationship.Trick.State == VersionState.Staged)
+                        _ctx.Remove(relationship);
+                    else
+                        relationship.Active = false;
                 }
             }
+        }
+
+        public void VoidRelationships(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

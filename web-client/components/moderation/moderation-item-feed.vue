@@ -7,13 +7,13 @@
         <user-header :image-url="modItem.user.image"/>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title>{{ modItem.targetObject.name }}</v-list-item-title>
+        <v-list-item-title v-if="modItem.currentObject">{{ modItem.currentObject.name }}</v-list-item-title>
+        <v-list-item-title v-else-if="modItem.targetObject">{{ modItem.targetObject.name }}</v-list-item-title>
         <v-list-item-subtitle v-if="modItem.reason">{{ modItem.reason }}</v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-content>
         <v-list-item-title>
-            <span class="text-h6" :class="modItem.targetObject.version === 1 ? 'green--text' : 'orange--text'">
-              {{ modItem.targetObject.version === 1 ? 'NEW' : 'CHANGE' }}</span>
+          <span class="text-h6" :class="changeTypeColour(modItem)">{{ changeType(modItem) }}</span>
         </v-list-item-title>
       </v-list-item-content>
       <v-list-item-content>
@@ -43,7 +43,7 @@
 <script>
 import UserHeader from "@/components/user-header";
 import {feed} from "@/components/feed";
-import {modItemRenderer} from "@/components/moderation";
+import {modItemRenderer, VERSION_STATE} from "@/components/moderation";
 import {EVENTS} from "@/data/events";
 
 export default {
@@ -63,6 +63,18 @@ export default {
     getContentUrl() {
       return `/api/moderation-items${this.query}`
     },
+    changeType(modItem) {
+      return modItem.currentObject === null ? "NEW"
+        : modItem.targetObject === null ? "DELETE"
+          : modItem.targetObject.state === VERSION_STATE.LIVE ? "MIGRATION"
+            : "CHANGE";
+    },
+    changeTypeColour(modItem) {
+      return modItem.currentObject === null ? 'green--text'
+        : modItem.targetObject === null ? 'red--text'
+          : modItem.targetObject.state === VERSION_STATE.LIVE ? 'orange--text'
+            : 'orange--text';
+    }
   }
 }
 </script>

@@ -124,5 +124,25 @@ namespace TrickingLibrary.Api.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(TrickingLibraryConstants.Policies.Mod)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (!_ctx.Categories.Any(x => x.Id == id))
+            {
+                return NoContent();
+            }
+
+            _ctx.ModerationItems.Add(new ModerationItem
+            {
+                Current = id,
+                UserId = UserId,
+                Type = ModerationTypes.Category,
+            });
+            await _ctx.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

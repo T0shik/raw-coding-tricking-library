@@ -15,7 +15,7 @@ namespace TrickingLibrary.Api.ViewModels
                 category.Id,
                 category.Slug,
                 category.Name,
-                category.Description,
+                category.State,
                 category.Version,
             };
 

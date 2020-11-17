@@ -50,6 +50,7 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Description,
                 trick.State,
                 Difficulty = trick.TrickDifficulties.AsQueryable()
+                    .OrderByDescending(x => x.Active)
                     .Select(x => x.DifficultyId)
                     .FirstOrDefault(),
                 trick.Version,
@@ -77,6 +78,7 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Slug,
                 trick.Name,
                 trick.Description,
+                trick.State,
                 trick.Version,
             };
     }

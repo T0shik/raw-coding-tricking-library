@@ -7,5 +7,6 @@ namespace TrickingLibrary.Data.VersionMigrations
     {
         IQueryable<VersionedModel> GetSource();
         void MigrateRelationships(int current, int target);
+        void VoidRelationships(int id);
     }
 }

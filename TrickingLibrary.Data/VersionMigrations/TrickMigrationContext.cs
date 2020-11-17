@@ -4,7 +4,7 @@ using TrickingLibrary.Models.Abstractions;
 
 namespace TrickingLibrary.Data.VersionMigrations
 {
-    class TrickMigrationContext : IEntityMigrationContext
+    public class TrickMigrationContext : IEntityMigrationContext
     {
         private readonly AppDbContext _ctx;
 
@@ -54,6 +54,11 @@ namespace TrickingLibrary.Data.VersionMigrations
                 progression.Active = true;
             foreach (var prerequisite in targetTrick.Prerequisites)
                 prerequisite.Active = true;
+        }
+
+        public void VoidRelationships(int id)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

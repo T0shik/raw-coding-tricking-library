@@ -6,7 +6,7 @@
           <v-col cols="5" v-if="current">
             <component v-if="itemComponent" :[itemComponent.payload]="current" :is="itemComponent.is"/>
           </v-col>
-          <v-col cols="2" class="d-flex justify-center" v-if="current">
+          <v-col cols="2" class="d-flex justify-center" v-if="current && target">
             <v-icon size="46">mdi-arrow-right</v-icon>
           </v-col>
           <v-col cols="5" v-if="target">

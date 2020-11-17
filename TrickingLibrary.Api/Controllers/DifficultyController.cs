@@ -107,5 +107,30 @@ namespace TrickingLibrary.Api.Controllers
             await _ctx.SaveChangesAsync();
             return Ok();
         }
+
+
+        [HttpPut("{current}/{target}")]
+        [Authorize(TrickingLibraryConstants.Policies.Mod)]
+        public async Task<IActionResult> Migrate(int current, int target)
+        {
+            var difficultyCount = _ctx.Difficulties.Count(x => !x.Deleted
+                                                               && x.State == VersionState.Live
+                                                               && (x.Id == current || x.Id == target));
+            if (difficultyCount != 2)
+            {
+                return NoContent();
+            }
+
+            _ctx.ModerationItems.Add(new ModerationItem
+            {
+                Current = current,
+                Target = target,
+                UserId = UserId,
+                Type = ModerationTypes.Difficulty,
+            });
+            await _ctx.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

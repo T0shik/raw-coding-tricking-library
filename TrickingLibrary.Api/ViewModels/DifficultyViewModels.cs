@@ -14,7 +14,7 @@ namespace TrickingLibrary.Api.ViewModels
             {
                 difficulty.Id,
                 difficulty.Name,
-                difficulty.Description,
+                difficulty.State,
                 difficulty.Slug,
                 difficulty.Version,
             };
