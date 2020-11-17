@@ -38,7 +38,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('tricks', ['lists']),
+    ...mapState('library', ['lists']),
     items() {
       return []
         .concat(this.lists.tricks.map(x => itemFactory(x.name, 'trick', x.slug)))

@@ -36,37 +36,6 @@ namespace TrickingLibrary.Api.ViewModels
                     .Where(x => x.Active)
                     .Select(x => x.ProgressionId)
                     .ToList(),
-            };
-
-        public static readonly Func<Trick, object> CreateUser = UserProjection.Compile();
-
-        public static Expression<Func<Trick, object>> UserProjection =>
-            trick => new
-            {
-                trick.Id,
-                trick.Slug,
-                trick.Name,
-                trick.Description,
-                Difficulty = trick.TrickDifficulties.AsQueryable()
-                    .Where(x => x.Active)
-                    .Select(x => x.DifficultyId)
-                    .FirstOrDefault(),
-                trick.Version,
-                Categories = trick.TrickCategories
-                    .AsQueryable()
-                    .Where(x => x.Active)
-                    .Select(x => x.CategoryId)
-                    .ToList(),
-                Prerequisites = trick.Prerequisites
-                    .AsQueryable()
-                    .Where(x => x.Active)
-                    .Select(x => x.PrerequisiteId)
-                    .ToList(),
-                Progressions = trick.Progressions
-                    .AsQueryable()
-                    .Where(x => x.Active)
-                    .Select(x => x.ProgressionId)
-                    .ToList(),
                 User = UserViewModels.CreateFlat(trick.User),
             };
 
@@ -79,14 +48,13 @@ namespace TrickingLibrary.Api.ViewModels
                 trick.Slug,
                 trick.Name,
                 trick.Description,
+                trick.State,
                 Difficulty = trick.TrickDifficulties.AsQueryable()
-                    .Where(x => x.Active)
                     .Select(x => x.DifficultyId)
                     .FirstOrDefault(),
                 trick.Version,
                 Categories = trick.TrickCategories
                     .AsQueryable()
-                    .Where(x => x.Active)
                     .Select(x => x.CategoryId)
                     .ToList(),
                 Prerequisites = trick.Prerequisites

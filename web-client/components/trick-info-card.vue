@@ -1,7 +1,11 @@
 ﻿<template>
   <v-sheet class="pa-3" rounded min-width="300">
     <div class="text-h5">
-      <span>{{ trick.name }}</span>
+      <nuxt-link class="white--text text-decoration-none"
+                 :to="`/trick/${trick.slug}`"
+                 v-if="link">{{ trick.name }}
+      </nuxt-link>
+      <span v-else>{{ trick.name }}</span>
       <v-chip class="mb-1 ml-2" small :to="`/difficulty/${difficulty.slug}`">
         {{ difficulty.name }}
       </v-chip>
@@ -57,6 +61,11 @@ export default {
       required: true,
       type: Object,
     },
+    link: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
     close: {
       required: false,
       type: Function,
@@ -65,10 +74,10 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('content-update', ['activate']),
+    ...mapMutations('content-creation', ['activate']),
     edit() {
       this.activate({
-        component: TrickSteps, edit: true, editPayload: this.trick
+        component: TrickSteps, editPayload: this.trick
       })
     },
     upload() {
@@ -79,7 +88,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('tricks', ['dictionary']),
+    ...mapState('library', ['dictionary']),
     relatedData() {
       return [
         {

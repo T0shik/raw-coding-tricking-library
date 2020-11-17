@@ -10,10 +10,8 @@
 </template>
 
 <script>
-// todo: clean up submission id's ^^^
-import {mapState, mapMutations} from 'vuex';
-import TrickSteps from "@/components/content-creation/trick-steps";
-import ItemContentLayout from "../../components/item-content-layout";
+import {mapState} from 'vuex';
+import ItemContentLayout from "@/components/item-content-layout";
 import Submission from "@/components/submission";
 import TrickInfoCard from "@/components/trick-info-card";
 import SubmissionFeed from "@/components/submission-feed";
@@ -21,7 +19,7 @@ import SubmissionFeed from "@/components/submission-feed";
 export default {
   components: {SubmissionFeed, TrickInfoCard, Submission, ItemContentLayout},
   computed: {
-    ...mapState('tricks', ['dictionary']),
+    ...mapState('library', ['dictionary']),
     trick() {
       return this.dictionary.tricks[this.$route.params.trick]
     }

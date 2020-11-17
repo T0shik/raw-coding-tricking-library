@@ -92,10 +92,11 @@ import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
 import SimpleInfoCard from "@/components/moderation/simple-info-card";
 import {COMMENT_PARENT_TYPE} from "@/components/comments/_shared";
-import {modItemRenderer, REVIEW_STATUS} from "@/components/moderation";
+import {MODERATION_TYPES, modItemRenderer, REVIEW_STATUS, VERSION_STATE} from "@/components/moderation";
 import IfAuth from "@/components/auth/if-auth";
 import UserHeader from "@/components/user-header";
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
+import {EVENTS} from "@/data/events";
 
 const initReview = () => ({
   status: -1,
@@ -138,6 +139,8 @@ export default {
         })
         .then(this.loadReviews)
         .then(this.resetReviewForm)
+        .then(() => this.$nuxt.$emit(EVENTS.CONTENT_UPDATED))
+        .then(this.loadContent)
     },
     loadReviews() {
       return this.$axios.$get(`/api/moderation-items/${this.modItem.id}/reviews`)
@@ -145,7 +148,8 @@ export default {
     },
     resetReviewForm() {
       this.review = initReview()
-    }
+    },
+    ...mapActions('library', ['loadContent'])
   },
   computed: {
     ...mapGetters('auth', ['moderator']),
@@ -160,7 +164,7 @@ export default {
       return this.reviews.filter(x => x.status === REVIEW_STATUS.APPROVED).length
     },
     outdated() {
-      return this.current && this.target && this.target.version - this.current.version <= 0
+      return this.current && this.target && this.current.state === VERSION_STATE.OUTDATED
     },
     moderationItemParentType() {
       return COMMENT_PARENT_TYPE.MODERATION_ITEM
@@ -171,9 +175,9 @@ export default {
     },
     itemComponent() {
       if (!this.modItem) return null;
-      if (this.modItem.type === 'trick') return {is: TrickInfoCard, payload: 'trick'};
-      if (this.modItem.type === 'category') return {is: SimpleInfoCard, payload: 'payload'};
-      if (this.modItem.type === 'difficulty') return {is: SimpleInfoCard, payload: 'payload'};
+      if (this.modItem.type === MODERATION_TYPES.TRICK) return {is: TrickInfoCard, payload: 'trick'};
+      if (this.modItem.type === MODERATION_TYPES.CATEGORY) return {is: SimpleInfoCard, payload: 'payload'};
+      if (this.modItem.type === MODERATION_TYPES.DIFFICULTY) return {is: SimpleInfoCard, payload: 'payload'};
       return null
     }
   }

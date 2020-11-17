@@ -28,12 +28,12 @@ namespace TrickingLibrary.Api.Controllers
         [HttpGet]
         public IEnumerable<object> All() => _ctx.Tricks
             .AsNoTracking()
-            .Where(x => x.Active)
+            .Where(x => !x.Deleted && x.State == VersionState.Live)
             .Include(x => x.TrickCategories)
             .Include(x => x.Progressions)
             .Include(x => x.Prerequisites)
             .Include(x => x.User)
-            .Select(TrickViewModels.UserProjection).ToList();
+            .Select(TrickViewModels.Projection).ToList();
 
         [HttpGet("{value}")]
         public IActionResult Get(string value)
@@ -55,6 +55,20 @@ namespace TrickingLibrary.Api.Controllers
             return Ok(trick);
         }
 
+        [HttpGet("{slug}/history")]
+        public IEnumerable<object> GetHistory(string slug)
+        {
+            return _ctx.Tricks
+                .Where(x => x.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase)
+                            && x.State != VersionState.Staged)
+                .Include(x => x.TrickCategories)
+                .Include(x => x.Progressions)
+                .Include(x => x.Prerequisites)
+                .Include(x => x.User)
+                .Select(TrickViewModels.FullProjection)
+                .ToList();
+        }
+
         [HttpGet("{trickId}/submissions")]
         public IEnumerable<object> ListSubmissionsForTrick(string trickId, [FromQuery] FeedQuery feedQuery)
         {
@@ -69,7 +83,7 @@ namespace TrickingLibrary.Api.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<object> Create([FromBody] CreateTrickForm createTrickForm)
+        public async Task<IActionResult> Create([FromBody] CreateTrickForm createTrickForm)
         {
             var trick = new Trick
             {
@@ -101,7 +115,7 @@ namespace TrickingLibrary.Api.Controllers
                 UserId = UserId,
             });
             await _ctx.SaveChangesAsync();
-            return TrickViewModels.Create(trick);
+            return Ok();
         }
 
         [HttpPut]
@@ -149,8 +163,7 @@ namespace TrickingLibrary.Api.Controllers
             });
             await _ctx.SaveChangesAsync();
 
-            // todo redirect to the mod item instead of returning the trick
-            return Ok(TrickViewModels.Create(newTrick));
+            return Ok();
         }
 
         [HttpDelete("{id}")]

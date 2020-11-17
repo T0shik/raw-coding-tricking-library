@@ -30,7 +30,7 @@ export default {
     submissions() {
       return [...this.profileSubmissions].sort((a, b) => b.score - a.score)
     },
-    ...mapState('tricks', ['lists', 'dictionary']),
+    ...mapState('library', ['lists', 'dictionary']),
     completedTricks() {
       const submissions = this.submissions.filter((v, i, a) => a.map(x => x.trickId).indexOf(v.trickId) === i);
       return submissions.map(submission => ({

@@ -1,8 +1,9 @@
 ﻿import {mapActions, mapState} from 'vuex';
+import {EVENTS} from "@/data/events";
 
 export const close = {
   methods: {
-    ...mapActions('content-update', ['cancelUpload']),
+    ...mapActions('content-creation', ['cancelUpload']),
     close() {
       return this.cancelUpload({hard: true})
     }
@@ -17,7 +18,14 @@ export const form = (formFactory) => ({
     if (this.setup)
       this.setup(this.form)
   },
+  methods: {
+    broadcastUpdate(){
+      this.$nuxt.$emit(EVENTS.CONTENT_UPDATED)
+      this.loadContent()
+    },
+    ...mapActions('library', ['loadContent'])
+  },
   computed: {
-    ...mapState('content-update', ['setup']),
+    ...mapState('content-creation', ['setup']),
   }
 })

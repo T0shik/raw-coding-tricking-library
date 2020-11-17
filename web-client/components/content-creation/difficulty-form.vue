@@ -24,17 +24,16 @@
 </template>
 
 <script>
-import {close} from "./_shared";
 import {mapState} from "vuex";
+import {form, close} from "@/components/content-creation/_shared";
 
 export default {
   name: "difficulty-form",
-  mixins: [close],
+  mixins: [close, form(() => ({
+    name: "",
+    description: "",
+  }))],
   data: () => ({
-    form: {
-      name: "",
-      description: "",
-    },
     validation: {
       valid: false,
       name: [v => !!v || "Name is required."],
@@ -48,16 +47,17 @@ export default {
     }
   },
   methods: {
-    save() {
+    async save() {
       if (this.form.id) {
-        this.$axios.put("/api/difficulties", this.form)
+        await this.$axios.put("/api/difficulties", this.form)
       } else {
-        this.$axios.post("/api/difficulties", this.form)
+        await this.$axios.post("/api/difficulties", this.form)
       }
+      this.broadcastUpdate()
       this.close()
     }
   },
-  computed: mapState('content-update', ['editPayload'])
+  computed: mapState('content-creation', ['editPayload'])
 }
 </script>
 

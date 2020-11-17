@@ -6,7 +6,7 @@
       <v-col class="d-flex justify-center align-start"
              lg="3"
              v-for="trick in filteredTricks" :key="`trick-info-card-${trick.id}`">
-        <trick-info-card :trick="trick"/>
+        <trick-info-card :trick="trick" link/>
       </v-col>
     </v-row>
   </div>

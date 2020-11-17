@@ -11,13 +11,13 @@
 
 <script>
 import {mapState} from 'vuex'
-import TrickList from "../../components/trick-list";
-import ItemContentLayout from "../../components/item-content-layout";
+import TrickList from "@/components/trick-list";
+import ItemContentLayout from "@/components/item-content-layout";
 
 export default {
   components: {ItemContentLayout, TrickList},
   computed: {
-    ...mapState('tricks', ['dictionary']),
+    ...mapState('library', ['dictionary']),
     tricks() {
       const categorySlug = this.$route.params.category;
       return this.dictionary.categories[categorySlug]

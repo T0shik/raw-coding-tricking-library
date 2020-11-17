@@ -15,12 +15,11 @@ export const state = initState
 
 const setEntities = (state, type, data) => {
   state.dictionary[type] = {}
+  state.lists[type] = []
   data.forEach(x => {
     state.lists[type].push(x)
     state.dictionary[type][x.id] = x
-    if (x.slug) {
-      state.dictionary[type][x.slug] = x
-    }
+    state.dictionary[type][x.slug] = x
   })
 }
 
@@ -40,7 +39,7 @@ export const mutations = {
 }
 
 export const actions = {
-  fetchTricks({commit}) {
+  loadContent({commit}) {
     return Promise.all([
       this.$axios.$get("/api/tricks").then(tricks => commit('setTricks', {tricks})),
       this.$axios.$get("/api/difficulties").then(difficulties => commit('setDifficulties', {difficulties})),

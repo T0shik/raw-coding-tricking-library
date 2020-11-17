@@ -8,6 +8,7 @@ namespace TrickingLibrary.Api.ViewModels
     public static class CategoryViewModels
     {
         public static readonly Func<Category, object> CreateFlat = FlatProjection.Compile();
+
         public static Expression<Func<Category, object>> FlatProjection =>
             category => new
             {
@@ -19,6 +20,7 @@ namespace TrickingLibrary.Api.ViewModels
             };
 
         public static readonly Func<Category, object> Create = Projection.Compile();
+
         public static Expression<Func<Category, object>> Projection =>
             category => new
             {
@@ -27,8 +29,12 @@ namespace TrickingLibrary.Api.ViewModels
                 category.Name,
                 category.Description,
                 category.Version,
+                category.State,
                 Updated = category.Updated.ToLocalTime().ToString("HH:mm dd/MM/yyyy"),
-                Tricks = category.Tricks.AsQueryable().Select(x => x.TrickId).ToList(),
+                Tricks = category.Tricks.AsQueryable()
+                    .Where(x => x.Active)
+                    .Select(x => x.TrickId)
+                    .ToList(),
             };
     }
 }

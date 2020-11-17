@@ -88,14 +88,14 @@ export default {
     }
   }),
   computed: {
-    ...mapState('tricks', ['lists', 'dictionary']),
+    ...mapState('library', ['lists', 'dictionary']),
     fileName() {
       return this.file ? this.file.name : ""
     }
   },
   methods: {
-    ...mapMutations('content-update', ['hide']),
-    ...mapActions('content-update', ['startVideoUpload', 'createSubmission']),
+    ...mapMutations('content-creation', ['hide']),
+    ...mapActions('content-creation', ['startVideoUpload', 'createSubmission']),
     async handleFile(file) {
       if (!file) return;
 
@@ -106,6 +106,7 @@ export default {
     },
     save() {
       this.createSubmission({form: this.form})
+        .then(this.broadcastUpdate)
       this.hide();
     },
     restart() {

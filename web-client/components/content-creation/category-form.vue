@@ -11,6 +11,7 @@
       <v-form ref="form" v-model="validation.valid">
         <v-text-field :rules="validation.name"
                       label="Name"
+                      :disabled="!!editPayload"
                       v-model="form.name"></v-text-field>
         <v-text-field :rules="validation.description"
                       label="Description"
@@ -24,17 +25,16 @@
 </template>
 
 <script>
-import {close} from "./_shared";
+import {form, close} from "@/components/content-creation/_shared";
 import {mapState} from "vuex";
 
 export default {
   name: "category-form",
-  mixins: [close],
+  mixins: [close, form(() => ({
+    name: "",
+    description: "",
+  }))],
   data: () => ({
-    form: {
-      name: "",
-      description: "",
-    },
     validation: {
       valid: false,
       name: [v => !!v || "Name is required."],
@@ -48,16 +48,17 @@ export default {
     }
   },
   methods: {
-    save() {
+    async save() {
       if (this.form.id) {
-        this.$axios.put("/api/categories", this.form)
+        await this.$axios.put("/api/categories", this.form)
       } else {
-        this.$axios.post("/api/categories", this.form)
+        await this.$axios.post("/api/categories", this.form)
       }
+      this.broadcastUpdate()
       this.close()
     }
   },
-  computed: mapState('content-update', ['editPayload'])
+  computed: mapState('content-creation', ['editPayload'])
 }
 </script>
 

@@ -65,7 +65,7 @@ export default {
       return Promise.all(submissionRequests)
     }
   },
-  computed: mapState('tricks', ['lists', 'dictionary'])
+  computed: mapState('library', ['lists', 'dictionary'])
 }
 </script>
 

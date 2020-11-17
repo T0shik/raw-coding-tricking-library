@@ -16,11 +16,7 @@
   }),
   watch: {
     'order': function () {
-      this.content = []
-      this.cursor = 0
-      this.finished = false
-      this.started = false
-      this.loadContent()
+      this.reloadContent()
     }
   },
   methods: {
@@ -34,6 +30,13 @@
       if (loadMore) {
         this.loadContent()
       }
+    },
+    reloadContent() {
+      this.content = []
+      this.cursor = 0
+      this.finished = false
+      this.started = false
+      return this.loadContent()
     },
     loadContent() {
       this.started = true

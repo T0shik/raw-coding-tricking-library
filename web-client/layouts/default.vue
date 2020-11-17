@@ -48,9 +48,12 @@
           </div>
         </template>
         <template v-slot:forbidden="{login}">
-          <v-btn outlined @click="login">
-            <v-icon left>mdi-account-circle-outline</v-icon>
+          <v-btn class="d-none d-md-flex" outlined @click="login">
+            <v-icon left>mdi-login</v-icon>
             Log In
+          </v-btn>
+          <v-btn class="d-flex d-md-none" icon @click="login">
+            <v-icon>mdi-login</v-icon>
           </v-btn>
         </template>
       </if-auth>

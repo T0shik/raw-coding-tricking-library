@@ -32,17 +32,16 @@ import DifficultyForm from "@/components/content-creation/difficulty-form";
 export default {
   name: "moderation-difficulty-overview",
   methods: {
-    ...mapMutations('content-update', ['activate']),
+    ...mapMutations('content-creation', ['activate']),
     edit(difficulty) {
       this.activate({
         component: DifficultyForm,
-        edit: true,
         editPayload: difficulty,
         setup: null
       })
     }
   },
-  computed: mapState('tricks', ['lists'])
+  computed: mapState('library', ['lists'])
 }
 </script>
 

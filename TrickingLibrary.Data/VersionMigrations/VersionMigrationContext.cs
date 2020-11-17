@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using TrickingLibrary.Models;
 using TrickingLibrary.Models.Moderation;
 
 namespace TrickingLibrary.Data.VersionMigrations
@@ -14,7 +15,7 @@ namespace TrickingLibrary.Data.VersionMigrations
 
         public VersionMigrationContext Setup(ModerationItem moderationItem)
         {
-            ModerationItem = moderationItem;
+            ModerationItem = moderationItem ?? throw new ArgumentException(nameof(moderationItem));
             EntityMigrationContext = moderationItem.Type switch
             {
                 ModerationTypes.Trick => new TrickMigrationContext(_ctx),
@@ -27,7 +28,8 @@ namespace TrickingLibrary.Data.VersionMigrations
 
         public void Migrate()
         {
-            // todo: throw some errors
+            if (ModerationItem == null) throw new NullReferenceException(nameof(ModerationItem));
+            if (EntityMigrationContext == null) throw new NullReferenceException(nameof(EntityMigrationContext));
             var source = EntityMigrationContext.GetSource();
 
             var current = source.FirstOrDefault(x => x.Id == ModerationItem.Current);
@@ -40,12 +42,14 @@ namespace TrickingLibrary.Data.VersionMigrations
 
             if (current != null)
             {
-                if (target.Version - current.Version <= 0)
+                var newVersion = !current.Slug.Equals(target.Slug, StringComparison.InvariantCultureIgnoreCase);
+                var outdatedVersion = target.Version - current.Version <= 0;
+                if (outdatedVersion && !newVersion)
                 {
                     throw new InvalidVersionException($"Current Version is {current.Version}, Target version is {target.Version}, for {ModerationItem.Type}.");
                 }
 
-                current.Active = false;
+                current.State = VersionState.Outdated;
 
                 var outdatedModerationItems = _ctx.ModerationItems
                     .Where(x => !x.Deleted && x.Type == ModerationItem.Type && x.Id != ModerationItem.Id)
@@ -57,7 +61,7 @@ namespace TrickingLibrary.Data.VersionMigrations
                 }
             }
 
-            target.Active = true;
+            target.State = VersionState.Live;
             EntityMigrationContext.MigrateRelationships(ModerationItem.Current, ModerationItem.Target);
         }
 

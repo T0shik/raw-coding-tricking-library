@@ -66,16 +66,16 @@ namespace TrickingLibrary.Api
                     });
                     var difficulties = new List<Difficulty>
                     {
-                        new Difficulty {Id = 1, Slug = "easy", Name = "Easy", Description = "Easy Test", Active = true},
-                        new Difficulty {Id = 2, Slug = "medium", Name = "Medium", Description = "Medium Test", Active = true},
-                        new Difficulty {Id = 3, Slug = "hard", Name = "Hard", Description = "Hard Test", Active = true},
+                        new Difficulty {Id = 1, Slug = "easy", Name = "Easy", Description = "Easy Test", State = VersionState.Live},
+                        new Difficulty {Id = 2, Slug = "medium", Name = "Medium", Description = "Medium Test", State = VersionState.Live},
+                        new Difficulty {Id = 3, Slug = "hard", Name = "Hard", Description = "Hard Test", State = VersionState.Live},
                     };
                     ctx.AddRange(difficulties);
                     var categories = new List<Category>
                     {
-                        new Category {Id = 1, Slug = "kick", Name = "Kick", Description = "Kick Test", Active = true},
-                        new Category {Id = 2, Slug = "flip", Name = "Flip", Description = "Flip Test", Active = true},
-                        new Category {Id = 3, Slug = "transition", Name = "Transition", Description = "Transition Test", Active = true},
+                        new Category {Id = 1, Slug = "kick", Name = "Kick", Description = "Kick Test", State = VersionState.Live},
+                        new Category {Id = 2, Slug = "flip", Name = "Flip", Description = "Flip Test", State = VersionState.Live},
+                        new Category {Id = 3, Slug = "transition", Name = "Transition", Description = "Transition Test", State = VersionState.Live},
                     };
                     ctx.AddRange(categories);
                     ctx.Add(new Category {Id = 4, Slug = "mod", Name = "Mod", Description = "Category under moderation"});
@@ -85,7 +85,7 @@ namespace TrickingLibrary.Api
                         UserId = testUser.Id,
                         Slug = "backwards-roll",
                         Name = "Backwards Roll",
-                        Active = true,
+                        State = VersionState.Live,
                         Version = 1,
                         Description = "This is a test backwards roll",
                         TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 1, Active = true}},
@@ -97,7 +97,7 @@ namespace TrickingLibrary.Api
                         UserId = testUser.Id,
                         Slug = "forwards-roll",
                         Name = "Forwards Roll",
-                        Active = true,
+                        State = VersionState.Live,
                         Version = 1,
                         Description = "This is a test forwards roll",
                         TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 1, Active = true}},
@@ -109,7 +109,7 @@ namespace TrickingLibrary.Api
                         UserId = testUser.Id,
                         Slug = "back-flip",
                         Name = "Back Flip",
-                        Active = true,
+                        State = VersionState.Live,
                         Version = 1,
                         Description = "This is a test back flip",
                         TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 2, Active = true}},
@@ -217,7 +217,7 @@ namespace TrickingLibrary.Api
                             UserId = testUser.Id,
                             Slug = $"fake-trick-{i}",
                             Name = $"Fake Trickery Trick {i}",
-                            Active = true,
+                            State = VersionState.Live,
                             Version = 1,
                             Description = $"This is a really fake trick # {i}",
                             TrickDifficulties = new List<TrickDifficulty>

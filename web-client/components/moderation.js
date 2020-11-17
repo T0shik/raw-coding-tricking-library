@@ -1,13 +1,24 @@
 ﻿const endpointResolver = (type) => {
-  if (type === 'trick') return 'tricks'
-  if (type === 'category') return 'categories'
-  if (type === 'difficulty') return 'difficulties'
+  if (type === MODERATION_TYPES.TRICK) return 'tricks'
+  if (type === MODERATION_TYPES.CATEGORY) return 'categories'
+  if (type === MODERATION_TYPES.DIFFICULTY) return 'difficulties'
+}
+
+export const MODERATION_TYPES = {
+  TRICK: 'trick',
+  CATEGORY: 'category',
+  DIFFICULTY: 'difficulty',
 }
 
 export const REVIEW_STATUS = {
   APPROVED: 0,
   REJECTED: 1,
   WAITING: 2,
+}
+export const VERSION_STATE = {
+  LIVE: 0,
+  STAGED: 1,
+  OUTDATED: 2,
 }
 
 const reviewStatusColor = (status) => {

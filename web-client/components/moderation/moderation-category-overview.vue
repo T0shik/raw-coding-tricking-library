@@ -32,17 +32,16 @@ import CategoryForm from '@/components/content-creation/category-form'
 export default {
   name: "moderation-category-overview",
   methods: {
-    ...mapMutations('content-update', ['activate']),
+    ...mapMutations('content-creation', ['activate']),
     edit(category) {
       this.activate({
         component: CategoryForm,
-        edit: true,
         editPayload: category,
         setup: null
       })
     }
   },
-  computed: mapState('tricks', ['lists'])
+  computed: mapState('library', ['lists'])
 }
 </script>
 

@@ -44,11 +44,18 @@
 import UserHeader from "@/components/user-header";
 import {feed} from "@/components/feed";
 import {modItemRenderer} from "@/components/moderation";
+import {EVENTS} from "@/data/events";
 
 export default {
   name: "moderation-item-feed",
   components: {UserHeader},
   mixins: [feed(''), modItemRenderer],
+  created() {
+    this.$nuxt.$on(EVENTS.CONTENT_UPDATED, this.reloadContent)
+  },
+  destroyed() {
+    this.$nuxt.$off(EVENTS.CONTENT_UPDATED, this.reloadContent)
+  },
   fetch() {
     return this.loadContent()
   },

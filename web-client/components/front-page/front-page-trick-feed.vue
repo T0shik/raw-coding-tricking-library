@@ -53,7 +53,7 @@ export default {
       return Promise.all(submissionRequests)
     }
   },
-  computed: mapState('tricks', ['lists'])
+  computed: mapState('library', ['lists'])
 }
 </script>
 

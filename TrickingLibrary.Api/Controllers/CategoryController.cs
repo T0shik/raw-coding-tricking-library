@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.Form;
@@ -24,7 +26,7 @@ namespace TrickingLibrary.Api.Controllers
         [HttpGet]
         public IEnumerable<object> All() =>
             _ctx.Categories
-                .Where(x => !x.Deleted && x.Active)
+                .Where(x => !x.Deleted && x.State == VersionState.Live)
                 .Select(CategoryViewModels.Projection)
                 .ToList();
 
@@ -44,6 +46,16 @@ namespace TrickingLibrary.Api.Controllers
             return Ok(category);
         }
 
+        [HttpGet("{slug}/history")]
+        public IEnumerable<object> GetHistory(string slug)
+        {
+            return _ctx.Categories
+                .Where(x => x.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase)
+                            && x.State != VersionState.Staged)
+                .Select(CategoryViewModels.Projection)
+                .ToList();
+        }
+
         [HttpGet("{id}/tricks")]
         public IEnumerable<Trick> ListCategoryTricks(int id) =>
             _ctx.TrickCategories
@@ -53,6 +65,7 @@ namespace TrickingLibrary.Api.Controllers
                 .ToList();
 
         [HttpPost]
+        [Authorize(TrickingLibraryConstants.Policies.Mod)]
         public async Task<IActionResult> Create([FromBody] CreateCategoryForm form)
         {
             var category = new Category
@@ -78,6 +91,7 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpPut]
+        [Authorize(TrickingLibraryConstants.Policies.Mod)]
         public async Task<IActionResult> Update([FromBody] UpdateCategoryForm form)
         {
             var category = _ctx.Categories.FirstOrDefault(x => x.Id == form.Id);
@@ -89,8 +103,8 @@ namespace TrickingLibrary.Api.Controllers
 
             var newCategory = new Category
             {
-                Slug = form.Name.Replace(" ", "-").ToLowerInvariant(),
-                Name = form.Name,
+                Slug = category.Slug,
+                Name = category.Name,
                 Description = form.Description,
                 Version = category.Version + 1,
                 UserId = UserId,

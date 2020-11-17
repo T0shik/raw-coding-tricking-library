@@ -11,13 +11,13 @@
 
 <script>
 import {mapState} from 'vuex'
-import TrickList from "../../components/trick-list";
-import ItemContentLayout from "../../components/item-content-layout";
+import TrickList from "@/components/trick-list";
+import ItemContentLayout from "@/components/item-content-layout";
 
 export default {
   components: {ItemContentLayout, TrickList},
   computed: {
-    ...mapState('tricks', ['lists', 'dictionary']),
+    ...mapState('library', ['lists', 'dictionary']),
     tricks() {
       const difficultySlug = this.$route.params.difficulty;
       return this.dictionary.difficulties[difficultySlug]

@@ -4,7 +4,6 @@
   uploadCompleted: false,
   active: active,
   component: component,
-  editing: false,
   editPayload: null,
   setup: null
 })
@@ -12,13 +11,10 @@
 export const state = initState
 
 export const mutations = {
-  activate(state, {component, edit = false, editPayload = null, setup = null}) {
+  activate(state, {component, editPayload = null, setup = null}) {
     state.active = true;
     state.component = component;
-    if (edit) {
-      state.editing = true;
-      state.editPayload = editPayload
-    }
+    state.editPayload = editPayload
     state.setup = setup
   },
   hide(state) {

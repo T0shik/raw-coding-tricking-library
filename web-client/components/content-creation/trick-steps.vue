@@ -20,6 +20,7 @@
           <v-form ref="form" v-model="validation.valid">
             <v-text-field :rules="validation.name"
                           label="Name"
+                          :disabled="!!editPayload"
                           v-model="form.name"/>
             <v-text-field label="Description"
                           :rules="validation.description"
@@ -63,13 +64,13 @@
           <div><strong>Categories:</strong> {{ form.categories.map(x => dictionary.categories[x].name).join(', ') }}
           </div>
 
-          <v-text-field v-if="editing" label="Reason For Change" v-model="form.reason"></v-text-field>
+          <v-text-field v-if="!!editPayload" label="Reason For Change" v-model="form.reason"></v-text-field>
 
           <div class="d-flex mt-3">
             <v-btn @click="step--">Edit</v-btn>
             <v-spacer/>
-            <v-btn color="primary" :disabled="editing && form.reason.length <= 5" @click="save">
-              {{ editing ? "Update" : "Create" }}
+            <v-btn color="primary" :disabled="!!editPayload && form.reason.length <= 5" @click="save">
+              {{ !!editPayload ? "Update" : "Create" }}
             </v-btn>
           </div>
         </v-stepper-content>
@@ -80,22 +81,21 @@
 
 <script>
 import {mapState, mapActions} from 'vuex';
-import {close} from "./_shared";
+import {form, close} from "@/components/content-creation/_shared";
 
 export default {
   name: "trick-steps",
-  mixins: [close],
+  mixins: [close, form(() => ({
+    name: "",
+    description: "",
+    difficulty: "",
+    reason: "",
+    prerequisites: [],
+    progressions: [],
+    categories: [],
+  }))],
   data: () => ({
     step: 1,
-    form: {
-      name: "",
-      description: "",
-      difficulty: "",
-      reason: "",
-      prerequisites: [],
-      progressions: [],
-      categories: [],
-    },
     validation: {
       valid: false,
       name: [v => !!v || "Name is required."],
@@ -110,22 +110,23 @@ export default {
     ]
   }),
   created() {
-    if (this.editing) {
+    if (this.editPayload) {
       Object.assign(this.form, this.editPayload)
     }
   },
   computed: {
-    ...mapState('content-update', ['editing', 'editPayload']),
-    ...mapState('tricks', ['lists', 'dictionary']),
+    ...mapState('content-creation', ['editPayload']),
+    ...mapState('library', ['lists', 'dictionary']),
   },
   methods: {
-    ...mapActions('tricks', ['createTrick', 'updateTrick']),
+    ...mapActions('library', ['createTrick', 'updateTrick']),
     async save() {
-      if (this.editing) {
+      if (this.form.id) {
         await this.updateTrick({form: this.form})
       } else {
         await this.createTrick({form: this.form})
       }
+      this.broadcastUpdate()
       this.close();
     },
   }
