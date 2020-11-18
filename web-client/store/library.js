@@ -45,11 +45,5 @@ export const actions = {
       this.$axios.$get("/api/difficulties").then(difficulties => commit('setDifficulties', {difficulties})),
       this.$axios.$get("/api/categories").then(categories => commit('setCategories', {categories})),
     ])
-  },
-  createTrick({state, commit, dispatch}, {form}) {
-    return this.$axios.$post("/api/tricks", form)
-  },
-  updateTrick({state, commit, dispatch}, {form}) {
-    return this.$axios.$put("/api/tricks", form)
   }
 }

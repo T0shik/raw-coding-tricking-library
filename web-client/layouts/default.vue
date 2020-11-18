@@ -16,7 +16,8 @@
             <v-btn v-if="moderator"
                    class="d-none d-md-flex mx-1"
                    depressed
-                   to="/moderation">Moderation</v-btn>
+                   to="/moderation">Moderation
+            </v-btn>
             <content-creation-dialog/>
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
@@ -63,6 +64,7 @@
         <nuxt/>
       </v-container>
     </v-main>
+    <popup/>
   </v-app>
 </template>
 
@@ -72,10 +74,11 @@ import {mapActions, mapGetters, mapState} from "vuex";
 import IfAuth from "@/components/auth/if-auth";
 import NavBarSearch from "@/components/nav-bar-search";
 import UserHeader from "@/components/user-header";
+import Popup from "@/components/popup";
 
 export default {
   name: "default",
-  components: {UserHeader, NavBarSearch, IfAuth, ContentCreationDialog},
+  components: {Popup, UserHeader, NavBarSearch, IfAuth, ContentCreationDialog},
   computed: {
     ...mapState('auth', ['profile']),
     ...mapGetters('auth', ['moderator']),

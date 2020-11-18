@@ -164,5 +164,36 @@ namespace TrickingLibrary.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPut("staged")]
+        [Authorize]
+        public async Task<IActionResult> UpdateStaged([FromBody] UpdateStagedTrickForm form)
+        {
+            var trick = _ctx.Tricks
+                .Include(x => x.TrickDifficulties)
+                .Include(x => x.TrickCategories)
+                .Include(x => x.Prerequisites)
+                .Include(x => x.Progressions)
+                .FirstOrDefault(x => x.Id == form.Id);
+
+            if (trick == null) return NoContent();
+            if (trick.UserId != UserId) return BadRequest("Can't edit this trick.");
+
+            trick.Description = form.Description;
+            trick.TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = form.Difficulty}};
+            trick.Prerequisites = form.Prerequisites
+                .Select(x => new TrickRelationship {PrerequisiteId = x})
+                .ToList();
+            trick.Progressions = form.Progressions
+                .Select(x => new TrickRelationship {ProgressionId = x})
+                .ToList();
+            trick.TrickCategories = form.Categories
+                .Select(x => new TrickCategory {CategoryId = x})
+                .ToList();
+
+            await _ctx.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

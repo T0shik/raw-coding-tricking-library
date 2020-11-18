@@ -10,7 +10,10 @@
             <v-icon size="46">mdi-arrow-right</v-icon>
           </v-col>
           <v-col cols="5" v-if="target">
-            <component v-if="itemComponent" :[itemComponent.payload]="target" :is="itemComponent.is"/>
+            <component v-if="itemComponent"
+                       :[itemComponent.payload]="target"
+                       :is="itemComponent.is"
+                       @edit="itemComponent.edit(target)"/>
           </v-col>
         </v-row>
         <v-divider class="my-2"/>
@@ -91,12 +94,15 @@
 import CommentSection from "@/components/comments/comment-section";
 import TrickInfoCard from "@/components/trick-info-card";
 import SimpleInfoCard from "@/components/moderation/simple-info-card";
+import CategoryForm from "@/components/content-creation/category-form";
+import DifficultyForm from "@/components/content-creation/difficulty-form";
 import {COMMENT_PARENT_TYPE} from "@/components/comments/_shared";
 import {MODERATION_TYPES, modItemRenderer, REVIEW_STATUS, VERSION_STATE} from "@/components/moderation";
 import IfAuth from "@/components/auth/if-auth";
 import UserHeader from "@/components/user-header";
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters, mapMutations} from "vuex";
 import {EVENTS} from "@/data/events";
+import {onContentUpdate} from "@/components/_shared";
 
 const initReview = () => ({
   status: -1,
@@ -105,7 +111,7 @@ const initReview = () => ({
 
 export default {
   components: {UserHeader, IfAuth, TrickInfoCard, CommentSection},
-  mixins: [modItemRenderer],
+  mixins: [modItemRenderer, onContentUpdate],
   data: () => ({
     current: null,
     target: null,
@@ -117,18 +123,24 @@ export default {
     const {modId} = this.$route.params
 
     this.modItem = await this.$axios.$get(`/api/moderation-items/${modId}`)
-    const {type, current, target} = this.modItem
-
-    const endpoint = this.endpointResolver(type)
-    const loadReviews = this.loadReviews()
-    const loadCurrent = this.$axios.$get(`/api/${endpoint}/${current}`)
-      .then((item) => this.current = item)
-    const loadTarget = this.$axios.$get(`/api/${endpoint}/${target}`)
-      .then((item) => this.target = item)
-
-    await Promise.all([loadReviews, loadCurrent, loadTarget])
+    await this.loadRelationships()
   },
   methods: {
+    onContentUpdate() {
+      return this.loadRelationships()
+    },
+    loadRelationships() {
+      const {type, current, target} = this.modItem
+
+      const endpoint = this.endpointResolver(type)
+      const loadReviews = this.loadReviews()
+      const loadCurrent = this.$axios.$get(`/api/${endpoint}/${current}`)
+        .then((item) => this.current = item)
+      const loadTarget = this.$axios.$get(`/api/${endpoint}/${target}`)
+        .then((item) => this.target = item)
+
+      return Promise.all([loadReviews, loadCurrent, loadTarget])
+    },
     createReview() {
       const {modId} = this.$route.params
 
@@ -149,7 +161,8 @@ export default {
     resetReviewForm() {
       this.review = initReview()
     },
-    ...mapActions('library', ['loadContent'])
+    ...mapActions('library', ['loadContent']),
+    ...mapMutations('content-creation', ['activate'])
   },
   computed: {
     ...mapGetters('auth', ['moderator']),
@@ -175,9 +188,23 @@ export default {
     },
     itemComponent() {
       if (!this.modItem) return null;
-      if (this.modItem.type === MODERATION_TYPES.TRICK) return {is: TrickInfoCard, payload: 'trick'};
-      if (this.modItem.type === MODERATION_TYPES.CATEGORY) return {is: SimpleInfoCard, payload: 'payload'};
-      if (this.modItem.type === MODERATION_TYPES.DIFFICULTY) return {is: SimpleInfoCard, payload: 'payload'};
+      if (this.modItem.type === MODERATION_TYPES.TRICK)
+        return {is: TrickInfoCard, payload: 'trick'};
+
+      if (this.modItem.type === MODERATION_TYPES.CATEGORY)
+        return {
+          is: SimpleInfoCard,
+          payload: 'payload',
+          edit: (category) => this.activate({component: CategoryForm, editPayload: category})
+        };
+
+      if (this.modItem.type === MODERATION_TYPES.DIFFICULTY)
+        return {
+          is: SimpleInfoCard,
+          payload: 'payload',
+          edit: (difficulty) => this.activate({component: DifficultyForm, editPayload: difficulty})
+        };
+
       return null
     }
   }

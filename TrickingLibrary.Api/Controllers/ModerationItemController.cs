@@ -26,12 +26,16 @@ namespace TrickingLibrary.Api.Controllers
         }
 
         [HttpGet]
-        public object All([FromQuery] FeedQuery feedQuery)
+        public object All([FromQuery] FeedQuery feedQuery, int user)
         {
-            var moderationItems = _ctx.ModerationItems
+            var query = _ctx.ModerationItems.Where(x => !x.Deleted);
+
+            if (user == 1)
+                query = query.Where(x => x.UserId == UserId);
+
+            var moderationItems = query
                 .Include(x => x.User)
                 .Include(x => x.Reviews)
-                .Where(x => !x.Deleted)
                 .OrderFeed(feedQuery)
                 .ToList();
 

@@ -71,6 +71,7 @@ namespace TrickingLibrary.Api
                         new Difficulty {Id = 3, Slug = "hard", Name = "Hard", Description = "Hard Test", State = VersionState.Live},
                     };
                     ctx.AddRange(difficulties);
+                    ctx.Add(new Difficulty {Id = 4, Slug = "wtf", Name = "WTF", Description = "Difficulty under moderation", UserId = testUser.Id});
                     var categories = new List<Category>
                     {
                         new Category {Id = 1, Slug = "kick", Name = "Kick", Description = "Kick Test", State = VersionState.Live},
@@ -78,7 +79,7 @@ namespace TrickingLibrary.Api
                         new Category {Id = 3, Slug = "transition", Name = "Transition", Description = "Transition Test", State = VersionState.Live},
                     };
                     ctx.AddRange(categories);
-                    ctx.Add(new Category {Id = 4, Slug = "mod", Name = "Mod", Description = "Category under moderation"});
+                    ctx.Add(new Category {Id = 4, Slug = "ground-work", Name = "Ground Work", Description = "Category under moderation", UserId = testUser.Id});
                     ctx.Add(new Trick
                     {
                         Id = 1,
@@ -119,6 +120,22 @@ namespace TrickingLibrary.Api
                             new TrickRelationship {PrerequisiteId = 1, Active = true},
                         }
                     });
+                    ctx.Add(new Trick
+                    {
+                        Id = 4,
+                        UserId = testUser.Id,
+                        Slug = "back-flip-360",
+                        Name = "Back Flip 360",
+                        State = VersionState.Staged,
+                        Version = 1,
+                        Description = "This is a test back flip 360",
+                        TrickDifficulties = new List<TrickDifficulty> {new TrickDifficulty {DifficultyId = 2}},
+                        TrickCategories = new List<TrickCategory> {new TrickCategory {CategoryId = 2}},
+                        Prerequisites = new List<TrickRelationship>
+                        {
+                            new TrickRelationship {PrerequisiteId = 3},
+                        }
+                    });
                     ctx.Add(new Submission
                     {
                         TrickId = "back-flip",
@@ -153,7 +170,7 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new ModerationItem
                     {
-                        Target = 3,
+                        Target = 4,
                         Type = ModerationTypes.Trick,
                         UserId = testUser.Id,
                     });
@@ -161,6 +178,12 @@ namespace TrickingLibrary.Api
                     {
                         Target = 4,
                         Type = ModerationTypes.Category,
+                        UserId = testUser.Id,
+                    });
+                    ctx.Add(new ModerationItem
+                    {
+                        Target = 4,
+                        Type = ModerationTypes.Difficulty,
                         UserId = testUser.Id,
                     });
                     ctx.SaveChanges();

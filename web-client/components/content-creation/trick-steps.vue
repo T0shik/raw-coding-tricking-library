@@ -64,12 +64,12 @@
           <div><strong>Categories:</strong> {{ form.categories.map(x => dictionary.categories[x].name).join(', ') }}
           </div>
 
-          <v-text-field v-if="!!editPayload" label="Reason For Change" v-model="form.reason"></v-text-field>
+          <v-text-field v-if="requireReason" label="Reason For Change" v-model="form.reason"></v-text-field>
 
           <div class="d-flex mt-3">
             <v-btn @click="step--">Edit</v-btn>
             <v-spacer/>
-            <v-btn color="primary" :disabled="!!editPayload && form.reason.length <= 5" @click="save">
+            <v-btn color="primary" :disabled="requireReason && form.reason.length <= 5" @click="save">
               {{ !!editPayload ? "Update" : "Create" }}
             </v-btn>
           </div>
@@ -82,6 +82,7 @@
 <script>
 import {mapState, mapActions} from 'vuex';
 import {form, close} from "@/components/content-creation/_shared";
+import {VERSION_STATE} from "@/components/moderation";
 
 export default {
   name: "trick-steps",
@@ -117,14 +118,23 @@ export default {
   computed: {
     ...mapState('content-creation', ['editPayload']),
     ...mapState('library', ['lists', 'dictionary']),
+    staged() {
+      return this.form.state === VERSION_STATE.STAGED
+    },
+    requireReason() {
+      return this.editPayload && !this.staged
+    }
   },
   methods: {
-    ...mapActions('library', ['createTrick', 'updateTrick']),
     async save() {
       if (this.form.id) {
-        await this.updateTrick({form: this.form})
+        if (this.staged) {
+          await this.$axios.$put("/api/tricks/staged", this.form)
+        } else {
+          await this.$axios.$put("/api/tricks", this.form)
+        }
       } else {
-        await this.createTrick({form: this.form})
+        await this.$axios.$post("/api/tricks", this.form)
       }
       this.broadcastUpdate()
       this.close();

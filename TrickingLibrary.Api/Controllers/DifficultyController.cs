@@ -132,5 +132,22 @@ namespace TrickingLibrary.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPut("staged")]
+        [Authorize]
+        public async Task<IActionResult> UpdateStaged([FromBody] UpdateDifficultyForm form)
+        {
+            var difficulty = _ctx.Difficulties
+                .FirstOrDefault(x => x.Id == form.Id);
+
+            if (difficulty == null) return NoContent();
+            if (difficulty.UserId != UserId) return BadRequest("Can't edit this difficulty.");
+
+            difficulty.Description = form.Description;
+
+            await _ctx.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
