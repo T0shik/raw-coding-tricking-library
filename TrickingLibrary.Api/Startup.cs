@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using TrickingLibrary.Api.BackgroundServices.SubmissionVoting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Services.Email;
+using TrickingLibrary.Api.Services.Storage;
 using TrickingLibrary.Data;
 using TrickingLibrary.Data.VersionMigrations;
 
@@ -49,6 +50,7 @@ namespace TrickingLibrary.Api
             services.Configure<ModerationItemReviewContext.ModerationSettings>(_config.GetSection(nameof(ModerationItemReviewContext.ModerationSettings)));
             services.Configure<SendGridOptions>(_config.GetSection(nameof(SendGridOptions)));
 
+
             services.AddHostedService<VideoEditingBackgroundService>()
                 .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
                 .AddScoped<VersionMigrationContext>()
@@ -57,7 +59,7 @@ namespace TrickingLibrary.Api
                 .AddSingleton<ISubmissionVoteSink, SubmissionVotingService>()
                 .AddHostedService(provider => (SubmissionVotingService) provider.GetRequiredService<ISubmissionVoteSink>())
                 .AddTransient<CommentCreationContext>()
-                .AddFileManager(_config)
+                .AddFileServices(_config)
                 .AddCors(options => options.AddPolicy(NuxtJsApp, build => build
                     .AllowAnyHeader()
                     .WithOrigins("https://localhost:3000")

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
+using TrickingLibrary.Api.Services.Storage;
 using TrickingLibrary.Api.Settings;
 
 namespace TrickingLibrary.Api.Controllers
@@ -11,11 +12,11 @@ namespace TrickingLibrary.Api.Controllers
     [Route("api/files")]
     public class FileController : ControllerBase
     {
-        private readonly IFileManager _fileManagerLocal;
+        private readonly TemporaryFileStorage _temporaryFileStorage;
 
-        public FileController(IFileManager fileManagerLocal)
+        public FileController(TemporaryFileStorage temporaryFileStorage)
         {
-            _fileManagerLocal = fileManagerLocal;
+            _temporaryFileStorage = temporaryFileStorage;
         }
 
         [HttpGet("{type}/{file}")]
@@ -32,7 +33,7 @@ namespace TrickingLibrary.Api.Controllers
                 return BadRequest();
             }
 
-            var savePath = _fileManagerLocal.GetSavePath(file);
+            var savePath = _temporaryFileStorage.GetSavePath(file);
             if (string.IsNullOrEmpty(savePath))
             {
                 return BadRequest();
@@ -44,23 +45,18 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPost]
         public Task<string> UploadVideo(IFormFile video)
         {
-            return _fileManagerLocal.SaveTemporaryFile(video);
+            return _temporaryFileStorage.SaveTemporaryFile(video);
         }
 
         [HttpDelete("{fileName}")]
         public IActionResult DeleteTemporaryVideo(string fileName)
         {
-            if (!_fileManagerLocal.Temporary(fileName))
-            {
-                return BadRequest();
-            }
-
-            if (!_fileManagerLocal.TemporaryFileExists(fileName))
+            if (!_temporaryFileStorage.TemporaryFileExists(fileName))
             {
                 return NoContent();
             }
 
-            _fileManagerLocal.DeleteTemporaryFile(fileName);
+            _temporaryFileStorage.DeleteTemporaryFile(fileName);
 
             return Ok();
         }

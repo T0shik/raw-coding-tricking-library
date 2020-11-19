@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using TrickingLibrary.Api.BackgroundServices.SubmissionVoting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
 using TrickingLibrary.Api.Form;
+using TrickingLibrary.Api.Services.Storage;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
 using TrickingLibrary.Models;
@@ -59,9 +60,9 @@ namespace TrickingLibrary.Api.Controllers
         public async Task<IActionResult> Create(
             [FromBody] SubmissionForm submissionForm,
             [FromServices] Channel<EditVideoMessage> channel,
-            [FromServices] IFileManager fileManagerLocal)
+            [FromServices] TemporaryFileStorage temporaryFileStorage)
         {
-            if (!fileManagerLocal.TemporaryFileExists(submissionForm.Video))
+            if (!temporaryFileStorage.TemporaryFileExists(submissionForm.Video))
             {
                 return BadRequest();
             }

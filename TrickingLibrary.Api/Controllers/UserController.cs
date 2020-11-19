@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
+using TrickingLibrary.Api.Services.Storage;
 using TrickingLibrary.Api.Settings;
 using TrickingLibrary.Api.ViewModels;
 using TrickingLibrary.Data;
@@ -82,7 +84,7 @@ namespace TrickingLibrary.Api.Controllers
         [HttpPut("me/image")]
         public async Task<IActionResult> UpdateProfileImage(
             IFormFile image,
-            [FromServices] IFileManager fileManager)
+            [FromServices] IFileProvider fileManager)
         {
             if (image == null) return BadRequest();
 
@@ -91,16 +93,16 @@ namespace TrickingLibrary.Api.Controllers
 
             if (user == null) return NoContent();
 
-            var fileName = TrickingLibraryConstants.Files.GenerateProfileFileName();
-            await using (var stream = System.IO.File.Create(fileManager.GetSavePath(fileName)))
+            await using (var stream = new MemoryStream())
             using (var imageProcessor = await Image.LoadAsync(image.OpenReadStream()))
             {
                 imageProcessor.Mutate(x => x.Resize(48, 48));
-
-                await imageProcessor.SaveAsync(stream, new JpegEncoder());
+                var processImage = imageProcessor.SaveAsync(stream, new JpegEncoder());
+                var saveImage = fileManager.SaveProfileImageAsync(stream);
+                await Task.WhenAll(processImage, saveImage);
+                user.Image = await saveImage;
             }
 
-            user.Image = fileManager.GetFileUrl(fileName, FileType.Image);
             await _ctx.SaveChangesAsync();
             return Ok(user);
         }
