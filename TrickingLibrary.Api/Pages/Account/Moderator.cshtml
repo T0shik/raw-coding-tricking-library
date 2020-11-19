@@ -1,0 +1,44 @@
+﻿@page
+@model TrickingLibrary.Api.Pages.Account.Moderator
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_Layout";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl">
+    <input type="hidden" asp-for="Form.Code" value="@Model.Form.Code">
+    <input type="hidden" asp-for="Form.Email" value="@Model.Form.Email">
+
+    <div class="field">
+        <label>@Model.Form.Email</label>
+    </div>
+    <div class="field">
+        <label>Username</label>
+        <input asp-for="Form.Username">
+        <span asp-validation-for="Form.Username"></span>
+    </div>
+    <div class="field">
+        <label>Password</label>
+        <input asp-for="Form.Password">
+        <span asp-validation-for="Form.Password"></span>
+    </div>
+    <div class="field">
+        <label>Confirm Password</label>
+        <input asp-for="Form.ConfirmPassword">
+        <span asp-validation-for="Form.ConfirmPassword"></span>
+    </div>
+    @if (Model.CustomErrors.Count > 0)
+    {
+        <div class="field">
+            @foreach (var error in Model.CustomErrors)
+            {
+                <div class="error">@error</div>
+            }
+        </div>
+    }
+    <div class="field flex-row">
+        <button type="submit">Register</button>
+    </div>
+</form>

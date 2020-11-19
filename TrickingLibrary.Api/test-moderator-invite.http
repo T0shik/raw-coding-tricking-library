@@ -1,0 +1,13 @@
+﻿POST https://localhost:5001/api/admin/moderators
+Content-Type: application/json
+
+{
+  "Email": "atwieslander@gmail.com",
+  "ReturnUrl": "https://localhost:3000/"
+}
+
+###
+GET https://localhost:5001/api/admin/moderators
+Accept: application/json
+
+###

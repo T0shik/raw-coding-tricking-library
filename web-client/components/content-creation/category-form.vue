@@ -49,7 +49,9 @@ export default {
     if (this.editPayload) {
       const {id, name, description, state} = this.editPayload
       Object.assign(this.form, {id, name, description})
-      this.staged = state && state === VERSION_STATE.STAGED
+      if (state) {
+        this.staged = state === VERSION_STATE.STAGED
+      }
     }
   },
   methods: {

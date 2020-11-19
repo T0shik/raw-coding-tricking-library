@@ -33,13 +33,7 @@ namespace TrickingLibrary.Api.ViewModels
                 user.Image,
             };
 
-        public static readonly Func<User, object> CreateProfileCache = ProfileProjection(false).Compile();
-        public static readonly Func<User, object> CreateModProfileCache = ProfileProjection(true).Compile();
-
-        public static object CreateProfile(User user, bool isMod) =>
-            isMod ? CreateModProfileCache(user) : CreateProfileCache(user);
-
-        public static Expression<Func<User, object>> ProfileProjection(bool isMod) =>
+        public static Expression<Func<User, object>> ProfileProjection(string role) =>
             user => new
             {
                 user.Id,
@@ -52,7 +46,7 @@ namespace TrickingLibrary.Api.ViewModels
                         Score = x.Votes.Sum(v => v.Value),
                     })
                     .ToList(),
-                IsMod = isMod,
+                Role = role,
             };
     }
 }

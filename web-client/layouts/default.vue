@@ -11,13 +11,8 @@
       <v-spacer/>
 
       <if-auth>
-        <template v-slot:allowed="{moderator}">
+        <template v-slot:allowed="{moderator, admin}">
           <div class="d-flex align-center">
-            <v-btn v-if="moderator"
-                   class="d-none d-md-flex mx-1"
-                   depressed
-                   to="/moderation">Moderation
-            </v-btn>
             <content-creation-dialog/>
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
@@ -26,7 +21,13 @@
                 </v-btn>
               </template>
               <v-list>
-                <v-list-item class="d-flex d-md-none" to="/moderation">
+                <v-list-item v-if="admin" to="/admin">
+                  <v-list-item-title>
+                    <v-icon left>mdi-cogs</v-icon>
+                    Admin Panel
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item v-if="moderator" to="/moderation">
                   <v-list-item-title>
                     <v-icon left>mdi-clipboard</v-icon>
                     Moderation

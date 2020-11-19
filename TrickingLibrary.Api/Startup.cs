@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrickingLibrary.Api.BackgroundServices.SubmissionVoting;
 using TrickingLibrary.Api.BackgroundServices.VideoEditing;
+using TrickingLibrary.Api.Services.Email;
 using TrickingLibrary.Data;
 using TrickingLibrary.Data.VersionMigrations;
 
@@ -46,10 +47,12 @@ namespace TrickingLibrary.Api
             services.AddRazorPages();
 
             services.Configure<ModerationItemReviewContext.ModerationSettings>(_config.GetSection(nameof(ModerationItemReviewContext.ModerationSettings)));
+            services.Configure<SendGridOptions>(_config.GetSection(nameof(SendGridOptions)));
 
             services.AddHostedService<VideoEditingBackgroundService>()
                 .AddSingleton(_ => Channel.CreateUnbounded<EditVideoMessage>())
                 .AddScoped<VersionMigrationContext>()
+                .AddScoped<EmailClient>()
                 .AddSingleton<ModerationItemReviewContext>()
                 .AddSingleton<ISubmissionVoteSink, SubmissionVotingService>()
                 .AddHostedService(provider => (SubmissionVotingService) provider.GetRequiredService<ISubmissionVoteSink>())
@@ -174,14 +177,20 @@ namespace TrickingLibrary.Api
 
                 identityServerBuilder.AddDeveloperSigningCredential();
             }
-
             services.AddLocalApiAuthentication();
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(TrickingLibraryConstants.Policies.Mod, policy => policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(TrickingLibraryConstants.Claims.Role, TrickingLibraryConstants.Roles.Mod)
+                    .RequireClaim(TrickingLibraryConstants.Claims.Role,
+                        TrickingLibraryConstants.Roles.Mod,
+                        TrickingLibraryConstants.Roles.Admin)
+                );
+                options.AddPolicy(TrickingLibraryConstants.Policies.Admin, policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(TrickingLibraryConstants.Claims.Role,
+                        TrickingLibraryConstants.Roles.Admin)
                 );
             });
         }

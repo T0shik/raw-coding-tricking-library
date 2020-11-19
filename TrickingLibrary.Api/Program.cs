@@ -52,9 +52,7 @@ namespace TrickingLibrary.Api
 
                     var mod = new IdentityUser("mod") {Id = "mod_user_id", Email = "mod@test.com"};
                     userMgr.CreateAsync(mod, "password").GetAwaiter().GetResult();
-                    userMgr.AddClaimAsync(mod,
-                            new Claim(TrickingLibraryConstants.Claims.Role,
-                                TrickingLibraryConstants.Roles.Mod))
+                    userMgr.AddClaimAsync(mod, TrickingLibraryConstants.Claims.ModeratorClaim)
                         .GetAwaiter()
                         .GetResult();
 
@@ -64,6 +62,22 @@ namespace TrickingLibrary.Api
                         Username = mod.UserName,
                         Image = "https://localhost:5001/api/files/image/judge.jpg",
                     });
+
+                    var admin = new IdentityUser("admin") {Id = "admin_user_id", Email = "admin@test.com"};
+                    userMgr.CreateAsync(admin, "password").GetAwaiter().GetResult();
+                    userMgr.AddClaimAsync(admin,
+                            new Claim(TrickingLibraryConstants.Claims.Role,
+                                TrickingLibraryConstants.Roles.Admin))
+                        .GetAwaiter()
+                        .GetResult();
+
+                    ctx.Add(new User
+                    {
+                        Id = admin.Id,
+                        Username = admin.UserName,
+                        Image = "https://localhost:5001/api/files/image/judge.jpg",
+                    });
+
                     var difficulties = new List<Difficulty>
                     {
                         new Difficulty {Id = 1, Slug = "easy", Name = "Easy", Description = "Easy Test", State = VersionState.Live},

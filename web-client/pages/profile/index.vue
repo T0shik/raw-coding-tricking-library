@@ -18,25 +18,30 @@
           </v-hover>
           {{ profile.username }}
         </div>
+        <div class="mt-2">
+          Role: <strong>{{ profile.role }}</strong>
+        </div>
         <v-divider class="my-2"/>
         <profile-completed-tricks :profile-submissions="profile.submissions"/>
-        <v-divider class="my-2"/>
-        <h5 class="text-h5">Change Requests</h5>
-        <v-list>
-          <v-list-item v-for="modItem in moderationItems"
-                       :key="`profile-modItem-${modItem.id}`"
-                       :to="`/moderation/${modItem.id}`">
-            <v-list-item-content>
-              <v-list-item-title v-if="modItem.currentObject">{{ modItem.currentObject.name }}</v-list-item-title>
-              <v-list-item-title v-else-if="modItem.targetObject">{{ modItem.targetObject.name }}</v-list-item-title>
-              <v-list-item-subtitle>
-                <span>Type: {{ modItem.type }},</span>
-                <span v-if="modItem.currentObject">Version: {{ modItem.currentObject.version }}</span>
-                <span v-else-if="modItem.targetObject">Version: {{ modItem.targetObject.version }}</span>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        <div v-if="moderationItems.length > 0">
+          <v-divider class="my-2"/>
+          <h5 class="text-h5">Change Requests</h5>
+          <v-list>
+            <v-list-item v-for="modItem in moderationItems"
+                         :key="`profile-modItem-${modItem.id}`"
+                         :to="`/moderation/${modItem.id}`">
+              <v-list-item-content>
+                <v-list-item-title v-if="modItem.currentObject">{{ modItem.currentObject.name }}</v-list-item-title>
+                <v-list-item-title v-else-if="modItem.targetObject">{{ modItem.targetObject.name }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  <span>Type: {{ modItem.type }},</span>
+                  <span v-if="modItem.currentObject">Version: {{ modItem.currentObject.version }}</span>
+                  <span v-else-if="modItem.targetObject">Version: {{ modItem.targetObject.version }}</span>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </div>
       </div>
     </template>
   </item-content-layout>

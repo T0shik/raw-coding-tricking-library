@@ -1,24 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>af4900d4-9fae-4d2e-b3ba-4f40f4ff2ac2</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TrickingLibrary.Data\TrickingLibrary.Data.csproj" />
+        <ProjectReference Include="..\TrickingLibrary.Data\TrickingLibrary.Data.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ffmpeg" />
-      <Folder Include="wwwroot" />
+        <Folder Include="ffmpeg" />
+        <Folder Include="wwwroot" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation.AspNetCore" Version="9.2.0" />
-      <PackageReference Include="IdentityServer4" Version="4.0.4" />
-      <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.0.4" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="9.2.0" />
+        <PackageReference Include="IdentityServer4" Version="4.0.4" />
+        <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
+        <PackageReference Include="SendGrid" Version="9.21.2" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
     </ItemGroup>
 
 </Project>

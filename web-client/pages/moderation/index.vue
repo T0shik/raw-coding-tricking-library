@@ -22,6 +22,7 @@ import ModerationCategoryOverview from '@/components/moderation/moderation-categ
 import ModerationDifficultyOverview from '@/components/moderation/moderation-difficulty-overview'
 
 export default {
+  middleware: ['mod'],
   data: () => ({
     tab: 0,
     tabs: [

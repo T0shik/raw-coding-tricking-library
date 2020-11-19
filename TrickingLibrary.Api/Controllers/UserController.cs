@@ -41,7 +41,7 @@ namespace TrickingLibrary.Api.Controllers
                 .Where(x => x.Id.Equals(userId))
                 .Include(x => x.Submissions)
                 .ThenInclude(x => x.Votes)
-                .Select(UserViewModels.ProfileProjection(IsMod))
+                .Select(UserViewModels.ProfileProjection(Role))
                 .FirstOrDefaultAsync();
 
             if (user != null) return Ok(user);
@@ -55,7 +55,7 @@ namespace TrickingLibrary.Api.Controllers
             _ctx.Add(newUser);
             await _ctx.SaveChangesAsync();
 
-            return Ok(UserViewModels.CreateProfile(newUser, IsMod));
+            return Ok(UserViewModels.ProfileProjection(Role).Compile().Invoke(newUser));
         }
 
         [AllowAnonymous]

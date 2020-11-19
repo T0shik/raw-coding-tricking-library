@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using IdentityServer4;
 
 namespace TrickingLibrary.Api
@@ -10,6 +11,7 @@ namespace TrickingLibrary.Api
             // public const string Anon = nameof(Anon);
             // public const string User = IdentityServerConstants.LocalApi.PolicyName;
             public const string Mod = nameof(Mod);
+            public const string Admin = nameof(Admin);
         }
 
         public struct IdentityResources
@@ -20,11 +22,13 @@ namespace TrickingLibrary.Api
         public struct Claims
         {
             public const string Role = "role";
+            public static readonly Claim ModeratorClaim = new Claim(Role, Roles.Mod);
         }
 
         public struct Roles
         {
             public const string Mod = nameof(Mod);
+            public const string Admin = nameof(Admin);
         }
 
         public struct Files

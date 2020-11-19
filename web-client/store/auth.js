@@ -5,13 +5,15 @@
 export const state = initState
 
 const ROLES = {
-  MODERATOR: "Mod"
+  MODERATOR: "Mod",
+  ADMIN: "Admin",
 }
 
 export const getters = {
   authenticated: state => state.profile != null,
-  moderator: (state, getters) => getters.authenticated && state.profile.isMod,
-  admin: (state, getters) => false
+  moderator: (state, getters) => getters.authenticated
+    && (getters.admin || state.profile.role === ROLES.MODERATOR),
+  admin: (state, getters) => getters.authenticated && state.profile.role === ROLES.ADMIN,
 }
 
 export const mutations = {

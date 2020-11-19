@@ -10,7 +10,7 @@ namespace TrickingLibrary.Api.Controllers
     {
         protected string UserId => GetClaim(ClaimTypes.NameIdentifier) ?? GetClaim(JwtClaimTypes.Subject);
         protected string Username => GetClaim(ClaimTypes.Name) ?? GetClaim(JwtClaimTypes.PreferredUserName);
-        protected bool IsMod => User.HasClaim(TrickingLibraryConstants.Claims.Role, TrickingLibraryConstants.Roles.Mod);
+        protected string Role => GetClaim(TrickingLibraryConstants.Claims.Role);
 
         private string GetClaim(string claimType) => User.Claims
             .FirstOrDefault(x => x.Type.Equals(claimType))?.Value;
