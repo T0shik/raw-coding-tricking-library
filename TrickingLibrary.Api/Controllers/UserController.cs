@@ -64,7 +64,7 @@ namespace TrickingLibrary.Api.Controllers
         [HttpGet("{username}")]
         public object GetUser(string username) =>
             _ctx.Users
-                .Where(x => x.Username.Equals(username, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x.Username.ToLower() == username.ToLower())
                 .Include(x => x.Submissions)
                 .ThenInclude(x => x.Votes)
                 .Select(UserViewModels.Projection)
@@ -104,7 +104,7 @@ namespace TrickingLibrary.Api.Controllers
             }
 
             await _ctx.SaveChangesAsync();
-            return Ok(user);
+            return Ok();
         }
     }
 }

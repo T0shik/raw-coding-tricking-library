@@ -59,7 +59,7 @@ namespace TrickingLibrary.Api.Controllers
         public IEnumerable<object> GetHistory(string slug)
         {
             return _ctx.Tricks
-                .Where(x => x.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase)
+                .Where(x => x.Slug.ToLower() == slug.ToLower()
                             && x.State != VersionState.Staged)
                 .Include(x => x.TrickCategories)
                 .Include(x => x.Progressions)
@@ -75,7 +75,7 @@ namespace TrickingLibrary.Api.Controllers
             return _ctx.Submissions
                 .Include(x => x.Video)
                 .Include(x => x.User)
-                .Where(x => x.TrickId.Equals(trickId, StringComparison.InvariantCultureIgnoreCase))
+                .Where(x => x.TrickId.ToLower() == trickId.ToLower())
                 .OrderFeed(feedQuery)
                 .Select(SubmissionViewModels.PerspectiveProjection(UserId))
                 .ToList();

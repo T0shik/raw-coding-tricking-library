@@ -42,8 +42,7 @@ namespace TrickingLibrary.Api.Controllers
         public IEnumerable<object> GetHistory(string slug)
         {
             return _ctx.Difficulties
-                .Where(x => x.Slug.Equals(slug, StringComparison.InvariantCultureIgnoreCase)
-                            && x.State != VersionState.Staged)
+                .Where(x => x.Slug.ToLower() == slug.ToLower() && x.State != VersionState.Staged)
                 .Select(DifficultyViewModels.Projection)
                 .ToList();
         }

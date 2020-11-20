@@ -49,7 +49,7 @@
 
 <script>
 import ItemContentLayout from "@/components/item-content-layout";
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import Submission from "@/components/submission";
 import SubmissionFeed from "@/components/submission-feed";
 import ProfileCompletedTricks from "@/components/profile-completed-tricks";
@@ -73,13 +73,13 @@ export default {
       formData.append('image', fileInput.files[0])
 
       return this.$axios.$put('/api/users/me/image', formData)
-        .then(profile => {
-          this.saveProfile({profile})
+        .then(() => {
+          this.initialize()
           fileInput.value = ""
           this.uploadingImage = false
         })
     },
-    ...mapMutations('auth', ['saveProfile'])
+    ...mapActions('auth', ['initialize'])
   },
   computed: mapState('auth', ['profile']),
 }

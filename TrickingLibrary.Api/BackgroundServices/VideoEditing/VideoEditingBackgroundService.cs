@@ -103,11 +103,11 @@ namespace TrickingLibrary.Api.BackgroundServices.VideoEditing
                 catch (Exception e)
                 {
                     _logger.LogError(e, "Video Processing Failed for {0}", message.Input);
-                    _temporaryFileStorage.DeleteTemporaryFile(outputConvertedName);
-                    _temporaryFileStorage.DeleteTemporaryFile(outputThumbnailName);
                 }
                 finally
                 {
+                    _temporaryFileStorage.DeleteTemporaryFile(outputConvertedName);
+                    _temporaryFileStorage.DeleteTemporaryFile(outputThumbnailName);
                     _temporaryFileStorage.DeleteTemporaryFile(message.Input);
                 }
             }

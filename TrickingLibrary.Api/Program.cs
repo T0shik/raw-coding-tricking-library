@@ -4,6 +4,8 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrickingLibrary.Data;
@@ -21,9 +23,10 @@ namespace TrickingLibrary.Api
             using (var scope = host.Services.CreateScope())
             {
                 var ctx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var identityContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
                 var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 
-                if (env.IsDevelopment())
+                if (!identityContext.Users.Any(x => x.UserName == "test") && env.IsDevelopment())
                 {
                     var fakeCounter = 20;
                     var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
@@ -80,23 +83,22 @@ namespace TrickingLibrary.Api
 
                     var difficulties = new List<Difficulty>
                     {
-                        new Difficulty {Id = 1, Slug = "easy", Name = "Easy", Description = "Easy Test", State = VersionState.Live},
-                        new Difficulty {Id = 2, Slug = "medium", Name = "Medium", Description = "Medium Test", State = VersionState.Live},
-                        new Difficulty {Id = 3, Slug = "hard", Name = "Hard", Description = "Hard Test", State = VersionState.Live},
+                        new Difficulty {Slug = "easy", Name = "Easy", Description = "Easy Test", State = VersionState.Live},
+                        new Difficulty {Slug = "medium", Name = "Medium", Description = "Medium Test", State = VersionState.Live},
+                        new Difficulty {Slug = "hard", Name = "Hard", Description = "Hard Test", State = VersionState.Live},
                     };
                     ctx.AddRange(difficulties);
-                    ctx.Add(new Difficulty {Id = 4, Slug = "wtf", Name = "WTF", Description = "Difficulty under moderation", UserId = testUser.Id});
+                    ctx.Add(new Difficulty {Slug = "wtf", Name = "WTF", Description = "Difficulty under moderation", UserId = testUser.Id});
                     var categories = new List<Category>
                     {
-                        new Category {Id = 1, Slug = "kick", Name = "Kick", Description = "Kick Test", State = VersionState.Live},
-                        new Category {Id = 2, Slug = "flip", Name = "Flip", Description = "Flip Test", State = VersionState.Live},
-                        new Category {Id = 3, Slug = "transition", Name = "Transition", Description = "Transition Test", State = VersionState.Live},
+                        new Category {Slug = "kick", Name = "Kick", Description = "Kick Test", State = VersionState.Live},
+                        new Category {Slug = "flip", Name = "Flip", Description = "Flip Test", State = VersionState.Live},
+                        new Category {Slug = "transition", Name = "Transition", Description = "Transition Test", State = VersionState.Live},
                     };
                     ctx.AddRange(categories);
-                    ctx.Add(new Category {Id = 4, Slug = "ground-work", Name = "Ground Work", Description = "Category under moderation", UserId = testUser.Id});
+                    ctx.Add(new Category {Slug = "ground-work", Name = "Ground Work", Description = "Category under moderation", UserId = testUser.Id});
                     ctx.Add(new Trick
                     {
-                        Id = 1,
                         UserId = testUser.Id,
                         Slug = "backwards-roll",
                         Name = "Backwards Roll",
@@ -108,7 +110,6 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new Trick
                     {
-                        Id = 2,
                         UserId = testUser.Id,
                         Slug = "forwards-roll",
                         Name = "Forwards Roll",
@@ -120,7 +121,6 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new Trick
                     {
-                        Id = 3,
                         UserId = testUser.Id,
                         Slug = "back-flip",
                         Name = "Back Flip",
@@ -136,7 +136,6 @@ namespace TrickingLibrary.Api
                     });
                     ctx.Add(new Trick
                     {
-                        Id = 4,
                         UserId = testUser.Id,
                         Slug = "back-flip-360",
                         Name = "Back Flip 360",

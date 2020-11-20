@@ -37,7 +37,8 @@ namespace TrickingLibrary.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Dev"));
+            // services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Dev"));
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_config.GetConnectionString("Default")));
 
             AddIdentity(services);
 
@@ -94,8 +95,11 @@ namespace TrickingLibrary.Api
 
         private void AddIdentity(IServiceCollection services)
         {
+            // services.AddDbContext<IdentityDbContext>(config =>
+            //     config.UseInMemoryDatabase("DevIdentity"));
             services.AddDbContext<IdentityDbContext>(config =>
-                config.UseInMemoryDatabase("DevIdentity"));
+                config.UseNpgsql(_config.GetConnectionString("Default"), b => b
+                    .MigrationsAssembly("TrickingLibrary.Api")));
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
@@ -179,6 +183,7 @@ namespace TrickingLibrary.Api
 
                 identityServerBuilder.AddDeveloperSigningCredential();
             }
+
             services.AddLocalApiAuthentication();
 
             services.AddAuthorization(options =>

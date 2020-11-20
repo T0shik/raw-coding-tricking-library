@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TrickingLibrary.Api.Services.Email;
@@ -10,6 +10,7 @@ using TrickingLibrary.Api.Services.Email;
 namespace TrickingLibrary.Api.Controllers
 {
     [Route("/api/admin")]
+    [Authorize(TrickingLibraryConstants.Policies.Admin)]
     public class AdminController : ApiController
     {
         [HttpGet("moderators")]
@@ -62,21 +63,6 @@ namespace TrickingLibrary.Api.Controllers
             await emailClient.SendModeratorInviteAsync(form.Email, link);
 
             return Ok(link);
-        }
-    }
-
-    public class InviteModeratorForm
-    {
-        public string Email { get; set; }
-        public string ReturnUrl { get; set; }
-    }
-
-    public class InviteModeratorFormValidation : AbstractValidator<InviteModeratorForm>
-    {
-        public InviteModeratorFormValidation()
-        {
-            RuleFor(x => x.Email).NotEmpty();
-            RuleFor(x => x.ReturnUrl).NotEmpty();
         }
     }
 }

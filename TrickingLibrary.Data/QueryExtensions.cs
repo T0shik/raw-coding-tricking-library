@@ -63,7 +63,7 @@ namespace TrickingLibrary.Data
             }
             else
             {
-                source = source.Where(x => x.Slug.Equals(value, StringComparison.InvariantCultureIgnoreCase)
+                source = source.Where(x => x.Slug.ToLower() == value.ToLower()
                                            && x.State == VersionState.Live);
             }
 
