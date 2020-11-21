@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "$ssh_key" > ~/ssh_key
           chmod 600 ~/ssh_key
-          rsync -e "ssh -i ~/ssh_key -o StrictHostKeyChecking=no" -avzr ./TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/* "$user"@"$target_ip":/var/tricking-library/app
+          rsync -e "ssh -i ~/ssh_key -o StrictHostKeyChecking=no" -avzr ./TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/ "$user"@"$target_ip":/var/tricking-library/api
         env:
           ssh_key: ${{ secrets.CICD_SSH }}
           user: ${{ secrets.CICD_USER }}

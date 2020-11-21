@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "$ssh_key" > ~/ssh_key
           chmod 600 ~/ssh_key
-          rsync -e "ssh -i ~/ssh_key -o StrictHostKeyChecking=no" -avzr ./web-client/* "$user"@"$target_ip":/var/tricking-library/api
+          rsync -e "ssh -i ~/ssh_key -o StrictHostKeyChecking=no" -avzr ./web-client/ "$user"@"$target_ip":/var/tricking-library/app
         env:
           ssh_key: ${{ secrets.CICD_SSH }}
           user: ${{ secrets.CICD_USER }}
