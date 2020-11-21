@@ -1,10 +1,6 @@
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
-using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -81,8 +77,6 @@ namespace TrickingLibrary.Api
 
             app.UseAuthentication();
 
-            app.UseIdentityServer();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -115,7 +109,11 @@ namespace TrickingLibrary.Api
                     }
                     else
                     {
-                        //todo configure for production
+                        options.Password.RequireDigit = true;
+                        options.Password.RequiredLength = 8;
+                        options.Password.RequireLowercase = true;
+                        options.Password.RequireUppercase = false;
+                        options.Password.RequireNonAlphanumeric = false;
                     }
                 })
                 .AddEntityFrameworkStores<IdentityDbContext>()
@@ -126,65 +124,6 @@ namespace TrickingLibrary.Api
                 config.LoginPath = "/Account/Login";
                 config.LogoutPath = "/api/auth/logout";
             });
-
-            var identityServerBuilder = services.AddIdentityServer();
-
-            identityServerBuilder.AddAspNetIdentity<IdentityUser>();
-
-            if (_env.IsDevelopment())
-            {
-                identityServerBuilder.AddInMemoryIdentityResources(new IdentityResource[]
-                {
-                    new IdentityResources.OpenId(),
-                    new IdentityResources.Profile(),
-                    new IdentityResource(TrickingLibraryConstants.IdentityResources.RoleScope,
-                        new[] {TrickingLibraryConstants.Claims.Role}),
-                });
-
-                identityServerBuilder.AddInMemoryApiScopes(new ApiScope[]
-                {
-                    new ApiScope(IdentityServerConstants.LocalApi.ScopeName,
-                        new[]
-                        {
-                            JwtClaimTypes.PreferredUserName,
-                            TrickingLibraryConstants.Claims.Role
-                        }),
-                });
-
-                identityServerBuilder.AddInMemoryClients(new Client[]
-                {
-                    new Client
-                    {
-                        ClientId = "web-client",
-                        AllowedGrantTypes = GrantTypes.Code,
-
-                        RedirectUris = new[]
-                        {
-                            "https://localhost:3000/oidc/sign-in-callback.html",
-                            "https://localhost:3000/oidc/sign-in-silent-callback.html"
-                        },
-                        PostLogoutRedirectUris = new[] {"https://localhost:3000"},
-                        AllowedCorsOrigins = new[] {"https://localhost:3000"},
-
-                        AllowedScopes = new[]
-                        {
-                            IdentityServerConstants.StandardScopes.OpenId,
-                            IdentityServerConstants.StandardScopes.Profile,
-                            IdentityServerConstants.LocalApi.ScopeName,
-                            TrickingLibraryConstants.IdentityResources.RoleScope
-                        },
-
-                        RequirePkce = true,
-                        AllowAccessTokensViaBrowser = true,
-                        RequireConsent = false,
-                        RequireClientSecret = false,
-                    },
-                });
-
-                identityServerBuilder.AddDeveloperSigningCredential();
-            }
-
-            services.AddLocalApiAuthentication();
 
             services.AddAuthorization(options =>
             {

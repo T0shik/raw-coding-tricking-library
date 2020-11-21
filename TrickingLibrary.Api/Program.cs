@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrickingLibrary.Data;
@@ -25,11 +26,11 @@ namespace TrickingLibrary.Api
                 var ctx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var identityContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
                 var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
                 if (!identityContext.Users.Any(x => x.UserName == "test") && env.IsDevelopment())
                 {
                     var fakeCounter = 20;
-                    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                     var testUser = new IdentityUser("test") {Id = "test_user_id", Email = "test@test.com"};
                     userMgr.CreateAsync(testUser, "password").GetAwaiter().GetResult();
                     ctx.Add(new User
@@ -289,6 +290,18 @@ namespace TrickingLibrary.Api
                         });
                         ctx.SaveChanges();
                     }
+                }
+                else if (!identityContext.Users.Any(x => x.UserName == "admin") && env.IsProduction())
+                {
+                    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+                    var admin = new IdentityUser("admin");
+                    userMgr.CreateAsync(admin, config.GetSection("AdminPassword").Value).GetAwaiter().GetResult();
+                    userMgr.AddClaimAsync(admin,
+                            new Claim(TrickingLibraryConstants.Claims.Role,
+                                TrickingLibraryConstants.Roles.Admin))
+                        .GetAwaiter()
+                        .GetResult();
                 }
             }
 

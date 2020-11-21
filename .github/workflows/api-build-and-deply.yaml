@@ -22,6 +22,8 @@ jobs:
         with:
           files: './TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/appsettings.Production.json'
         env:
+          ConnectionStrings.Default: ${{ secrets.POSTGRESQL_CONNECTION_STRING }}
+          AdminPassword: ${{ secrets.ADMIN_PASSWORD }}
           SendGridOptions.ApiKey: ${{ secrets.SEND_GRID_API_KEY }}
           SendGridOptions.From: ${{ secrets.SEND_GRID_FROM }}
           S3Settings.AccessKey: ${{ secrets.S3_ACCESS_KEY }}

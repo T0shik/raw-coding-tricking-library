@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Security.Claims;
-using IdentityServer4;
 
 namespace TrickingLibrary.Api
 {
