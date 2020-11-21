@@ -19,12 +19,12 @@ jobs:
       - name: Create Release
         run: dotnet publish -c Release --no-restore
       - uses: microsoft/variable-substitution@v1
-          with:
-            files: './TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/appsettings.Production.json'
-          env:
-            SendGridOptions.ApiKey: ${{ secrets.SendGridApiKey }}
-            S3Settings.AccessKey: "access_key"
-            S3Settings.SecretKey: "secret_key"
+        with:
+          files: './TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/appsettings.Production.json'
+        env:
+          SendGridOptions.ApiKey: ${{ secrets.SendGridApiKey }}
+          S3Settings.AccessKey: "access_key"
+          S3Settings.SecretKey: "secret_key"
       - name: Push To Linode
         run: |
           echo "$ssh_key" > ~/ssh_key
