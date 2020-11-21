@@ -1,0 +1,35 @@
+﻿name: Build and Deploy API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Code
+        uses: actions/checkout@v2
+      - name: Setup .Net Core tools
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+      - name: Setup .Net Core tools
+        run: dotnet restore
+      - name: Create Release
+        run: dotnet publish -c Release --no-restore
+      - uses: microsoft/variable-substitution@v1
+          with:
+            files: './TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/appsettings.Production.json'
+          env:
+            SendGridOptions.ApiKey: ${{ secrets.SendGridApiKey }}
+            S3Settings.AccessKey: "access_key"
+            S3Settings.SecretKey: "secret_key"
+      - name: Push To Linode
+        run: |
+          echo "$ssh_key" > ~/ssh_key
+          chmod 600 ~/ssh_key
+          rsync -e "ssh -i ~/ssh_key" -avrz ./TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/* github_actions@"$target_ip":/var/app/api
+        env:
+          ssh_key: ${{ secrets.GIHUB_ACTIONS_SSH }}
+          target_ip: ${{ secrets.LINODE_VM_IP }}
