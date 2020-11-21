@@ -1,0 +1,30 @@
+﻿name: Nuxtjs app Build and Deploy to Linode
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build our App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Code
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+      - name: Install Dependencies
+        run: npm install
+        working-directory: web-client
+      - name: Install Dependencies
+        run: npm run build
+        working-directory: web-client
+      - name: Push to Linode
+        run: |
+          echo "$ssh_key" > ~/ssh_key
+          chmod 600 ~/ssh_key
+          rsync -e "ssh -i ~/ssh_key -o StrictHostKeyChecking=no" -avzr ./web-client/* "$user"@"$target_ip":/var/tricking-library/api
+        env:
+          ssh_key: ${{ secrets.CICD_SSH }}
+          user: ${{ secrets.CICD_USER }}
+          target_ip: ${{ secrets.LINODE_IP }}

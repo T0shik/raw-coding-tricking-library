@@ -23,13 +23,6 @@ export default {
     },
   },
 
-  server: {
-    https: {
-      key: fs.readFileSync(path.relative(__dirname, 'server.key')),
-      cert: fs.readFileSync(path.relative(__dirname, 'server.cert')),
-    }
-  },
-
   head: {
     titleTemplate: '%s - Tricking Library',
     title: 'Welcome',
@@ -95,14 +88,17 @@ export default {
       }
     }
   },
-  /*
-  ** Build configuration
-  */
+
   build: {
-    /*
-    ** You can extend webpack config here
-    */
     extend(config, ctx) {
+      if (ctx.isDev) {
+        config.server = {
+          https: {
+            key: fs.readFileSync(path.relative(__dirname, 'server.key')),
+            cert: fs.readFileSync(path.relative(__dirname, 'server.cert')),
+          }
+        }
+      }
     }
   }
 }
