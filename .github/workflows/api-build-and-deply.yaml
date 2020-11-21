@@ -1,0 +1,39 @@
+﻿name: API Build and Deploy to Linode
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build our App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Code
+        uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+      - name: Restore Dependencies
+        run: dotnet restore
+      - name: Create Production Build
+        run: dotnet publish -c Release --no-restore
+      - name: Inject Secrets
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: './TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/appsettings.Production.json'
+        env:
+          SendGridOptions.ApiKey: ${{ secrets.SEND_GRID_API_KEY }}
+          SendGridOptions.From: ${{ secrets.SEND_GRID_FROM }}
+          S3Settings.AccessKey: ${{ secrets.S3_ACCESS_KEY }}
+          S3Settings.SecretKey: ${{ secrets.S3_SECRET_KEY }}
+          S3Settings.ServiceUrl: ${{ secrets.S3_SERVICE_URL }}
+          S3Settings.Bucket: ${{ secrets.S3_BUCKET }}
+      - name: Push to Linode
+        run: |
+          echo "$ssh_key" > ~/ssh_key
+          chmod 600 ~/ssh_key
+          rsync -e "ssh -i ~/ssh_key -o StrictHostKeyChecking=no" -avzr ./TrickingLibrary.Api/bin/Release/netcoreapp3.1/publish/* "$user"@"$target_ip":/var/tricking-library/api
+        env:
+          ssh_key: ${{ secrets.CICD_SSH }}
+          user: ${{ secrets.CICD_USER }}
+          target_ip: ${{ secrets.LINODE_IP }}
