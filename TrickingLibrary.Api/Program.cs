@@ -295,7 +295,7 @@ namespace TrickingLibrary.Api
                 {
                     var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-                    var admin = new IdentityUser("admin");
+                    var admin = new IdentityUser("admin"){Email = "admin@raw-coding.net"};
                     userMgr.CreateAsync(admin, config.GetSection("AdminPassword").Value).GetAwaiter().GetResult();
                     userMgr.AddClaimAsync(admin,
                             new Claim(TrickingLibraryConstants.Claims.Role,

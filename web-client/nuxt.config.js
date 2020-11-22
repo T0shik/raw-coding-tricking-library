@@ -11,7 +11,7 @@ export default {
       logoutPath: process.env.LOGOUT_PATH,
     },
     axios: {
-      baseURL: "https://localhost:5001",
+      baseURL: process.env.BROWSER_SIDE_URL,
       https: true
     },
   },
