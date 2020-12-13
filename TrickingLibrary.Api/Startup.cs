@@ -61,7 +61,7 @@ namespace TrickingLibrary.Api
                 .AddFileServices(_config)
                 .AddCors(options => options.AddPolicy(NuxtJsApp, build => build
                     .AllowAnyHeader()
-                    .WithOrigins("https://localhost:3000")
+                    .WithOrigins("https://localhost:3000", "https://app.raw-coding.net")
                     .AllowAnyMethod()
                     .AllowCredentials()));
         }
