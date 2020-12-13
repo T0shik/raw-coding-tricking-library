@@ -8,6 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
+    "start-prod": "nuxt start --dotenv .env.production",
     "generate": "nuxt generate"
   },
   "dependencies": {

@@ -24,7 +24,7 @@ namespace TrickingLibrary.Api
             using (var scope = host.Services.CreateScope())
             {
                 var ctx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var identityContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+                var identityContext = scope.ServiceProvider.GetRequiredService<ApiIdentityDbContext>();
                 var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
                 var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 

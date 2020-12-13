@@ -1,0 +1,14 @@
+﻿[Unit]
+Description=Tricking Library Nuxtjs App
+
+[Service]
+WorkingDirectory=/var/tricking-library/app
+ExecStart=npm run start-prod
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=tricking-library-app
+
+[Install]
+WantedBy=multi-user.target

@@ -2,7 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 import path from 'path'
 import fs from 'fs'
 
-export default {
+const config = {
   mode: 'universal',
 
   publicRuntimeConfig: {
@@ -91,14 +91,17 @@ export default {
 
   build: {
     extend(config, ctx) {
-      if (ctx.isDev) {
-        config.server = {
-          https: {
-            key: fs.readFileSync(path.relative(__dirname, 'server.key')),
-            cert: fs.readFileSync(path.relative(__dirname, 'server.cert')),
-          }
-        }
-      }
     }
   }
 }
+
+if (process.env.NODE_ENV === 'development') {
+  config.server = {
+    https: {
+      key: fs.readFileSync(path.relative(__dirname, 'server.key')),
+      cert: fs.readFileSync(path.relative(__dirname, 'server.cert')),
+    }
+  }
+}
+
+export default config;

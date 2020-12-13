@@ -1,7 +1,9 @@
+using System.IO;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -91,9 +93,12 @@ namespace TrickingLibrary.Api
         {
             // services.AddDbContext<IdentityDbContext>(config =>
             //     config.UseInMemoryDatabase("DevIdentity"));
-            services.AddDbContext<IdentityDbContext>(config =>
-                config.UseNpgsql(_config.GetConnectionString("Default"), b => b
-                    .MigrationsAssembly("TrickingLibrary.Api")));
+            services.AddDbContext<ApiIdentityDbContext>(config =>
+                config.UseNpgsql(_config.GetConnectionString("Default")));
+
+            services.AddDataProtection()
+                .SetApplicationName("TrickingLibrary")
+                .PersistKeysToDbContext<ApiIdentityDbContext>();
 
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
@@ -116,13 +121,14 @@ namespace TrickingLibrary.Api
                         options.Password.RequireNonAlphanumeric = false;
                     }
                 })
-                .AddEntityFrameworkStores<IdentityDbContext>()
+                .AddEntityFrameworkStores<ApiIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
             services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/Login";
                 config.LogoutPath = "/api/auth/logout";
+                config.Cookie.Domain = _config["CookieDomain"];
             });
 
             services.AddAuthorization(options =>
