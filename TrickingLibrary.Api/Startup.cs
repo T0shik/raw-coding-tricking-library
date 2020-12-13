@@ -35,8 +35,8 @@ namespace TrickingLibrary.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Dev"));
-            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_config.GetConnectionString("Default")));
+            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Dev"));
+            // services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_config.GetConnectionString("Default")));
 
             AddIdentity(services);
 
@@ -91,10 +91,10 @@ namespace TrickingLibrary.Api
 
         private void AddIdentity(IServiceCollection services)
         {
-            // services.AddDbContext<IdentityDbContext>(config =>
-            //     config.UseInMemoryDatabase("DevIdentity"));
             services.AddDbContext<ApiIdentityDbContext>(config =>
-                config.UseNpgsql(_config.GetConnectionString("Default")));
+            config.UseInMemoryDatabase("DevIdentity"));
+            // services.AddDbContext<ApiIdentityDbContext>(config =>
+                // config.UseNpgsql(_config.GetConnectionString("Default")));
 
             services.AddDataProtection()
                 .SetApplicationName("TrickingLibrary")
